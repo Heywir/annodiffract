@@ -3,9 +3,6 @@ package main;
 public class Fenetre {
 
 	int i = 0;
-	int j=0;
-	int c = 0;
-	
 	//
 	public Fenetre() {
 	
