@@ -1,2 +1,31 @@
-AnnoDiffract is a school project from 3 grade of computer science of the university of New Caledonia.
-The goal is to make an Java application to manipulate diffraction images.
+AnnoDriffract
+=======================
+
+AnnoDiffract is a school project made by 3grader in computer science of University of New Caledonia, the goal is to make an application similar to Diffraction Ring Profiler.
+
+Requirements
+============
+
+* Java at https://www.java.com/
+
+Installation
+============
+
+WIP
+
+
+Usage
+=====
+
+WIP
+
+Credits
+=======
+
+* My mate Morteum
+* Myself
+* Physics Teachers
+* Dev Teachers
+* The University
+
+Copyright © UNC-NC 2017
