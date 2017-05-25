@@ -16,11 +16,13 @@ public class Fenetre extends JFrame{
 	JMenu menuFile = null;
 	
 	public Fenetre() {
+		
+		// Composants
 	
 		mainWindow = new JFrame("AnnoDiffract");
 		mainPanel = new JPanel();
 		mainMenuBar = new JMenuBar();
-		menuFile = new JMenu();
+		menuFile = new JMenu("File");
 		
 		// Layout
 		
@@ -31,6 +33,10 @@ public class Fenetre extends JFrame{
 		
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	
 		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		
+		// MenuBar
+		
+		mainMenuBar.add(menuFile);
 		
 		// Ajouts
 		
