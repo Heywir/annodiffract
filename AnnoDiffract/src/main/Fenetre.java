@@ -22,7 +22,7 @@ public class Fenetre extends JFrame{
 		mainWindow = new JFrame("AnnoDiffract");
 		mainPanel = new JPanel();
 		mainMenuBar = new JMenuBar();
-		menuFile = new JMenu("File");
+		menuFile = new JMenu("Fichier");
 		
 		// Layout
 		
