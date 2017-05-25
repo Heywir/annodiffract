@@ -1,15 +1,25 @@
 package main;
 
-public class Fenetre {
+import javax.swing.JFrame;
 
-	int i = 0;
-	//
+public class Fenetre extends JFrame{
+
+	JFrame mainWindow = null;
+	
 	public Fenetre() {
 	
-		//
+		mainWindow = new JFrame("AnnoDiffract");
+		
+		// Window Settings
+		
+		
+		
 	}
 	
 	public static void main(String[] args) {
-		//
+		
+		Fenetre Window = new Fenetre();
+		Window.setVisible(true);
+		
 	}
 }
