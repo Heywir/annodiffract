@@ -1,10 +1,12 @@
 package main;
 
 import java.awt.BorderLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
-
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -16,7 +18,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-public class Fenetre extends JFrame implements ActionListener{
+public class Fenetre extends JFrame implements ActionListener, ComponentListener{
 
 	JFrame mainWindow = null;
 	JPanel mainPanel = null;
@@ -56,6 +58,7 @@ public class Fenetre extends JFrame implements ActionListener{
 		
 		// Listeners
 		
+		mainPanel.addComponentListener(this);
 		menuItemOuvrir.addActionListener(this);
 		
 		// Ajouts
@@ -98,10 +101,35 @@ public class Fenetre extends JFrame implements ActionListener{
 			e.printStackTrace();
 		}
 		//Set image in the window
-		label.setIcon(new ImageIcon(image));
+		label.setIcon(new ImageIcon(new ImageIcon(image).getImage().getScaledInstance((mainPanel.getWidth()/100)*80, (mainPanel.getHeight()/100)*80, Image.SCALE_SMOOTH)));
 		mainPanel.add(label, BorderLayout.CENTER);
 		//reset the window
 		mainPanel.revalidate();
+	}
+		
+	@Override
+	public void componentHidden(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void componentMoved(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void componentResized(ComponentEvent e) {
+		label.setIcon(new ImageIcon(new ImageIcon(image).getImage().getScaledInstance((mainPanel.getWidth()/100)*80, (mainPanel.getHeight()/100)*80, Image.SCALE_SMOOTH)));
+		mainPanel.add(label, BorderLayout.CENTER);
+		mainPanel.revalidate();
+	}
+
+	@Override
+	public void componentShown(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	//Main
