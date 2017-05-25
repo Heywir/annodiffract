@@ -14,6 +14,7 @@ public class Fenetre extends JFrame{
 	JPanel mainPanel = null;
 	JMenuBar mainMenuBar = null;
 	JMenu menuFile = null;
+	JMenuItem menuItemOuvrir = null;
 	
 	public Fenetre() {
 		
@@ -23,6 +24,7 @@ public class Fenetre extends JFrame{
 		mainPanel = new JPanel();
 		mainMenuBar = new JMenuBar();
 		menuFile = new JMenu("Fichier");
+		menuItemOuvrir = new JMenuItem("Ouvrir");
 		
 		// Layout
 		
@@ -37,6 +39,7 @@ public class Fenetre extends JFrame{
 		// MenuBar
 		
 		mainMenuBar.add(menuFile);
+		menuFile.add(menuItemOuvrir);
 		
 		// Ajouts
 		
