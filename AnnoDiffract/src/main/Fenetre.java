@@ -1,6 +1,8 @@
 package main;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -8,7 +10,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
-public class Fenetre extends JFrame{
+public class Fenetre extends JFrame implements ActionListener{
 
 	JFrame mainWindow = null;
 	JPanel mainPanel = null;
@@ -41,6 +43,10 @@ public class Fenetre extends JFrame{
 		mainMenuBar.add(menuFile);
 		menuFile.add(menuItemOuvrir);
 		
+		// Listeners
+		
+		menuItemOuvrir.addActionListener(this);
+		
 		// Ajouts
 		
 		this.add(mainMenuBar, BorderLayout.NORTH);
@@ -52,6 +58,12 @@ public class Fenetre extends JFrame{
 		
 		Fenetre window = new Fenetre();
 		window.setVisible(true);
+		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
 		
 	}
 }
