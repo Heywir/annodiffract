@@ -101,10 +101,25 @@ public class Fenetre extends JFrame implements ActionListener, ComponentListener
 			e.printStackTrace();
 		}
 		//Set image in the window
-		label.setIcon(new ImageIcon(new ImageIcon(image).getImage().getScaledInstance((mainPanel.getWidth()/100)*80, (mainPanel.getHeight()/100)*80, Image.SCALE_SMOOTH)));
+		label.setIcon(new ImageIcon(new ImageIcon(image).getImage().getScaledInstance((mainPanel.getWidth()/100)*80, (mainPanel.getHeight()/100)*80, Image.SCALE_DEFAULT)));
 		mainPanel.add(label, BorderLayout.CENTER);
 		//reset the window
 		mainPanel.revalidate();
+	}
+	
+	static BufferedImage scale(BufferedImage src, int w, int h)
+	{
+	  BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+	  int x, y;
+	  int ww = src.getWidth();
+	  int hh = src.getHeight();
+	  for (x = 0; x < w; x++) {
+	    for (y = 0; y < h; y++) {
+	      int col = src.getRGB(x * ww / w, y * hh / h);
+	      img.setRGB(x, y, col);
+	    }
+	  }
+	  return img;
 	}
 		
 	@Override
@@ -121,9 +136,10 @@ public class Fenetre extends JFrame implements ActionListener, ComponentListener
 
 	@Override
 	public void componentResized(ComponentEvent e) {
-		label.setIcon(new ImageIcon(new ImageIcon(image).getImage().getScaledInstance((mainPanel.getWidth()/100)*80, (mainPanel.getHeight()/100)*80, Image.SCALE_SMOOTH)));
-		mainPanel.add(label, BorderLayout.CENTER);
-		mainPanel.revalidate();
+		BufferedImage resize = null;
+		resize = scale(image, (mainPanel.getWidth()/100)*80, (mainPanel.getHeight()/100)*80);
+		label.setIcon(new ImageIcon(resize));
+		
 	}
 
 	@Override
