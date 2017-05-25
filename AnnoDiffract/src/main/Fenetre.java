@@ -65,41 +65,52 @@ public class Fenetre extends JFrame implements ActionListener{
 		
 	}
 	
+	//Action On button
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		
+		if (e.getSource() == menuItemOuvrir) {
+			
+			//Variable Chooser
+			JFileChooser chooser = new JFileChooser();
+			//Filter
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("Image Files", "Jpeg", "jpg", "tif", "Tiff");
+			chooser.setFileFilter(filter);
+			//EndFilter
+			chooser.setAcceptAllFileFilterUsed(false);
+			int returnVal = chooser.showOpenDialog(this);
+			//Case of file the user choose
+			if(returnVal == JFileChooser.APPROVE_OPTION) {
+					openImage(chooser);
+			    }
+		}
+		
+	}
+	
+	//Method OpenImage
+	private void openImage(JFileChooser chooser) {
+			
+		try {
+			//Read Image
+			image = ImageIO.read(chooser.getSelectedFile());
+		} catch (Exception e) {
+			//In case of exception
+			e.printStackTrace();
+		}
+		//Set image in the window
+		label.setIcon(new ImageIcon(image));
+		mainPanel.add(label, BorderLayout.CENTER);
+		//reset the window
+		mainPanel.revalidate();
+	}
+	
+	//Main
 	public static void main(String[] args) {
 		
 		Fenetre window = new Fenetre();
 		window.setVisible(true);
 		
 	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		
-		if (e.getSource() == menuItemOuvrir) {
-			
-			JFileChooser chooser = new JFileChooser();
-			FileNameExtensionFilter filter = new FileNameExtensionFilter("Image Files", "Jpeg", "jpg", "tif", "Tiff");
-			chooser.setFileFilter(filter);
-			chooser.setAcceptAllFileFilterUsed(false);
-			int returnVal = chooser.showOpenDialog(this);
-			if(returnVal == JFileChooser.APPROVE_OPTION) {
-			 	    System.out.println("Yes");
-					openImage(chooser);
-			    }
-		}
-		
-	}
-
-	private void openImage(JFileChooser chooser) {
-			try {
-				image = ImageIO.read(chooser.getSelectedFile());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			label.setIcon(new ImageIcon(image));
-			mainPanel.add(label, BorderLayout.CENTER);
-			mainPanel.revalidate();
-		
-	}
+	
 	
 }
