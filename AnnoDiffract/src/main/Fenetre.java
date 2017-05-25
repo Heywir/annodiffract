@@ -3,9 +3,13 @@ package main;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -19,6 +23,8 @@ public class Fenetre extends JFrame implements ActionListener{
 	JMenuBar mainMenuBar = null;
 	JMenu menuFile = null;
 	JMenuItem menuItemOuvrir = null;
+	JLabel label = null;
+	BufferedImage image = null;
 	
 	public Fenetre() {
 		
@@ -29,6 +35,8 @@ public class Fenetre extends JFrame implements ActionListener{
 		mainMenuBar = new JMenuBar();
 		menuFile = new JMenu("Fichier");
 		menuItemOuvrir = new JMenuItem("Ouvrir");
+		label = new JLabel();
+		
 		
 		// Layout
 		
@@ -39,6 +47,7 @@ public class Fenetre extends JFrame implements ActionListener{
 		
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	
 		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		this.pack();
 		
 		// MenuBar
 		
@@ -65,18 +74,32 @@ public class Fenetre extends JFrame implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
 		
 		if (e.getSource() == menuItemOuvrir) {
+			
 			JFileChooser chooser = new JFileChooser();
-			FileNameExtensionFilter filter = new FileNameExtensionFilter("Image Files", "Jpeg", "Tiff");
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("Image Files", "Jpeg", "jpg", "tif", "Tiff");
 			chooser.setFileFilter(filter);
 			chooser.setAcceptAllFileFilterUsed(false);
 			int returnVal = chooser.showOpenDialog(this);
 			if(returnVal == JFileChooser.APPROVE_OPTION) {
-					System.out.println("Yes");
-			}
+			 	    System.out.println("Yes");
+					openImage(chooser);
+			    }
 		}
 		
 	}
+
+	private void openImage(JFileChooser chooser) {
+			try {
+				image = ImageIO.read(chooser.getSelectedFile());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			label.setIcon(new ImageIcon(image));
+			mainPanel.add(label, BorderLayout.CENTER);
+			mainPanel.revalidate();
+		
+	}
+	
 }
