@@ -69,12 +69,13 @@ public class Fenetre extends JFrame implements ActionListener{
 		
 		if (e.getSource() == menuItemOuvrir) {
 			JFileChooser chooser = new JFileChooser();
-			FileNameExtensionFilter filter = new FileNameExtensionFilter("Image Files", "jpg", "tif");
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("Image Files", "Jpeg", "Tiff");
 			chooser.setFileFilter(filter);
+			chooser.setAcceptAllFileFilterUsed(false);
 			int returnVal = chooser.showOpenDialog(this);
 			if(returnVal == JFileChooser.APPROVE_OPTION) {
-					
-			    }
+					System.out.println("Yes");
+			}
 		}
 		
 	}
