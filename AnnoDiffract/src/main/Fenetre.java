@@ -9,7 +9,7 @@ public class Fenetre extends JFrame{
 	public Fenetre() {
 	
 		mainWindow = new JFrame("AnnoDiffract");
-		
+		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		// Window Settings
 		
 		
