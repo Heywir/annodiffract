@@ -4,11 +4,13 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class Fenetre extends JFrame implements ActionListener{
 
@@ -64,6 +66,16 @@ public class Fenetre extends JFrame implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
+		
+		if (e.getSource() == menuItemOuvrir) {
+			JFileChooser chooser = new JFileChooser();
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("Image Files", "jpg", "tif");
+			chooser.setFileFilter(filter);
+			int returnVal = chooser.showOpenDialog(this);
+			if(returnVal == JFileChooser.APPROVE_OPTION) {
+					
+			    }
+		}
 		
 	}
 }
