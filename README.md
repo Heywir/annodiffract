@@ -10,7 +10,7 @@ Current Stage
 
 - Must draw X and Y Axes (with numbers)
 - Must add some toolbar
-- Must start to calculate the intensity
+- Must start to calculate the intensity (after finding the center of all the rings)
 
 Requirements
 ============
