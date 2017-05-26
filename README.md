@@ -1,7 +1,7 @@
 ![alt text](https://img4.hostingpics.net/pics/515212AnnoDiffract.png)
 =======================
 
-AnnoDiffract is a school project made by 3grader in computer science of University of New Caledonia, the goal is to make an application similar to Diffraction Ring Profiler.
+AnnoDiffract is a school project made by third year students in computer science of University of New Caledonia, the goal is to make an application similar to Diffraction Ring Profiler.
 
 Requirements
 ============
