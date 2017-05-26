@@ -7,6 +7,9 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+import java.awt.geom.Line2D;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,6 +18,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
 import javax.media.jai.PlanarImage;
+import javax.sound.sampled.Line;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -25,7 +29,7 @@ import com.sun.media.jai.codec.ImageCodec;
 import com.sun.media.jai.codec.ImageDecoder;
 import com.sun.media.jai.codec.SeekableStream;
 
-public class Panel extends JPanel {
+public class Panel extends JPanel{
 	
 	private JLabel label = null;
 	private JLabel xAxis = null;
@@ -91,6 +95,7 @@ public class Panel extends JPanel {
 		    channel.read(buffer);
 		    setImage(load(buffer.array()));
 		    Image imageScaled = getImage().getScaledInstance((this.getWidth()/100)*65, -1,  Image.SCALE_SMOOTH);
+		    setImage(imageScaled);
 		    getLabel().setIcon(new ImageIcon(imageScaled));
 		    setLoaded(true);
 			
@@ -102,7 +107,9 @@ public class Panel extends JPanel {
 	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		if (isLoaded()) {		
+		if (isLoaded()) {
+			ImageIcon test = new ImageIcon(getImage());
+			System.out.println("Label X " + getLabel().getLocation().x + " " + "Label Y " + getLabel().getLocation().y);
 			getxAxis().setText("X Axis");
 			getyAxis().setText("Y Axis");
 			
@@ -159,6 +166,5 @@ public class Panel extends JPanel {
 	public void setyAxis(JLabel yAxis) {
 		this.yAxis = yAxis;
 	}
-
 	
 }
