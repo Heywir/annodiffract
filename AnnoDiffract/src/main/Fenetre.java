@@ -1,6 +1,8 @@
 package main;
 
 import java.awt.BorderLayout;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -21,6 +23,11 @@ public class Fenetre extends JFrame implements ActionListener{
 	
 	public Fenetre() {
 		
+		// Taille Ecran
+		
+		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		Rectangle bounds = env.getMaximumWindowBounds();
+		
 		// Composants
 	
 		mainWindow = new JFrame();
@@ -29,7 +36,6 @@ public class Fenetre extends JFrame implements ActionListener{
 		menuFile = new JMenu("Fichier");
 		menuItemOuvrir = new JMenuItem("Ouvrir");
 		
-		
 		// Layout
 		
 		BorderLayout layout = new BorderLayout();
@@ -37,9 +43,10 @@ public class Fenetre extends JFrame implements ActionListener{
 		
 		// Window Settings
 		
+		this.setSize((bounds.width/100)*60, (bounds.height/100)*80);
 		this.setTitle("AnnoDiffract");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	
-		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		//this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		
 		// MenuBar
 		
@@ -54,10 +61,6 @@ public class Fenetre extends JFrame implements ActionListener{
 		
 		this.add(mainMenuBar, BorderLayout.NORTH);
 		this.add(mainPanel, BorderLayout.CENTER);
-		
-		//
-		
-		this.pack();
 		
 	}
 	

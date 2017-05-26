@@ -3,6 +3,8 @@ package main;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.image.RenderedImage;
@@ -27,12 +29,12 @@ public class Panel extends JPanel {
 	
 	private JLabel label = null;
 	private JLabel xAxis = null;
-	JLabel yAxis = null;
+	private JLabel yAxis = null;
 	private Image image = null;
 	private boolean loaded = false;
-
+	
 	public Panel(){
-		
+				
 		// Taille Ecran
 		
 		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -40,7 +42,9 @@ public class Panel extends JPanel {
 		
 		// Layout
 		
-		SpringLayout layout = new SpringLayout();
+		GridBagLayout layout = new GridBagLayout();
+		GridBagConstraints c = new GridBagConstraints();
+		
 		this.setLayout(layout);
 		
 		// Composants
@@ -55,29 +59,26 @@ public class Panel extends JPanel {
 		
 		// Axe Y
 		
-		yAxis = new JLabel();
-		
+		setyAxis(new JLabel());
 		
 		// Ajouts
 		
-		this.add(getLabel());
-		this.add(getxAxis());
-		this.add(yAxis);
-		
-		// Contraintes
-		
 		// Image
-		layout.putConstraint(SpringLayout.NORTH, getLabel(), (bounds.height)/20, SpringLayout.NORTH, this);
-		layout.putConstraint(SpringLayout.WEST, getLabel(), (bounds.width)/5, SpringLayout.WEST, this);
 		
-		// X Axis
-		layout.putConstraint(SpringLayout.NORTH, getxAxis(), 0, SpringLayout.SOUTH, getLabel());
-		layout.putConstraint(SpringLayout.WEST, getxAxis(), (bounds.width)/5, SpringLayout.WEST, this);
+		c.gridx = 1;
+		c.gridy = 0;
+		this.add(getLabel(), c);
 		
-		// Y Axis
-		layout.putConstraint(SpringLayout.NORTH, yAxis, (bounds.height)/20, SpringLayout.NORTH, this);
-		layout.putConstraint(SpringLayout.EAST, yAxis, 0, SpringLayout.WEST, getLabel());
+		// X
+		c.gridx = 1;
+		c.gridy = 1;
+		this.add(getxAxis(), c);
 		
+		// Y
+		c.gridx = 0;
+		c.gridy = 0;
+		this.add(getyAxis(), c);
+	
 		
 	}
 	
@@ -89,7 +90,7 @@ public class Panel extends JPanel {
 			ByteBuffer buffer = ByteBuffer.allocate((int)channel.size());
 		    channel.read(buffer);
 		    setImage(load(buffer.array()));
-		    Image imageScaled = getImage().getScaledInstance((this.getWidth()/100)*60, -1,  Image.SCALE_SMOOTH);
+		    Image imageScaled = getImage().getScaledInstance((this.getWidth()/100)*65, -1,  Image.SCALE_SMOOTH);
 		    getLabel().setIcon(new ImageIcon(imageScaled));
 		    setLoaded(true);
 			
@@ -103,7 +104,7 @@ public class Panel extends JPanel {
 		super.paintComponent(g);
 		if (isLoaded()) {		
 			getxAxis().setText("X Axis");
-			yAxis.setText("Y Axis");
+			getyAxis().setText("Y Axis");
 			
 		}
 	}
@@ -149,6 +150,14 @@ public class Panel extends JPanel {
 
 	public void setxAxis(JLabel grid) {
 		this.xAxis = grid;
+	}
+
+	public JLabel getyAxis() {
+		return yAxis;
+	}
+
+	public void setyAxis(JLabel yAxis) {
+		this.yAxis = yAxis;
 	}
 
 	
