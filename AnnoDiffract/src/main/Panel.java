@@ -1,11 +1,13 @@
 package main;
 
+import com.sun.media.jai.codec.ByteArraySeekableStream;
+import com.sun.media.jai.codec.ImageCodec;
+import com.sun.media.jai.codec.ImageDecoder;
+import com.sun.media.jai.codec.SeekableStream;
 
-import java.awt.Graphics;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-
+import javax.media.jai.PlanarImage;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,25 +15,15 @@ import java.io.FileNotFoundException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
-import javax.media.jai.PlanarImage;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
-import com.sun.media.jai.codec.ByteArraySeekableStream;
-import com.sun.media.jai.codec.ImageCodec;
-import com.sun.media.jai.codec.ImageDecoder;
-import com.sun.media.jai.codec.SeekableStream;
-
-class Panel extends JPanel{
+class Panel extends JPanel {
 	
 	private JLabel label = null;
 	private JLabel xAxis = null;
 	private JLabel yAxis = null;
 	private Image image = null;
 	private boolean loaded = false;
-	
-	Panel(){
+
+	Panel() {
 
 		// Layout
 		
@@ -87,21 +79,87 @@ class Panel extends JPanel{
 		    setImage(imageScaled);
 		    getLabel().setIcon(new ImageIcon(imageScaled));
 		    setLoaded();
+		    repaint();
 			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+
 		if (isLoaded()) {
-			System.out.println("Label X " + getLabel().getLocation().x + " " + "Label Y " + getLabel().getLocation().y);
-			getxAxis().setText("X Axis");
-			getyAxis().setText("Y Axis");
-			
+			drawGraph(g);
 		}
 	}
+
+	//Methode pour déssiner le graph
+	private void drawGraph(Graphics g) {
+		// Paramètres graphe
+
+		// Distance entre axe et text
+		int distance = 20;
+
+		// Pour le découpage selon l'image
+		int indentationY = (getLabel().getHeight()) / 100;
+		int indentationX = (getLabel().getWidth() / 100);
+		int tailleInden = 5;
+
+		// Point En haut à gauche
+		int yZeroX = getLabel().getLocation().x;
+		int yZeroY = getLabel().getLocation().y;
+
+		// En Bas à gauche
+		int yFinY = yZeroY + getLabel().getIcon().getIconHeight();
+
+		// En Bas à droite
+		int xFinX = yZeroX + getLabel().getIcon().getIconWidth();
+
+		// Longueur
+
+		int xLength = (xFinX - yZeroX) / indentationX;
+		int yLength = (yFinY - yZeroY) / indentationY;
+
+		// Dessin
+
+		// Paramètres
+
+		Graphics2D g2 = (Graphics2D) g;
+		g2.setStroke(new BasicStroke(1));
+		g2.setColor(Color.BLACK);
+
+		// Y Axis
+		g2.drawLine(yZeroX, yZeroY +2, yZeroX, yFinY);
+
+		// X Axis
+		g2.drawLine(yZeroX, yFinY, xFinX -2, yFinY);
+
+		// Format droite vers gauche (pour l'axe Y)
+
+
+		// Numérotation Y
+
+		int longueurMot;
+		for(int i = 0; i < indentationY +1; i++) {
+			g2.drawLine(yZeroX - tailleInden, yZeroY + (i * yLength), yZeroX + tailleInden, yZeroY + (i * yLength));
+			FontMetrics fm = getFontMetrics(getFont());
+			longueurMot = fm.stringWidth(Integer.toString(i*100));
+			g2.drawString(Integer.toString(i*100), (yZeroX - distance) - longueurMot /2, yZeroY + (i * yLength));
+
+		}
+
+		// Numérotation X
+
+		for(int i = 0; i < indentationX +1; i++) {
+			g2.drawLine(yZeroX + (i * xLength), yFinY - tailleInden, yZeroX + (i * xLength), yFinY + tailleInden);
+			FontMetrics fm = getFontMetrics(getFont());
+			longueurMot = fm.stringWidth(Integer.toString(i*100));
+			g2.drawString(Integer.toString(i*100), yZeroX + (i * xLength) - longueurMot /2, yFinY + distance);
+		}
+
+	}
+
 	
 	//Methode pour charger l'image apr�s ca r�cuperation	
 	private Image load(byte[] data) throws Exception{
@@ -113,6 +171,7 @@ class Panel extends JPanel{
 	    image = PlanarImage.wrapRenderedImage(im).getAsBufferedImage();
 	    return image;
 	  }
+
 
 	private Image getImage() {
 		return image;
