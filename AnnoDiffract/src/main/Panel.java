@@ -29,7 +29,6 @@ class Panel extends JPanel {
 		
 		GridBagLayout layout = new GridBagLayout();
 		GridBagConstraints c = new GridBagConstraints();
-		
 		this.setLayout(layout);
 		
 		// Composants
@@ -160,7 +159,6 @@ class Panel extends JPanel {
 
 	}
 
-	
 	//Methode pour charger l'image apr�s ca r�cuperation	
 	private Image load(byte[] data) throws Exception{
 	    Image image;
@@ -171,7 +169,6 @@ class Panel extends JPanel {
 	    image = PlanarImage.wrapRenderedImage(im).getAsBufferedImage();
 	    return image;
 	  }
-
 
 	private Image getImage() {
 		return image;
