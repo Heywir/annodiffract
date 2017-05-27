@@ -26,7 +26,7 @@ For Contribution
 Installation
 ============
 
-Download one of this version, or compile the code yourself :)
+Download one of the version, or compile the code yourself :)
 
 Usage
 =====
