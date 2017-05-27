@@ -13,7 +13,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 
-public class Fenetre extends JFrame implements ActionListener, MouseMotionListener{
+class Fenetre extends JFrame implements ActionListener, MouseMotionListener{
 
 	private JFrame mainWindow = null;
 	private Panel mainPanel = null;

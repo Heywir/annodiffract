@@ -23,7 +23,7 @@ import com.sun.media.jai.codec.ImageCodec;
 import com.sun.media.jai.codec.ImageDecoder;
 import com.sun.media.jai.codec.SeekableStream;
 
-public class Panel extends JPanel{
+class Panel extends JPanel{
 	
 	private JLabel label = null;
 	private JLabel xAxis = null;
