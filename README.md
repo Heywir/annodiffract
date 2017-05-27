@@ -26,8 +26,7 @@ For Contribution
 Installation
 ============
 
-WIP
-
+Download one of the version, or compile the code yourself :)
 
 Usage
 =====
