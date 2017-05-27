@@ -1,15 +1,11 @@
 package main;
 
-import java.awt.Dimension;
+
 import java.awt.Graphics;
-import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
-import java.awt.geom.Line2D;
+
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,11 +14,9 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
 import javax.media.jai.PlanarImage;
-import javax.sound.sampled.Line;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SpringLayout;
 
 import com.sun.media.jai.codec.ByteArraySeekableStream;
 import com.sun.media.jai.codec.ImageCodec;
@@ -37,13 +31,8 @@ public class Panel extends JPanel{
 	private Image image = null;
 	private boolean loaded = false;
 	
-	public Panel(){
-				
-		// Taille Ecran
-		
-		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		Rectangle bounds = env.getMaximumWindowBounds();
-		
+	Panel(){
+
 		// Layout
 		
 		GridBagLayout layout = new GridBagLayout();
@@ -87,7 +76,7 @@ public class Panel extends JPanel{
 	}
 	
 	//Methode pour ouvrir l'image puis l'afficher avec une bonne dimension
-	public void openImage(File file) throws Exception {
+	void openImage(File file) throws Exception {
 		try {
 			FileInputStream in = new FileInputStream(file.getPath());
 			FileChannel channel = in.getChannel();
@@ -97,10 +86,9 @@ public class Panel extends JPanel{
 		    Image imageScaled = getImage().getScaledInstance((this.getWidth()/100)*65, -1,  Image.SCALE_SMOOTH);
 		    setImage(imageScaled);
 		    getLabel().setIcon(new ImageIcon(imageScaled));
-		    setLoaded(true);
+		    setLoaded();
 			
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -108,7 +96,6 @@ public class Panel extends JPanel{
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		if (isLoaded()) {
-			ImageIcon test = new ImageIcon(getImage());
 			System.out.println("Label X " + getLabel().getLocation().x + " " + "Label Y " + getLabel().getLocation().y);
 			getxAxis().setText("X Axis");
 			getyAxis().setText("Y Axis");
@@ -116,9 +103,9 @@ public class Panel extends JPanel{
 		}
 	}
 	
-	//Methode pour charger l'image après ca récuperation	
+	//Methode pour charger l'image aprï¿½s ca rï¿½cuperation	
 	private Image load(byte[] data) throws Exception{
-	    Image image = null;
+	    Image image;
 	    SeekableStream stream = new ByteArraySeekableStream(data);
 	    String[] names = ImageCodec.getDecoderNames(stream);
 	    ImageDecoder dec = ImageCodec.createImageDecoder(names[0], stream, null);
@@ -127,43 +114,43 @@ public class Panel extends JPanel{
 	    return image;
 	  }
 
-	public Image getImage() {
+	private Image getImage() {
 		return image;
 	}
 
-	public void setImage(Image image) {
+	private void setImage(Image image) {
 		this.image = image;
 	}
 
-	public JLabel getLabel() {
+	private JLabel getLabel() {
 		return label;
 	}
 
-	public void setLabel(JLabel label) {
+	private void setLabel(JLabel label) {
 		this.label = label;
 	}
 
-	public boolean isLoaded() {
+	private boolean isLoaded() {
 		return loaded;
 	}
 
-	public void setLoaded(boolean loaded) {
-		this.loaded = loaded;
+	private void setLoaded() {
+		this.loaded = true;
 	}
 
-	public JLabel getxAxis() {
+	private JLabel getxAxis() {
 		return xAxis;
 	}
 
-	public void setxAxis(JLabel grid) {
+	private void setxAxis(JLabel grid) {
 		this.xAxis = grid;
 	}
 
-	public JLabel getyAxis() {
+	private JLabel getyAxis() {
 		return yAxis;
 	}
 
-	public void setyAxis(JLabel yAxis) {
+	private void setyAxis(JLabel yAxis) {
 		this.yAxis = yAxis;
 	}
 	
