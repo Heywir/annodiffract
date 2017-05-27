@@ -17,6 +17,12 @@ Requirements
 
 * Java at https://www.java.com/
 
+For Contribution
+================
+
+- JAI Library : http://maven.ibiblio.org/maven/geoserver/jai/jars/
+- JDK 8u73 : http://filehippo.com/fr/download_java_development_kit/tech/66101/
+
 Installation
 ============
 
