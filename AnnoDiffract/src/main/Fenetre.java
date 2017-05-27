@@ -3,53 +3,40 @@ package main;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
-
+import java.awt.event.*;
 
 class Fenetre extends JFrame implements ActionListener, MouseMotionListener{
 
-	private JFrame mainWindow = null;
 	private Panel mainPanel = null;
 	private JMenuItem menuItemOuvrir = null;
+	private JButton findCenter = null;
 	private JLabel statusLabel = null;
 	
 	private Fenetre() {
 		
 		// Taille Ecran
-		
+
 		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		Rectangle bounds = env.getMaximumWindowBounds();
 		
 		// Composants
 
-		mainWindow = new JFrame();
 		mainPanel = new Panel();
-		JMenuBar mainMenuBar = new JMenuBar();
-		JMenu menuFile = new JMenu("Fichier");
-		menuItemOuvrir = new JMenuItem("Ouvrir");
+		JMenuBar mainMenuBar = buildMenuBar();
 		JPanel statusPanel = new JPanel(new BorderLayout());
 		statusLabel = new JLabel();
-		
-		// Layout
-		
-		BorderLayout layout = new BorderLayout();
-		this.setLayout(layout);
-		
+
 		// Window Settings
 		
 		this.setSize((bounds.width/100)*60, (bounds.height/100)*80);
 		this.setTitle("AnnoDiffract");
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		//this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-		
-		// MenuBar
-		
-		mainMenuBar.add(menuFile);
-		menuFile.add(menuItemOuvrir);
-		
+
+		// Layout
+
+		BorderLayout layout = new BorderLayout();
+		this.setLayout(layout);
+
 		// Status Bar
 	
 		statusPanel.add(statusLabel, BorderLayout.EAST);
@@ -57,16 +44,58 @@ class Fenetre extends JFrame implements ActionListener, MouseMotionListener{
 		// Listeners
 		
 		mainPanel.addMouseMotionListener(this);
-		menuItemOuvrir.addActionListener(this);
 		
 		// Ajouts
 		
 		this.add(mainMenuBar, BorderLayout.NORTH);
 		this.add(mainPanel, BorderLayout.CENTER);
 		this.add(statusPanel, BorderLayout.SOUTH);
-		
 	}
-	
+
+	private JMenuBar buildMenuBar() {
+
+		// Menu Bar
+		JMenuBar menuBar = new JMenuBar();
+		//menuBar.setBorder(null);
+
+		// Layout
+
+		BorderLayout barLayout = new BorderLayout();
+		menuBar.setLayout(barLayout);
+
+		// Menus
+		JMenu menuFile = new JMenu("Fichier");
+		menuItemOuvrir = new JMenuItem("Ouvrir");
+
+		// ToolBar
+
+		JPanel toolBar = new JPanel(new FlowLayout(FlowLayout.LEFT));
+
+		// ToolBar Bouttons
+		// 32 x 32
+
+		// Find Center
+		findCenter = new JButton(new ImageIcon(Fenetre.class.getResource("img/fc.png")));
+		findCenter.setPressedIcon(new ImageIcon(Fenetre.class.getResource("img/fcPressed.png")));
+		findCenter.setToolTipText("Find Center");
+		findCenter.setBorder(null);
+		findCenter.setContentAreaFilled(false);
+
+		// Ajouts
+
+		menuBar.add(menuFile, BorderLayout.NORTH);
+		menuBar.add(toolBar, BorderLayout.CENTER);
+		menuFile.add(menuItemOuvrir);
+		toolBar.add(findCenter);
+
+		// Listeners
+
+		menuItemOuvrir.addActionListener(this);
+		findCenter.addActionListener(this);
+
+		return menuBar;
+	}
+
 	//Action On button
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -90,7 +119,11 @@ class Fenetre extends JFrame implements ActionListener, MouseMotionListener{
 						e1.printStackTrace();
 					}
 			    }
-		}	
+		}
+		if (e.getSource() == findCenter) {
+			//Method to find center
+			System.out.println("Click FC");
+		}
 	}
 
 	@Override
@@ -105,14 +138,6 @@ class Fenetre extends JFrame implements ActionListener, MouseMotionListener{
 		
 	}
 
-    public JFrame getMainWindow() {
-        return mainWindow;
-    }
-
-    public void setMainWindow(JFrame mainWindow) {
-        this.mainWindow = mainWindow;
-    }
-
     //Main
     public static void main(String[] args) {
 
@@ -120,4 +145,5 @@ class Fenetre extends JFrame implements ActionListener, MouseMotionListener{
         window.setVisible(true);
 
     }
+
 }
