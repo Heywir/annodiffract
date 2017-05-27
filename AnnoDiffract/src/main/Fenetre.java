@@ -1,16 +1,12 @@
 package main;
 
-import java.awt.BorderLayout;
-import java.awt.GraphicsEnvironment;
-import java.awt.Rectangle;
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
-
-import javax.swing.*;
-
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 
 class Fenetre extends JFrame implements ActionListener, MouseMotionListener{
@@ -116,7 +112,6 @@ class Fenetre extends JFrame implements ActionListener, MouseMotionListener{
     public void setMainWindow(JFrame mainWindow) {
         this.mainWindow = mainWindow;
     }
-
 
     //Main
     public static void main(String[] args) {
