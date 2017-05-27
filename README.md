@@ -6,9 +6,8 @@ AnnoDiffract is a school project made by third year students in computer science
 Current Stage
 =============
 
-![alt text](http://zupimages.net/up/17/21/388l.jpg)
+![alt text](http://zupimages.net/up/17/21/n98p.jpg)
 
-- Must draw X and Y Axes (with numbers)
 - Must add some toolbar
 - Must start to calculate the intensity (after finding the center of all the rings)
 
