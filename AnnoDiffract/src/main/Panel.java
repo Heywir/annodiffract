@@ -22,6 +22,10 @@ class Panel extends JPanel {
 	private JLabel yAxis = null;
 	private Image image = null;
 	private boolean loaded = false;
+	private Integer ratioX = 65;
+	private Integer ratioY = 90;
+	private Image imageScaled = null;
+	private Image afterScale = null;
 
 	Panel() {
 
@@ -74,14 +78,34 @@ class Panel extends JPanel {
 			ByteBuffer buffer = ByteBuffer.allocate((int)channel.size());
 		    channel.read(buffer);
 		    setImage(load(buffer.array()));
-		    Image imageScaled = getImage().getScaledInstance((this.getWidth()/100)*65, -1,  Image.SCALE_SMOOTH);
+		    imageScaled = getImage().getScaledInstance((this.getWidth()/100)*ratioX, ((this.getHeight()/100)*ratioY),  Image.SCALE_SMOOTH);
 		    setImage(imageScaled);
 		    getLabel().setIcon(new ImageIcon(imageScaled));
-		    setLoaded();
+		    setLoaded(true);
 		    repaint();
 			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	//Methode pour charger l'image apr�s ca r�cuperation	
+	private Image load(byte[] data) throws Exception{
+	    Image image;
+	    SeekableStream stream = new ByteArraySeekableStream(data);
+	    String[] names = ImageCodec.getDecoderNames(stream);
+	    ImageDecoder dec = ImageCodec.createImageDecoder(names[0], stream, null);
+	    RenderedImage im = dec.decodeAsRenderedImage();
+	    image = PlanarImage.wrapRenderedImage(im).getAsBufferedImage();
+	    return image;
+	  }
+	
+	public void scale() {
+		
+		if (imageScaled != null) {
+			Image img = getImage().getScaledInstance((this.getWidth()/100)*ratioX, ((this.getHeight()/100)*ratioY),  Image.SCALE_SMOOTH);
+			getLabel().setIcon(new ImageIcon(img));
+			repaint();
 		}
 	}
 
@@ -129,13 +153,12 @@ class Panel extends JPanel {
 		g2.setColor(Color.BLACK);
 
 		// Y Axis
-		g2.drawLine(yZeroX, yZeroY +2, yZeroX, yFinY);
+		g2.drawLine(yZeroX -1, yZeroY, yZeroX -1, yFinY);
+		g2.drawString("Y", yZeroX - 4, yZeroY - 4);
 
 		// X Axis
-		g2.drawLine(yZeroX, yFinY, xFinX -2, yFinY);
-
-		// Format droite vers gauche (pour l'axe Y)
-
+		g2.drawLine(yZeroX, yFinY, xFinX, yFinY);
+		g2.drawString("X", xFinX + 4, yFinY + 4);
 
 		// Numérotation Y
 
@@ -159,17 +182,6 @@ class Panel extends JPanel {
 
 	}
 
-	//Methode pour charger l'image apr�s ca r�cuperation	
-	private Image load(byte[] data) throws Exception{
-	    Image image;
-	    SeekableStream stream = new ByteArraySeekableStream(data);
-	    String[] names = ImageCodec.getDecoderNames(stream);
-	    ImageDecoder dec = ImageCodec.createImageDecoder(names[0], stream, null);
-	    RenderedImage im = dec.decodeAsRenderedImage();
-	    image = PlanarImage.wrapRenderedImage(im).getAsBufferedImage();
-	    return image;
-	  }
-
 	private Image getImage() {
 		return image;
 	}
@@ -178,20 +190,20 @@ class Panel extends JPanel {
 		this.image = image;
 	}
 
-	private JLabel getLabel() {
+	JLabel getLabel() {
 		return label;
 	}
 
-	private void setLabel(JLabel label) {
+	void setLabel(JLabel label) {
 		this.label = label;
 	}
 
-	private boolean isLoaded() {
+	boolean isLoaded() {
 		return loaded;
 	}
 
-	private void setLoaded() {
-		this.loaded = true;
+	void setLoaded(boolean b) {
+		this.loaded = b;
 	}
 
 	private JLabel getxAxis() {
