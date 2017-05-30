@@ -138,7 +138,7 @@ class Fenetre extends JFrame implements ActionListener, MouseMotionListener, Com
 		
 	}
 
-	//A chaque fois que l'utilisateur bouge la souris, la position ou est placée la souris est mise à jour
+	//A chaque fois que l'utilisateur bouge la souris, la position ou est placÃ©e la souris est mise Ã  jour
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
 		statusLabel.setText("MouseX: " + arg0.getX() + " " + "MouseY: " + arg0.getY());

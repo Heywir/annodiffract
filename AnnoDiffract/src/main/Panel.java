@@ -89,7 +89,8 @@ class Panel extends JPanel {
 		}
 	}
 	
-	//Methode pour charger l'image apr�s ca r�cuperation	
+	//Methode pour charger l'image apres ca recuperation	
+
 	private Image load(byte[] data) throws Exception{
 	    Image image;
 	    SeekableStream stream = new ByteArraySeekableStream(data);
@@ -117,26 +118,26 @@ class Panel extends JPanel {
 		}
 	}
 
-	//Methode pour déssiner le graph
+	//Methode pour dÃ©ssiner le graph
 	private void drawGraph(Graphics g) {
-		// Paramètres graphe
+		// ParamÃ¨tres graphe
 
 		// Distance entre axe et text
 		int distance = 20;
 
-		// Pour le découpage selon l'image
+		// Pour le dÃ©coupage selon l'image
 		int indentationY = (getLabel().getHeight()) / 100;
 		int indentationX = (getLabel().getWidth() / 100);
 		int tailleInden = 5;
 
-		// Point En haut à gauche
+		// Point En haut Ã  gauche
 		int yZeroX = getLabel().getLocation().x;
 		int yZeroY = getLabel().getLocation().y;
 
-		// En Bas à gauche
+		// En Bas Ã  gauche
 		int yFinY = yZeroY + getLabel().getIcon().getIconHeight();
 
-		// En Bas à droite
+		// En Bas Ã  droite
 		int xFinX = yZeroX + getLabel().getIcon().getIconWidth();
 
 		// Longueur
@@ -146,7 +147,7 @@ class Panel extends JPanel {
 
 		// Dessin
 
-		// Paramètres
+		// ParamÃ¨tres
 
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setStroke(new BasicStroke(1));
@@ -160,7 +161,8 @@ class Panel extends JPanel {
 		g2.drawLine(yZeroX, yFinY, xFinX, yFinY);
 		g2.drawString("X", xFinX + 4, yFinY + 4);
 
-		// Numérotation Y
+
+	  // Numerotation Y
 
 		int longueurMot;
 		for(int i = 0; i < indentationY +1; i++) {
@@ -171,7 +173,7 @@ class Panel extends JPanel {
 
 		}
 
-		// Numérotation X
+		// Numerotation X
 
 		for(int i = 0; i < indentationX +1; i++) {
 			g2.drawLine(yZeroX + (i * xLength), yFinY - tailleInden, yZeroX + (i * xLength), yFinY + tailleInden);
