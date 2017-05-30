@@ -5,12 +5,13 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
 
-class Fenetre extends JFrame implements ActionListener, MouseMotionListener{
+class Fenetre extends JFrame implements ActionListener, MouseMotionListener, ComponentListener{
 
 	private Panel mainPanel = null;
 	private JMenuItem menuItemOuvrir = null;
 	private JButton findCenter = null;
 	private JLabel statusLabel = null;
+	private JFileChooser chooser = null;
 	
 	private Fenetre() {
 		
@@ -21,14 +22,14 @@ class Fenetre extends JFrame implements ActionListener, MouseMotionListener{
 		
 		// Composants
 
-		mainPanel = new Panel();
+		setMainPanel(new Panel());
 		JMenuBar mainMenuBar = buildMenuBar();
 		JPanel statusPanel = new JPanel(new BorderLayout());
 		statusLabel = new JLabel();
 
 		// Window Settings
 		
-		this.setSize((bounds.width/100)*60, (bounds.height/100)*80);
+		this.setSize((bounds.width/100)*90, (bounds.height/100)*90);
 		this.setTitle("AnnoDiffract");
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -43,13 +44,14 @@ class Fenetre extends JFrame implements ActionListener, MouseMotionListener{
 		
 		// Listeners
 		
-		mainPanel.addMouseMotionListener(this);
+		getMainPanel().addMouseMotionListener(this);
 		
 		// Ajouts
 		
 		this.add(mainMenuBar, BorderLayout.NORTH);
-		this.add(mainPanel, BorderLayout.CENTER);
+		this.add(getMainPanel(), BorderLayout.CENTER);
 		this.add(statusPanel, BorderLayout.SOUTH);
+	
 	}
 
 	private JMenuBar buildMenuBar() {
@@ -90,6 +92,7 @@ class Fenetre extends JFrame implements ActionListener, MouseMotionListener{
 
 		// Listeners
 
+		getMainPanel().addComponentListener(this);
 		menuItemOuvrir.addActionListener(this);
 		findCenter.addActionListener(this);
 
@@ -104,7 +107,7 @@ class Fenetre extends JFrame implements ActionListener, MouseMotionListener{
 		if (e.getSource() == menuItemOuvrir) {
 			
 			//Variable Chooser
-			JFileChooser chooser = new JFileChooser();
+			chooser = new JFileChooser();
 			//Filter
 			FileNameExtensionFilter filter = new FileNameExtensionFilter("Image Files", "Jpeg", "jpg", "tif", "Tiff");
 			chooser.setFileFilter(filter);
@@ -114,7 +117,11 @@ class Fenetre extends JFrame implements ActionListener, MouseMotionListener{
 			//Case of file the user choose
 			if(returnVal == JFileChooser.APPROVE_OPTION) {
 					try {
-						mainPanel.openImage(chooser.getSelectedFile());
+						if (getMainPanel().isLoaded()) {
+							getMainPanel().getLabel().setIcon(null);
+							getMainPanel().setLoaded(false);
+						}
+						getMainPanel().openImage(chooser.getSelectedFile());
 					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
@@ -131,7 +138,7 @@ class Fenetre extends JFrame implements ActionListener, MouseMotionListener{
 		
 	}
 
-	//A chaque fois que l'utilisateur bouge la souris, la position ou est placée la souris est mise à jour
+	//A chaque fois que l'utilisateur bouge la souris, la position ou est placÃ©e la souris est mise Ã  jour
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
 		statusLabel.setText("MouseX: " + arg0.getX() + " " + "MouseY: " + arg0.getY());
@@ -145,5 +152,40 @@ class Fenetre extends JFrame implements ActionListener, MouseMotionListener{
         window.setVisible(true);
 
     }
+
+	@Override
+	public void componentHidden(ComponentEvent e) {
+		
+		
+	}
+
+	@Override
+	public void componentMoved(ComponentEvent e) {
+		
+		
+	}
+
+	@Override
+	public void componentResized(ComponentEvent e) {
+		
+		if (e.getSource() == getMainPanel()) {
+			mainPanel.scale();
+		}
+		
+	}
+
+	@Override
+	public void componentShown(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public Panel getMainPanel() {
+		return mainPanel;
+	}
+
+	public void setMainPanel(Panel mainPanel) {
+		this.mainPanel = mainPanel;
+	}
 
 }
