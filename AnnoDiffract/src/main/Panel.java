@@ -89,7 +89,8 @@ class Panel extends JPanel {
 		}
 	}
 	
-	//Methode pour charger l'image aprï¿½s ca rï¿½cuperation	
+	//Methode pour charger l'image apres ca recuperation	
+
 	private Image load(byte[] data) throws Exception{
 	    Image image;
 	    SeekableStream stream = new ByteArraySeekableStream(data);
@@ -160,7 +161,8 @@ class Panel extends JPanel {
 		g2.drawLine(yZeroX, yFinY, xFinX, yFinY);
 		g2.drawString("X", xFinX + 4, yFinY + 4);
 
-		// NumÃ©rotation Y
+
+	  // Numerotation Y
 
 		int longueurMot;
 		for(int i = 0; i < indentationY +1; i++) {
@@ -171,7 +173,7 @@ class Panel extends JPanel {
 
 		}
 
-		// NumÃ©rotation X
+		// Numerotation X
 
 		for(int i = 0; i < indentationX +1; i++) {
 			g2.drawLine(yZeroX + (i * xLength), yFinY - tailleInden, yZeroX + (i * xLength), yFinY + tailleInden);
