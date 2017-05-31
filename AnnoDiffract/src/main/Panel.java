@@ -18,14 +18,11 @@ import java.nio.channels.FileChannel;
 class Panel extends JPanel {
 	
 	private JLabel label = null;
-	private JLabel xAxis = null;
-	private JLabel yAxis = null;
 	private Image image = null;
 	private boolean loaded = false;
-	private Integer ratioX = 65;
-	private Integer ratioY = 90;
+	private final Integer ratioX = 65;
+	private final Integer ratioY = 90;
 	private Image imageScaled = null;
-	private Image afterScale = null;
 
 	Panel() {
 
@@ -36,38 +33,13 @@ class Panel extends JPanel {
 		this.setLayout(layout);
 		
 		// Composants
-		
+
 		// Panel Image
-		
 		setLabel(new JLabel());
-		
-		// Axe X
-		
-		setxAxis(new JLabel());
-		
-		// Axe Y
-		
-		setyAxis(new JLabel());
-		
+
 		// Ajouts
-		
-		// Image
-		
-		c.gridx = 1;
-		c.gridy = 0;
 		this.add(getLabel(), c);
-		
-		// X
-		c.gridx = 1;
-		c.gridy = 1;
-		this.add(getxAxis(), c);
-		
-		// Y
-		c.gridx = 0;
-		c.gridy = 0;
-		this.add(getyAxis(), c);
-	
-		
+
 	}
 	
 	//Methode pour ouvrir l'image puis l'afficher avec une bonne dimension
@@ -89,8 +61,7 @@ class Panel extends JPanel {
 		}
 	}
 	
-	//Methode pour charger l'image apres ca recuperation	
-
+	//Methode pour charger l'image apres ca recuperation
 	private Image load(byte[] data) throws Exception{
 	    Image image;
 	    SeekableStream stream = new ByteArraySeekableStream(data);
@@ -100,9 +71,8 @@ class Panel extends JPanel {
 	    image = PlanarImage.wrapRenderedImage(im).getAsBufferedImage();
 	    return image;
 	  }
-	
-	public void scale() {
-		
+
+	void scale() {
 		if (imageScaled != null) {
 			Image img = getImage().getScaledInstance((this.getWidth()/100)*ratioX, ((this.getHeight()/100)*ratioY),  Image.SCALE_SMOOTH);
 			getLabel().setIcon(new ImageIcon(img));
@@ -196,7 +166,7 @@ class Panel extends JPanel {
 		return label;
 	}
 
-	void setLabel(JLabel label) {
+	private void setLabel(JLabel label) {
 		this.label = label;
 	}
 
@@ -206,22 +176,6 @@ class Panel extends JPanel {
 
 	void setLoaded(boolean b) {
 		this.loaded = b;
-	}
-
-	private JLabel getxAxis() {
-		return xAxis;
-	}
-
-	private void setxAxis(JLabel grid) {
-		this.xAxis = grid;
-	}
-
-	private JLabel getyAxis() {
-		return yAxis;
-	}
-
-	private void setyAxis(JLabel yAxis) {
-		this.yAxis = yAxis;
 	}
 	
 }

@@ -11,43 +11,35 @@ class Fenetre extends JFrame implements ActionListener, MouseMotionListener, Com
 	private JMenuItem menuItemOuvrir = null;
 	private JButton findCenter = null;
 	private JLabel statusLabel = null;
-	private JFileChooser chooser = null;
-	
+
 	private Fenetre() {
 		
 		// Taille Ecran
-
 		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		Rectangle bounds = env.getMaximumWindowBounds();
 		
 		// Composants
-
 		setMainPanel(new Panel());
 		JMenuBar mainMenuBar = buildMenuBar();
 		JPanel statusPanel = new JPanel(new BorderLayout());
 		statusLabel = new JLabel();
 
 		// Window Settings
-		
 		this.setSize((bounds.width/100)*90, (bounds.height/100)*90);
 		this.setTitle("AnnoDiffract");
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
 		// Layout
-
 		BorderLayout layout = new BorderLayout();
 		this.setLayout(layout);
 
 		// Status Bar
-	
 		statusPanel.add(statusLabel, BorderLayout.EAST);
 		
 		// Listeners
-		
-		getMainPanel().addMouseMotionListener(this);
+		getMainPanel().getLabel().addMouseMotionListener(this);
 		
 		// Ajouts
-		
 		this.add(mainMenuBar, BorderLayout.NORTH);
 		this.add(getMainPanel(), BorderLayout.CENTER);
 		this.add(statusPanel, BorderLayout.SOUTH);
@@ -61,7 +53,6 @@ class Fenetre extends JFrame implements ActionListener, MouseMotionListener, Com
 		//menuBar.setBorder(null);
 
 		// Layout
-
 		BorderLayout barLayout = new BorderLayout();
 		menuBar.setLayout(barLayout);
 
@@ -70,7 +61,6 @@ class Fenetre extends JFrame implements ActionListener, MouseMotionListener, Com
 		menuItemOuvrir = new JMenuItem("Ouvrir");
 
 		// ToolBar
-
 		JPanel toolBar = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
 		// ToolBar Bouttons
@@ -84,14 +74,12 @@ class Fenetre extends JFrame implements ActionListener, MouseMotionListener, Com
 		findCenter.setContentAreaFilled(false);
 
 		// Ajouts
-
 		menuBar.add(menuFile, BorderLayout.NORTH);
 		menuBar.add(toolBar, BorderLayout.CENTER);
 		menuFile.add(menuItemOuvrir);
 		toolBar.add(findCenter);
 
 		// Listeners
-
 		getMainPanel().addComponentListener(this);
 		menuItemOuvrir.addActionListener(this);
 		findCenter.addActionListener(this);
@@ -107,7 +95,7 @@ class Fenetre extends JFrame implements ActionListener, MouseMotionListener, Com
 		if (e.getSource() == menuItemOuvrir) {
 			
 			//Variable Chooser
-			chooser = new JFileChooser();
+			JFileChooser chooser = new JFileChooser();
 			//Filter
 			FileNameExtensionFilter filter = new FileNameExtensionFilter("Image Files", "Jpeg", "jpg", "tif", "Tiff");
 			chooser.setFileFilter(filter);
@@ -141,7 +129,9 @@ class Fenetre extends JFrame implements ActionListener, MouseMotionListener, Com
 	//A chaque fois que l'utilisateur bouge la souris, la position ou est placÃ©e la souris est mise Ã  jour
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
-		statusLabel.setText("MouseX: " + arg0.getX() + " " + "MouseY: " + arg0.getY());
+		if (arg0.getSource() == mainPanel.getLabel()) {
+			statusLabel.setText("MouseX: " + arg0.getX() + " " + "MouseY: " + arg0.getY());
+		}
 		
 	}
 
@@ -180,11 +170,11 @@ class Fenetre extends JFrame implements ActionListener, MouseMotionListener, Com
 		
 	}
 
-	public Panel getMainPanel() {
+	private Panel getMainPanel() {
 		return mainPanel;
 	}
 
-	public void setMainPanel(Panel mainPanel) {
+	private void setMainPanel(Panel mainPanel) {
 		this.mainPanel = mainPanel;
 	}
 
