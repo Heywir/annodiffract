@@ -48,7 +48,8 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		this.add(mainMenuBar, BorderLayout.NORTH);
 		this.add(getMainPanel(), BorderLayout.CENTER);
 		this.add(statusPanel, BorderLayout.SOUTH);
-
+		
+		
 	
 	}
 
@@ -89,6 +90,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		getMainPanel().addComponentListener(this);
 		menuItemOuvrir.addActionListener(this);
 		findCenter.addActionListener(this);
+		mainPanel.getLabel().addMouseListener(this);
 
 		return menuBar;
 	}
@@ -181,13 +183,13 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
-		System.out.println("bim");
+		System.out.println(mainPanel.listePoint.size());
 		if(mainPanel.getCurrentTool() == TypeOutil.POINT){
 			System.out.println("bim");
-			Point p= new Point(1,1);
+			System.out.println(positionX + " "+positionY);
+			
 			mainPanel.listePoint.add(new Point(positionX,positionY));
 		}
-			  mainPanel.repaint();
 	}
 
 	@Override

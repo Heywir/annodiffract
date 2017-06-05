@@ -101,18 +101,20 @@ class Panel extends JPanel {
 		
         
 		if (isLoaded()) {
+			System.out.println(listePoint.size());
+			if(listePoint.isEmpty() == false){
+				for(int i= 0 ; i < listePoint.size(); i++ ){
+					Graphics2D g2d = bufferedScaled.createGraphics();
+					g2d.setColor(Color.BLUE);
+			        g2d.drawLine(0, 0, 500 ,500);
+			        g2d.dispose();
+			        setImage(bufferedScaled );
+					System.out.println(listePoint.get(i).getX());
+				}
+			}
 			drawGraph(g);
 		}
-		System.out.println(listePoint.size());
-		if(listePoint.size() != 0){
-			Graphics2D g2d = bufferedScaled.createGraphics();
-			System.out.println("bim");
-			for(int i= 0 ; i < listePoint.size(); i++ ){
-				System.out.println(listePoint.get(i).getX());
-				g2d.setColor(Color.BLUE);
-		        g2d.drawLine(0, 0, 500 ,500);
-			}
-		}
+		
 	}
 
 	//Methode pour dÃ©ssiner le graph
