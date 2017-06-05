@@ -2,15 +2,20 @@ package main;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import main.Panel.TypeOutil;
+
 import java.awt.*;
 import java.awt.event.*;
 
-class Fenetre extends JFrame implements ActionListener, MouseMotionListener, ComponentListener{
+class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMotionListener, ComponentListener{
 
 	private Panel mainPanel = null;
 	private JMenuItem menuItemOuvrir = null;
 	private JButton findCenter = null;
 	private JLabel statusLabel = null;
+	private int positionX=0;
+	private int positionY=0;
 
 	private Fenetre() {
 		
@@ -43,6 +48,7 @@ class Fenetre extends JFrame implements ActionListener, MouseMotionListener, Com
 		this.add(mainMenuBar, BorderLayout.NORTH);
 		this.add(getMainPanel(), BorderLayout.CENTER);
 		this.add(statusPanel, BorderLayout.SOUTH);
+
 	
 	}
 
@@ -117,7 +123,8 @@ class Fenetre extends JFrame implements ActionListener, MouseMotionListener, Com
 		}
 		if (e.getSource() == findCenter) {
 			//Method to find center
-			System.out.println("Click FC");
+			mainPanel.setCurrentTool(TypeOutil.POINT);
+			System.out.println("Click FC"+mainPanel.getCurrentTool());
 		}
 	}
 
@@ -130,19 +137,13 @@ class Fenetre extends JFrame implements ActionListener, MouseMotionListener, Com
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
 		if (arg0.getSource() == mainPanel.getLabel()) {
+			positionX = arg0.getX();
+			positionY = arg0.getY();
 			statusLabel.setText("MouseX: " + arg0.getX() + " " + "MouseY: " + arg0.getY());
 		}
 		
 	}
-
-    //Main
-    public static void main(String[] args) {
-
-        Fenetre window = new Fenetre();
-        window.setVisible(true);
-
-    }
-
+	
 	@Override
 	public void componentHidden(ComponentEvent e) {
 		
@@ -178,4 +179,47 @@ class Fenetre extends JFrame implements ActionListener, MouseMotionListener, Com
 		this.mainPanel = mainPanel;
 	}
 
+	@Override
+	public void mouseClicked(MouseEvent arg0) {
+		System.out.println("bim");
+		if(mainPanel.getCurrentTool() == TypeOutil.POINT){
+			System.out.println("bim");
+			Point p= new Point(1,1);
+			mainPanel.listePoint.add(new Point(positionX,positionY));
+		}
+			  mainPanel.repaint();
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+    //Main
+    public static void main(String[] args) {
+
+        Fenetre window = new Fenetre();
+        window.setVisible(true);
+
+    }
 }
+
