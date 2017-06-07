@@ -2,55 +2,54 @@ package main;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import main.Panel.TypeOutil;
+
 import java.awt.*;
 import java.awt.event.*;
 
-class Fenetre extends JFrame implements ActionListener, MouseMotionListener, ComponentListener{
+class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMotionListener, ComponentListener{
 
 	private Panel mainPanel = null;
 	private JMenuItem menuItemOuvrir = null;
 	private JButton findCenter = null;
 	private JLabel statusLabel = null;
-	private JFileChooser chooser = null;
-	
+	private int positionX=0;
+	private int positionY=0;
+
 	private Fenetre() {
 		
 		// Taille Ecran
-
 		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		Rectangle bounds = env.getMaximumWindowBounds();
 		
 		// Composants
-
 		setMainPanel(new Panel());
 		JMenuBar mainMenuBar = buildMenuBar();
 		JPanel statusPanel = new JPanel(new BorderLayout());
 		statusLabel = new JLabel();
 
 		// Window Settings
-		
 		this.setSize((bounds.width/100)*90, (bounds.height/100)*90);
 		this.setTitle("AnnoDiffract");
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
 		// Layout
-
 		BorderLayout layout = new BorderLayout();
 		this.setLayout(layout);
 
 		// Status Bar
-	
 		statusPanel.add(statusLabel, BorderLayout.EAST);
 		
 		// Listeners
-		
-		getMainPanel().addMouseMotionListener(this);
+		getMainPanel().getLabel().addMouseMotionListener(this);
 		
 		// Ajouts
-		
 		this.add(mainMenuBar, BorderLayout.NORTH);
 		this.add(getMainPanel(), BorderLayout.CENTER);
 		this.add(statusPanel, BorderLayout.SOUTH);
+		
+		
 	
 	}
 
@@ -61,7 +60,6 @@ class Fenetre extends JFrame implements ActionListener, MouseMotionListener, Com
 		//menuBar.setBorder(null);
 
 		// Layout
-
 		BorderLayout barLayout = new BorderLayout();
 		menuBar.setLayout(barLayout);
 
@@ -70,7 +68,6 @@ class Fenetre extends JFrame implements ActionListener, MouseMotionListener, Com
 		menuItemOuvrir = new JMenuItem("Ouvrir");
 
 		// ToolBar
-
 		JPanel toolBar = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
 		// ToolBar Bouttons
@@ -84,17 +81,16 @@ class Fenetre extends JFrame implements ActionListener, MouseMotionListener, Com
 		findCenter.setContentAreaFilled(false);
 
 		// Ajouts
-
 		menuBar.add(menuFile, BorderLayout.NORTH);
 		menuBar.add(toolBar, BorderLayout.CENTER);
 		menuFile.add(menuItemOuvrir);
 		toolBar.add(findCenter);
 
 		// Listeners
-
 		getMainPanel().addComponentListener(this);
 		menuItemOuvrir.addActionListener(this);
 		findCenter.addActionListener(this);
+		mainPanel.getLabel().addMouseListener(this);
 
 		return menuBar;
 	}
@@ -107,7 +103,7 @@ class Fenetre extends JFrame implements ActionListener, MouseMotionListener, Com
 		if (e.getSource() == menuItemOuvrir) {
 			
 			//Variable Chooser
-			chooser = new JFileChooser();
+			JFileChooser chooser = new JFileChooser();
 			//Filter
 			FileNameExtensionFilter filter = new FileNameExtensionFilter("Image Files", "Jpeg", "jpg", "tif", "Tiff");
 			chooser.setFileFilter(filter);
@@ -129,7 +125,8 @@ class Fenetre extends JFrame implements ActionListener, MouseMotionListener, Com
 		}
 		if (e.getSource() == findCenter) {
 			//Method to find center
-			System.out.println("Click FC");
+			mainPanel.setCurrentTool(TypeOutil.POINT);
+			System.out.println("Click FC"+mainPanel.getCurrentTool());
 		}
 	}
 
@@ -141,18 +138,14 @@ class Fenetre extends JFrame implements ActionListener, MouseMotionListener, Com
 	//A chaque fois que l'utilisateur bouge la souris, la position ou est placÃ©e la souris est mise Ã  jour
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
-		statusLabel.setText("MouseX: " + arg0.getX() + " " + "MouseY: " + arg0.getY());
+		if (arg0.getSource() == mainPanel.getLabel()) {
+			positionX = arg0.getX();
+			positionY = arg0.getY();
+			statusLabel.setText("MouseX: " + arg0.getX() + " " + "MouseY: " + arg0.getY());
+		}
 		
 	}
-
-    //Main
-    public static void main(String[] args) {
-
-        Fenetre window = new Fenetre();
-        window.setVisible(true);
-
-    }
-
+	
 	@Override
 	public void componentHidden(ComponentEvent e) {
 		
@@ -180,12 +173,55 @@ class Fenetre extends JFrame implements ActionListener, MouseMotionListener, Com
 		
 	}
 
-	public Panel getMainPanel() {
+	private Panel getMainPanel() {
 		return mainPanel;
 	}
 
-	public void setMainPanel(Panel mainPanel) {
+	private void setMainPanel(Panel mainPanel) {
 		this.mainPanel = mainPanel;
 	}
 
+	@Override
+	public void mouseClicked(MouseEvent arg0) {
+		System.out.println(mainPanel.listePoint.size());
+		if(mainPanel.getCurrentTool() == TypeOutil.POINT){
+			System.out.println("bim");
+			System.out.println(positionX + " "+positionY);
+			
+			mainPanel.listePoint.add(new Point(positionX,positionY));
+		}
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+    //Main
+    public static void main(String[] args) {
+
+        Fenetre window = new Fenetre();
+        window.setVisible(true);
+
+    }
 }
+

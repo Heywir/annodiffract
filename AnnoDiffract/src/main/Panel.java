@@ -5,27 +5,37 @@ import com.sun.media.jai.codec.ImageCodec;
 import com.sun.media.jai.codec.ImageDecoder;
 import com.sun.media.jai.codec.SeekableStream;
 
+import sun.java2d.loops.DrawLine;
+
 import javax.media.jai.PlanarImage;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
 
 class Panel extends JPanel {
-	
+	public enum TypeOutil {
+		
+		 /** Outil principaux */
+		 NORMAL,/** L'utilisateur vient de lancer le software */
+		 POINT,/** L'utilisateur va placer des points */
+	}
+	private TypeOutil currentTool = TypeOutil.NORMAL;
 	private JLabel label = null;
-	private JLabel xAxis = null;
-	private JLabel yAxis = null;
 	private Image image = null;
 	private boolean loaded = false;
-	private Integer ratioX = 65;
-	private Integer ratioY = 90;
+	private final Integer ratioX = 65;
+	private final Integer ratioY = 90;
 	private Image imageScaled = null;
-	private Image afterScale = null;
+	BufferedImage bufferedScaled;
+	public ArrayList<Point> listePoint = new ArrayList<Point>();
 
 	Panel() {
 
@@ -36,38 +46,13 @@ class Panel extends JPanel {
 		this.setLayout(layout);
 		
 		// Composants
-		
+
 		// Panel Image
-		
 		setLabel(new JLabel());
-		
-		// Axe X
-		
-		setxAxis(new JLabel());
-		
-		// Axe Y
-		
-		setyAxis(new JLabel());
-		
+
 		// Ajouts
-		
-		// Image
-		
-		c.gridx = 1;
-		c.gridy = 0;
 		this.add(getLabel(), c);
-		
-		// X
-		c.gridx = 1;
-		c.gridy = 1;
-		this.add(getxAxis(), c);
-		
-		// Y
-		c.gridx = 0;
-		c.gridy = 0;
-		this.add(getyAxis(), c);
-	
-		
+
 	}
 	
 	//Methode pour ouvrir l'image puis l'afficher avec une bonne dimension
@@ -79,9 +64,12 @@ class Panel extends JPanel {
 		    channel.read(buffer);
 		    setImage(load(buffer.array()));
 		    imageScaled = getImage().getScaledInstance((this.getWidth()/100)*ratioX, ((this.getHeight()/100)*ratioY),  Image.SCALE_SMOOTH);
-		    setImage(imageScaled);
-		    getLabel().setIcon(new ImageIcon(imageScaled));
-		    setLoaded(true);
+		    
+		    bufferedScaled = toBufferedImage(imageScaled);
+            setImage(bufferedScaled );
+            
+            getLabel().setIcon(new ImageIcon(bufferedScaled));
+            setLoaded(true);
 		    repaint();
 			
 		} catch (FileNotFoundException e) {
@@ -89,8 +77,7 @@ class Panel extends JPanel {
 		}
 	}
 	
-	//Methode pour charger l'image apres ca recuperation	
-
+	//Methode pour charger l'image apres ca recuperation
 	private Image load(byte[] data) throws Exception{
 	    Image image;
 	    SeekableStream stream = new ByteArraySeekableStream(data);
@@ -101,8 +88,7 @@ class Panel extends JPanel {
 	    return image;
 	  }
 	
-	public void scale() {
-		
+	void scale() {
 		if (imageScaled != null) {
 			Image img = getImage().getScaledInstance((this.getWidth()/100)*ratioX, ((this.getHeight()/100)*ratioY),  Image.SCALE_SMOOTH);
 			getLabel().setIcon(new ImageIcon(img));
@@ -112,10 +98,23 @@ class Panel extends JPanel {
 
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-
+		
+        
 		if (isLoaded()) {
+			System.out.println(listePoint.size());
+			if(listePoint.isEmpty() == false){
+				for(int i= 0 ; i < listePoint.size(); i++ ){
+					Graphics2D g2d = bufferedScaled.createGraphics();
+					g2d.setColor(Color.BLUE);
+			        g2d.drawLine(0, 0, 500 ,500);
+			        g2d.dispose();
+			        setImage(bufferedScaled );
+					System.out.println(listePoint.get(i).getX());
+				}
+			}
 			drawGraph(g);
 		}
+		
 	}
 
 	//Methode pour dÃ©ssiner le graph
@@ -126,7 +125,7 @@ class Panel extends JPanel {
 		int distance = 20;
 
 		// Pour le dÃ©coupage selon l'image
-		int indentationY = (getLabel().getHeight()) / 100;
+		int indentationY = (getLabel().getHeight() / 100);
 		int indentationX = (getLabel().getWidth() / 100);
 		int tailleInden = 5;
 
@@ -183,7 +182,26 @@ class Panel extends JPanel {
 		}
 
 	}
+	
+	
+	public static BufferedImage toBufferedImage(Image img) {
+        if (img instanceof BufferedImage)
+        {
+            return (BufferedImage) img;
+        }
 
+        // Create a buffered image with transparency
+        BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+        // Draw the image on to the buffered image
+        Graphics2D bGr = bimage.createGraphics();
+        bGr.drawImage(img, 0, 0, null);
+        bGr.dispose();
+
+        // Return the buffered image
+        return bimage;
+    }
+	
 	private Image getImage() {
 		return image;
 	}
@@ -196,7 +214,7 @@ class Panel extends JPanel {
 		return label;
 	}
 
-	void setLabel(JLabel label) {
+	private void setLabel(JLabel label) {
 		this.label = label;
 	}
 
@@ -208,20 +226,20 @@ class Panel extends JPanel {
 		this.loaded = b;
 	}
 
-	private JLabel getxAxis() {
-		return xAxis;
+	public TypeOutil getCurrentTool() {
+		return currentTool;
 	}
 
-	private void setxAxis(JLabel grid) {
-		this.xAxis = grid;
+	public void setCurrentTool(TypeOutil currentTool) {
+		this.currentTool = currentTool;
 	}
 
-	private JLabel getyAxis() {
-		return yAxis;
+	public ArrayList<Point> getListePoint() {
+		return listePoint;
 	}
 
-	private void setyAxis(JLabel yAxis) {
-		this.yAxis = yAxis;
+	public void setListePoint(ArrayList<Point> listePoint) {
+		listePoint = listePoint;
 	}
 	
 }
