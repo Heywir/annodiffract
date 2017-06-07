@@ -98,21 +98,23 @@ class Panel extends JPanel {
 
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		
         
 		if (isLoaded()) {
 			System.out.println(listePoint.size());
 			if(listePoint.isEmpty() == false){
 				for(int i= 0 ; i < listePoint.size(); i++ ){
+					bufferedScaled = toBufferedImage(imageScaled);
 					Graphics2D g2d = bufferedScaled.createGraphics();
-					g2d.setColor(Color.BLUE);
+					g2d.setColor(Color.RED);
+			        g2d.drawLine(0, 0, 500 ,500);
 			        g2d.drawLine(0, 0, 500 ,500);
 			        g2d.dispose();
-			        setImage(bufferedScaled );
 					System.out.println(listePoint.get(i).getX());
+					getLabel().setIcon(new ImageIcon(bufferedScaled));
 				}
 			}
 			drawGraph(g);
+			repaint();
 		}
 		
 	}
