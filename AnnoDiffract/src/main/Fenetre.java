@@ -183,12 +183,11 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
-		System.out.println(mainPanel.listePoint.size());
 		if(mainPanel.getCurrentTool() == TypeOutil.POINT){
-			System.out.println("bim");
 			System.out.println(positionX + " "+positionY);
 			
 			mainPanel.listePoint.add(new Point(positionX,positionY));
+			mainPanel.listeRes.add(new Point(mainPanel.getLabel().getWidth(),mainPanel.getLabel().getHeight()));
 		}
 	}
 

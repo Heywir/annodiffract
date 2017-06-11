@@ -7,6 +7,7 @@ import com.sun.media.jai.codec.SeekableStream;
 
 import sun.java2d.loops.DrawLine;
 
+import javax.management.openmbean.CompositeType;
 import javax.media.jai.PlanarImage;
 import javax.swing.*;
 import java.awt.*;
@@ -36,6 +37,7 @@ class Panel extends JPanel {
 	private Image imageScaled = null;
 	BufferedImage bufferedScaled;
 	public ArrayList<Point> listePoint = new ArrayList<Point>();
+	public ArrayList<Point> listeRes = new ArrayList<Point>();
 
 	Panel() {
 
@@ -92,6 +94,13 @@ class Panel extends JPanel {
 		if (imageScaled != null) {
 			Image img = getImage().getScaledInstance((this.getWidth()/100)*ratioX, ((this.getHeight()/100)*ratioY),  Image.SCALE_SMOOTH);
 			getLabel().setIcon(new ImageIcon(img));
+			if(listePoint.isEmpty() == false){
+				for(int i= 0 ; i < listePoint.size(); i++ ){
+					listePoint.get(i).setLocation(((getLabel().getWidth()/listeRes.get(i).getX())*listePoint.get(i).getX()), ((getLabel().getHeight()/listeRes.get(i).getY())*listePoint.get(i).getY()));
+					listeRes.get(i).setLocation(getLabel().getWidth(), getLabel().getHeight());;
+					System.out.println(listePoint.get(i).getX()+" "+listePoint.get(i).getY());
+				}
+			}
 			repaint();
 		}
 	}
@@ -100,23 +109,19 @@ class Panel extends JPanel {
 		super.paintComponent(g);
         
 		if (isLoaded()) {
-			System.out.println(listePoint.size());
 			if(listePoint.isEmpty() == false){
-				for(int i= 0 ; i < listePoint.size(); i++ ){
-					bufferedScaled = toBufferedImage(imageScaled);
+				for(int i= 0 ; i < listePoint.size(); i++ ){		
+					//System.out.println(listePoint.get(i).getX()+" "+listePoint.get(i).getY());
 					Graphics2D g2d = bufferedScaled.createGraphics();
 					g2d.setColor(Color.RED);
 			        g2d.drawLine(0, 0, 500 ,500);
-			        g2d.drawLine(0, 0, 500 ,500);
 			        g2d.dispose();
-					System.out.println(listePoint.get(i).getX());
-					getLabel().setIcon(new ImageIcon(bufferedScaled));
 				}
 			}
 			drawGraph(g);
-			repaint();
 		}
-		
+
+		repaint();
 	}
 
 	//Methode pour dÃ©ssiner le graph
