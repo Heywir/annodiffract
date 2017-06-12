@@ -37,7 +37,8 @@ class Panel extends JPanel {
 	private Image imageScaled = null;
 	BufferedImage bufferedScaled;
 	public ArrayList<Point> listePoint = new ArrayList<Point>();
-	public ArrayList<Point> listeRes = new ArrayList<Point>();
+	public ArrayList<Point> resPoint = new ArrayList<Point>();
+	
 
 	Panel() {
 
@@ -92,13 +93,16 @@ class Panel extends JPanel {
 	
 	void scale() {
 		if (imageScaled != null) {
-			Image img = getImage().getScaledInstance((this.getWidth()/100)*ratioX, ((this.getHeight()/100)*ratioY),  Image.SCALE_SMOOTH);
+			imageScaled = getImage().getScaledInstance((this.getWidth()/100)*ratioX, ((this.getHeight()/100)*ratioY),  Image.SCALE_SMOOTH);
+		    bufferedScaled = toBufferedImage(imageScaled);
+			Image img = bufferedScaled.getScaledInstance((this.getWidth()/100)*ratioX, ((this.getHeight()/100)*ratioY),  Image.SCALE_SMOOTH);
 			getLabel().setIcon(new ImageIcon(img));
 			if(listePoint.isEmpty() == false){
 				for(int i= 0 ; i < listePoint.size(); i++ ){
-					listePoint.get(i).setLocation(((getLabel().getWidth()/listeRes.get(i).getX())*listePoint.get(i).getX()), ((getLabel().getHeight()/listeRes.get(i).getY())*listePoint.get(i).getY()));
-					listeRes.get(i).setLocation(getLabel().getWidth(), getLabel().getHeight());;
+					System.out.println(getLabel().getWidth()+"/"+resPoint.get(i).getX()+"*"+listePoint.get(i).getX()+","+ getLabel().getHeight()+"/"+resPoint.get(i).getY()+"*"+listePoint.get(i).getY());
+					listePoint.get(i).setLocation(((getLabel().getWidth()/resPoint.get(i).getX())*listePoint.get(i).getX()), ((getLabel().getHeight()/resPoint.get(i).getY())*listePoint.get(i).getY()));
 					System.out.println(listePoint.get(i).getX()+" "+listePoint.get(i).getY());
+					resPoint.get(i).setLocation(getLabel().getWidth(), getLabel().getHeight());
 				}
 			}
 			repaint();
@@ -106,21 +110,40 @@ class Panel extends JPanel {
 	}
 
 	public void paintComponent(Graphics g) {
+		int x1,y1,x2,y2;
 		super.paintComponent(g);
-        
 		if (isLoaded()) {
 			if(listePoint.isEmpty() == false){
 				for(int i= 0 ; i < listePoint.size(); i++ ){		
 					//System.out.println(listePoint.get(i).getX()+" "+listePoint.get(i).getY());
 					Graphics2D g2d = bufferedScaled.createGraphics();
-					g2d.setColor(Color.RED);
-			        g2d.drawLine(0, 0, 500 ,500);
-			        g2d.dispose();
+					x1=(int) Math.round(listePoint.get(i).getX()-3);
+					y1=(int) Math.round(listePoint.get(i).getY());
+					x2=(int) Math.round(listePoint.get(i).getX());
+					y2=(int) Math.round(listePoint.get(i).getY());
+					g2d.drawLine(x1, y1, x2, y2);
+					x1=(int) Math.round(listePoint.get(i).getX());
+					y1=(int) Math.round(listePoint.get(i).getY()-3);
+					x2=(int) Math.round(listePoint.get(i).getX());
+					y2=(int) Math.round(listePoint.get(i).getY());
+					g2d.drawLine(x1, y1, x2, y2);
+					x1=(int) Math.round(listePoint.get(i).getX());
+					y1=(int) Math.round(listePoint.get(i).getY());
+					x2=(int) Math.round(listePoint.get(i).getX()+3);
+					y2=(int) Math.round(listePoint.get(i).getY());
+					g2d.drawLine(x1, y1, x2, y2);
+					x1=(int) Math.round(listePoint.get(i).getX());
+					y1=(int) Math.round(listePoint.get(i).getY());
+					x2=(int) Math.round(listePoint.get(i).getX());
+					y2=(int) Math.round(listePoint.get(i).getY()+3);
+					g2d.drawLine(x1, y1, x2, y2);
+					g2d.dispose();
 				}
 			}
+			//Image img = getImage().getScaledInstance((this.getWidth()/100)*ratioX, ((this.getHeight()/100)*ratioY),  Image.SCALE_SMOOTH);
+			getLabel().setIcon(new ImageIcon(bufferedScaled));
 			drawGraph(g);
 		}
-
 		repaint();
 	}
 
@@ -189,7 +212,6 @@ class Panel extends JPanel {
 		}
 
 	}
-	
 	
 	public static BufferedImage toBufferedImage(Image img) {
         if (img instanceof BufferedImage)
