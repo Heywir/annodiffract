@@ -6,10 +6,15 @@ AnnoDiffract is a school project made by third year students in computer science
 Current Stage
 =============
 
-![alt text](http://zupimages.net/up/17/21/n98p.jpg)
+![alt text](https://img15.hostingpics.net/pics/232574annodiffract.jpg)
 
-- Must add some toolbar
-- Must start to calculate the intensity (after finding the center of all the rings)
+TODO
+=============
+- Full scaling, i mean showing a scaled image (to fit on every screen) and having precise information from the original image.
+- Redraw when resize.
+- More buttons, menus (graph, recentering ...)
+- RGB2Gray (should be fairely easy).
+- Documentation.
 
 Requirements
 ============
