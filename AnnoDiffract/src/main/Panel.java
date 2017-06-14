@@ -5,14 +5,10 @@ import com.sun.media.jai.codec.ImageCodec;
 import com.sun.media.jai.codec.ImageDecoder;
 import com.sun.media.jai.codec.SeekableStream;
 
-import sun.java2d.loops.DrawLine;
-
-import javax.management.openmbean.CompositeType;
 import javax.media.jai.PlanarImage;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,9 +20,9 @@ import java.util.ArrayList;
 class Panel extends JPanel {
 	public enum TypeOutil {
 		
-		 /** Outil principaux */
-		 NORMAL,/** L'utilisateur vient de lancer le software */
-		 POINT,/** L'utilisateur va placer des points */
+		 /* Outil principaux */
+		 NORMAL,/* L'utilisateur vient de lancer le software */
+		 POINT, /* L'utilisateur va placer des points */
 	}
 	private TypeOutil currentTool = TypeOutil.NORMAL;
 	private JLabel label = null;
@@ -35,9 +31,9 @@ class Panel extends JPanel {
 	private final Integer ratioX = 65;
 	private final Integer ratioY = 90;
 	private Image imageScaled = null;
-	BufferedImage bufferedScaled;
-	public ArrayList<Point> listePoint = new ArrayList<Point>();
-	public ArrayList<Point> resPoint = new ArrayList<Point>();
+	private BufferedImage bufferedScaled;
+	public final ArrayList<Point> listePoint = new ArrayList<>();
+	public final ArrayList<Point> resPoint = new ArrayList<>();
 	
 
 	Panel() {
@@ -69,7 +65,8 @@ class Panel extends JPanel {
 		    imageScaled = getImage().getScaledInstance((this.getWidth()/100)*ratioX, ((this.getHeight()/100)*ratioY),  Image.SCALE_SMOOTH);
 		    
 		    bufferedScaled = toBufferedImage(imageScaled);
-            setImage(bufferedScaled );
+		    BufferedImage tGray = toGray(bufferedScaled);
+            setImage(tGray);
             
             getLabel().setIcon(new ImageIcon(bufferedScaled));
             setLoaded(true);
@@ -97,7 +94,7 @@ class Panel extends JPanel {
 		    bufferedScaled = toBufferedImage(imageScaled);
 			Image img = bufferedScaled.getScaledInstance((this.getWidth()/100)*ratioX, ((this.getHeight()/100)*ratioY),  Image.SCALE_SMOOTH);
 			getLabel().setIcon(new ImageIcon(img));
-			if(listePoint.isEmpty() == false){
+			if(!listePoint.isEmpty()){
 				for(int i= 0 ; i < listePoint.size(); i++ ){
 					System.out.println(getLabel().getWidth()+"/"+resPoint.get(i).getX()+"*"+listePoint.get(i).getX()+","+ getLabel().getHeight()+"/"+resPoint.get(i).getY()+"*"+listePoint.get(i).getY());
 					listePoint.get(i).setLocation(((getLabel().getWidth()/resPoint.get(i).getX())*listePoint.get(i).getX()), ((getLabel().getHeight()/resPoint.get(i).getY())*listePoint.get(i).getY()));
@@ -109,33 +106,50 @@ class Panel extends JPanel {
 		}
 	}
 
+	private BufferedImage toGray(BufferedImage image) {
+		int width = image.getWidth();
+		int height = image.getHeight();
+		for(int i=0; i<height; i++){
+			for(int j=0; j<width; j++){
+				Color c = new Color(image.getRGB(j, i));
+				int red = (int)(c.getRed() * 0.21);
+				int green = (int)(c.getGreen() * 0.72);
+				int blue = (int)(c.getBlue() *0.07);
+				int sum = red + green + blue;
+				Color newColor = new Color(sum,sum,sum);
+				image.setRGB(j,i,newColor.getRGB());
+			}
+		}
+		return image;
+	}
+
 	public void paintComponent(Graphics g) {
 		int x1,y1,x2,y2;
 		super.paintComponent(g);
 		if (isLoaded()) {
-			if(listePoint.isEmpty() == false){
-				for(int i= 0 ; i < listePoint.size(); i++ ){		
+			if(!listePoint.isEmpty()){
+				for (Point aListePoint : listePoint) {
 					//System.out.println(listePoint.get(i).getX()+" "+listePoint.get(i).getY());
 					Graphics2D g2d = bufferedScaled.createGraphics();
-					x1=(int) Math.round(listePoint.get(i).getX()-3);
-					y1=(int) Math.round(listePoint.get(i).getY());
-					x2=(int) Math.round(listePoint.get(i).getX());
-					y2=(int) Math.round(listePoint.get(i).getY());
+					x1 = (int) Math.round(aListePoint.getX() - 3);
+					y1 = (int) Math.round(aListePoint.getY());
+					x2 = (int) Math.round(aListePoint.getX());
+					y2 = (int) Math.round(aListePoint.getY());
 					g2d.drawLine(x1, y1, x2, y2);
-					x1=(int) Math.round(listePoint.get(i).getX());
-					y1=(int) Math.round(listePoint.get(i).getY()-3);
-					x2=(int) Math.round(listePoint.get(i).getX());
-					y2=(int) Math.round(listePoint.get(i).getY());
+					x1 = (int) Math.round(aListePoint.getX());
+					y1 = (int) Math.round(aListePoint.getY() - 3);
+					x2 = (int) Math.round(aListePoint.getX());
+					y2 = (int) Math.round(aListePoint.getY());
 					g2d.drawLine(x1, y1, x2, y2);
-					x1=(int) Math.round(listePoint.get(i).getX());
-					y1=(int) Math.round(listePoint.get(i).getY());
-					x2=(int) Math.round(listePoint.get(i).getX()+3);
-					y2=(int) Math.round(listePoint.get(i).getY());
+					x1 = (int) Math.round(aListePoint.getX());
+					y1 = (int) Math.round(aListePoint.getY());
+					x2 = (int) Math.round(aListePoint.getX() + 3);
+					y2 = (int) Math.round(aListePoint.getY());
 					g2d.drawLine(x1, y1, x2, y2);
-					x1=(int) Math.round(listePoint.get(i).getX());
-					y1=(int) Math.round(listePoint.get(i).getY());
-					x2=(int) Math.round(listePoint.get(i).getX());
-					y2=(int) Math.round(listePoint.get(i).getY()+3);
+					x1 = (int) Math.round(aListePoint.getX());
+					y1 = (int) Math.round(aListePoint.getY());
+					x2 = (int) Math.round(aListePoint.getX());
+					y2 = (int) Math.round(aListePoint.getY() + 3);
 					g2d.drawLine(x1, y1, x2, y2);
 					g2d.dispose();
 				}
@@ -213,7 +227,7 @@ class Panel extends JPanel {
 
 	}
 	
-	public static BufferedImage toBufferedImage(Image img) {
+	private static BufferedImage toBufferedImage(Image img) {
         if (img instanceof BufferedImage)
         {
             return (BufferedImage) img;
@@ -259,16 +273,12 @@ class Panel extends JPanel {
 		return currentTool;
 	}
 
-	public void setCurrentTool(TypeOutil currentTool) {
-		this.currentTool = currentTool;
+	public void setCurrentTool() {
+		this.currentTool = TypeOutil.POINT;
 	}
 
 	public ArrayList<Point> getListePoint() {
 		return listePoint;
-	}
-
-	public void setListePoint(ArrayList<Point> listePoint) {
-		listePoint = listePoint;
 	}
 	
 }
