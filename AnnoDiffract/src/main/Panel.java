@@ -5,6 +5,8 @@ import com.sun.media.jai.codec.ImageCodec;
 import com.sun.media.jai.codec.ImageDecoder;
 import com.sun.media.jai.codec.SeekableStream;
 
+import sun.security.util.Length;
+
 import javax.media.jai.PlanarImage;
 import javax.swing.*;
 import java.awt.*;
@@ -122,6 +124,34 @@ class Panel extends JPanel {
 		}
 		return image;
 	}
+	
+	public void drawCenteredCircle(Graphics2D g, Point centerCircle, int r) {
+		  int x = (int) Math.round(centerCircle.getX()-(r));
+		  int y = (int) Math.round(centerCircle.getY()-(r));
+		  g.drawOval(x,y,2*r,2*r);
+		}
+	
+	public Point circleCenter(Point A, Point B, Point C) { 
+		float yDelta_a = B.y - A.y; 
+		float xDelta_a = B.x - A.x; 
+		float yDelta_b = C.y - B.y; 
+		float xDelta_b = C.x - B.x; 
+		int centerX;
+		int centerY;
+		Point center = new Point(0,0); 
+		float aSlope = yDelta_a/xDelta_a; 
+		float bSlope = yDelta_b/xDelta_b;
+		centerX = (int) Math.round((aSlope*bSlope*(A.y - C.y) + bSlope*(A.getX() + B.getX())- aSlope*(B.x+C.x) )/(2*(bSlope-aSlope) ));
+		centerY = (int) Math.round(-1*(centerX - (A.x+B.x)/2)/aSlope +  (A.y+B.y)/2);
+		center.setLocation(new Point(centerX, centerY)); 
+		
+		return center; 
+	}
+	
+	public int lenghtFrom2Points(Point A, Point B) {
+		int lenght = (int) Math.sqrt((A.getX()-B.getX())*(A.getX()-B.getX()) + (A.getY()-B.getY())*(A.getY()-B.getY()));
+		return lenght; 
+	}
 
 	public void paintComponent(Graphics g) {
 		int x1,y1,x2,y2;
@@ -151,6 +181,32 @@ class Panel extends JPanel {
 					x2 = (int) Math.round(aListePoint.getX());
 					y2 = (int) Math.round(aListePoint.getY() + 3);
 					g2d.drawLine(x1, y1, x2, y2);
+					
+					if (listePoint.size()==3){
+						Point A = circleCenter(listePoint.get(0), listePoint.get(1), listePoint.get(2));
+						int r = lenghtFrom2Points(listePoint.get(0), A);
+						x1 = (int) Math.round(A.getX() - 3);
+						y1 = (int) Math.round(A.getY());
+						x2 = (int) Math.round(A.getX());
+						y2 = (int) Math.round(A.getY());
+						g2d.drawLine(x1, y1, x2, y2);
+						x1 = (int) Math.round(A.getX());
+						y1 = (int) Math.round(A.getY() - 3);
+						x2 = (int) Math.round(A.getX());
+						y2 = (int) Math.round(A.getY());
+						g2d.drawLine(x1, y1, x2, y2);
+						x1 = (int) Math.round(A.getX());
+						y1 = (int) Math.round(A.getY());
+						x2 = (int) Math.round(A.getX() + 3);
+						y2 = (int) Math.round(A.getY());
+						g2d.drawLine(x1, y1, x2, y2);
+						x1 = (int) Math.round(A.getX());
+						y1 = (int) Math.round(A.getY());
+						x2 = (int) Math.round(A.getX());
+						y2 = (int) Math.round(A.getY() + 3);
+						g2d.drawLine(x1, y1, x2, y2);
+						drawCenteredCircle(g2d, A, r); 
+					}
 					g2d.dispose();
 				}
 			}
@@ -273,7 +329,7 @@ class Panel extends JPanel {
 		return currentTool;
 	}
 
-	public void setCurrentTool() {
+	public void setCurrentTool(TypeOutil point) {
 		this.currentTool = TypeOutil.POINT;
 	}
 
