@@ -145,7 +145,7 @@ class Panel extends JPanel {
 		centerY = (int) Math.round(-1*(centerX - (A.x+B.x)/2)/aSlope +  (A.y+B.y)/2);
 		center.setLocation(new Point(centerX, centerY)); 
 		
-		return center; 
+		return center;
 	}
 	
 	public int lenghtFrom2Points(Point A, Point B) {
