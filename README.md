@@ -13,7 +13,6 @@ TODO
 - Full scaling, i mean showing a scaled image (to fit on every screen) and having precise information from the original image.
 - Redraw when resize.
 - More buttons, menus (graph, recentering ...)
-- RGB2Gray (should be fairely easy).
 - Documentation.
 
 Requirements
