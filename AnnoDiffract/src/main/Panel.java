@@ -79,6 +79,24 @@ class Panel extends JPanel {
 		}
 	}
 	
+	private static BufferedImage toBufferedImage(Image img) {
+        if (img instanceof BufferedImage)
+        {
+            return (BufferedImage) img;
+        }
+
+        // Create a buffered image with transparency
+        BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+        // Draw the image on to the buffered image
+        Graphics2D bGr = bimage.createGraphics();
+        bGr.drawImage(img, 0, 0, null);
+        bGr.dispose();
+
+        // Return the buffered image
+        return bimage;
+    }
+	
 	//Methode pour charger l'image apres ca recuperation
 	private Image load(byte[] data) throws Exception{
 	    Image image;
@@ -154,57 +172,18 @@ class Panel extends JPanel {
 	}
 
 	public void paintComponent(Graphics g) {
-		int x1,y1,x2,y2;
 		super.paintComponent(g);
 		if (isLoaded()) {
 			if(!listePoint.isEmpty()){
 				for (Point aListePoint : listePoint) {
 					//System.out.println(listePoint.get(i).getX()+" "+listePoint.get(i).getY());
 					Graphics2D g2d = bufferedScaled.createGraphics();
-					x1 = (int) Math.round(aListePoint.getX() - 3);
-					y1 = (int) Math.round(aListePoint.getY());
-					x2 = (int) Math.round(aListePoint.getX());
-					y2 = (int) Math.round(aListePoint.getY());
-					g2d.drawLine(x1, y1, x2, y2);
-					x1 = (int) Math.round(aListePoint.getX());
-					y1 = (int) Math.round(aListePoint.getY() - 3);
-					x2 = (int) Math.round(aListePoint.getX());
-					y2 = (int) Math.round(aListePoint.getY());
-					g2d.drawLine(x1, y1, x2, y2);
-					x1 = (int) Math.round(aListePoint.getX());
-					y1 = (int) Math.round(aListePoint.getY());
-					x2 = (int) Math.round(aListePoint.getX() + 3);
-					y2 = (int) Math.round(aListePoint.getY());
-					g2d.drawLine(x1, y1, x2, y2);
-					x1 = (int) Math.round(aListePoint.getX());
-					y1 = (int) Math.round(aListePoint.getY());
-					x2 = (int) Math.round(aListePoint.getX());
-					y2 = (int) Math.round(aListePoint.getY() + 3);
-					g2d.drawLine(x1, y1, x2, y2);
+					drawPoint(g2d,aListePoint);
 					
 					if (listePoint.size()==3){
 						Point A = circleCenter(listePoint.get(0), listePoint.get(1), listePoint.get(2));
 						int r = lenghtFrom2Points(listePoint.get(0), A);
-						x1 = (int) Math.round(A.getX() - 3);
-						y1 = (int) Math.round(A.getY());
-						x2 = (int) Math.round(A.getX());
-						y2 = (int) Math.round(A.getY());
-						g2d.drawLine(x1, y1, x2, y2);
-						x1 = (int) Math.round(A.getX());
-						y1 = (int) Math.round(A.getY() - 3);
-						x2 = (int) Math.round(A.getX());
-						y2 = (int) Math.round(A.getY());
-						g2d.drawLine(x1, y1, x2, y2);
-						x1 = (int) Math.round(A.getX());
-						y1 = (int) Math.round(A.getY());
-						x2 = (int) Math.round(A.getX() + 3);
-						y2 = (int) Math.round(A.getY());
-						g2d.drawLine(x1, y1, x2, y2);
-						x1 = (int) Math.round(A.getX());
-						y1 = (int) Math.round(A.getY());
-						x2 = (int) Math.round(A.getX());
-						y2 = (int) Math.round(A.getY() + 3);
-						g2d.drawLine(x1, y1, x2, y2);
+						drawPoint(g2d,A);
 						drawCenteredCircle(g2d, A, r); 
 					}
 					g2d.dispose();
@@ -283,23 +262,31 @@ class Panel extends JPanel {
 
 	}
 	
-	private static BufferedImage toBufferedImage(Image img) {
-        if (img instanceof BufferedImage)
-        {
-            return (BufferedImage) img;
-        }
+	private void drawPoint(Graphics2D g2d, Point e) {
+		int x1,y1,x2,y2;
+		x1 = (int) Math.round(e.getX() - 3);
+		y1 = (int) Math.round(e.getY());
+		x2 = (int) Math.round(e.getX());
+		y2 = (int) Math.round(e.getY());
+		g2d.drawLine(x1, y1, x2, y2);
+		x1 = (int) Math.round(e.getX());
+		y1 = (int) Math.round(e.getY() - 3);
+		x2 = (int) Math.round(e.getX());
+		y2 = (int) Math.round(e.getY());
+		g2d.drawLine(x1, y1, x2, y2);
+		x1 = (int) Math.round(e.getX());
+		y1 = (int) Math.round(e.getY());
+		x2 = (int) Math.round(e.getX() + 3);
+		y2 = (int) Math.round(e.getY());
+		g2d.drawLine(x1, y1, x2, y2);
+		x1 = (int) Math.round(e.getX());
+		y1 = (int) Math.round(e.getY());
+		x2 = (int) Math.round(e.getX());
+		y2 = (int) Math.round(e.getY() + 3);
+		g2d.drawLine(x1, y1, x2, y2);
+	}
+	
 
-        // Create a buffered image with transparency
-        BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-
-        // Draw the image on to the buffered image
-        Graphics2D bGr = bimage.createGraphics();
-        bGr.drawImage(img, 0, 0, null);
-        bGr.dispose();
-
-        // Return the buffered image
-        return bimage;
-    }
 	
 	private Image getImage() {
 		return image;
