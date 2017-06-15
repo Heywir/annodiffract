@@ -34,8 +34,10 @@ class Panel extends JPanel {
 	private final Integer ratioY = 90;
 	private Image imageScaled = null;
 	private BufferedImage bufferedScaled;
-	public final ArrayList<Point> listePoint = new ArrayList<>();
-	public final ArrayList<Point> resPoint = new ArrayList<>();
+	public Circle tmpCircle = new Circle();
+	public final ArrayList<Circle> listeCircle = new ArrayList<>();
+	private double resX=0;
+	private double resY=0;
 	
 
 	Panel() {
@@ -72,6 +74,7 @@ class Panel extends JPanel {
             
             getLabel().setIcon(new ImageIcon(bufferedScaled));
             setLoaded(true);
+            in.close();
 		    repaint();
 			
 		} catch (FileNotFoundException e) {
@@ -114,15 +117,18 @@ class Panel extends JPanel {
 		    bufferedScaled = toBufferedImage(imageScaled);
 			Image img = bufferedScaled.getScaledInstance((this.getWidth()/100)*ratioX, ((this.getHeight()/100)*ratioY),  Image.SCALE_SMOOTH);
 			getLabel().setIcon(new ImageIcon(img));
-			if(!listePoint.isEmpty()){
-				for(int i= 0 ; i < listePoint.size(); i++ ){
-					System.out.println(getLabel().getWidth()+"/"+resPoint.get(i).getX()+"*"+listePoint.get(i).getX()+","+ getLabel().getHeight()+"/"+resPoint.get(i).getY()+"*"+listePoint.get(i).getY());
-					listePoint.get(i).setLocation(((getLabel().getWidth()/resPoint.get(i).getX())*listePoint.get(i).getX()), ((getLabel().getHeight()/resPoint.get(i).getY())*listePoint.get(i).getY()));
-					System.out.println(listePoint.get(i).getX()+" "+listePoint.get(i).getY());
-					resPoint.get(i).setLocation(getLabel().getWidth(), getLabel().getHeight());
+			if(!listeCircle.isEmpty()){
+				for(int i= 0 ; i < listeCircle.size(); i++ ){
+					for(int j=0 ; j < listeCircle.get(i).ptCircle.size();j++){
+					//System.out.println(getLabel().getWidth()+"/"+resX+"*"+listeCircle.get(i).ptCircle.get(j).getX()+","+ getLabel().getHeight()+"/"+resY+"*"+listeCircle.get(i).ptCircle.get(j).getY());
+					listeCircle.get(i).ptCircle.get(j).setLocation(((getLabel().getWidth()/resX)*listeCircle.get(i).ptCircle.get(j).getX()), ((getLabel().getHeight()/resY)*listeCircle.get(i).ptCircle.get(j).getY()));
+					System.out.println(listeCircle.get(i).ptCircle.get(j).getX()+" "+listeCircle.get(i).ptCircle.get(j).getY());
 				}
 			}
+			resX = getLabel().getWidth();
+			resY = getLabel().getHeight();
 			repaint();
+			}
 		}
 	}
 
@@ -174,21 +180,27 @@ class Panel extends JPanel {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		if (isLoaded()) {
-			if(!listePoint.isEmpty()){
-				for (Point aListePoint : listePoint) {
-					//System.out.println(listePoint.get(i).getX()+" "+listePoint.get(i).getY());
-					Graphics2D g2d = bufferedScaled.createGraphics();
-					drawPoint(g2d,aListePoint);
-					
-					if (listePoint.size()==3){
-						Point A = circleCenter(listePoint.get(0), listePoint.get(1), listePoint.get(2));
-						int r = lenghtFrom2Points(listePoint.get(0), A);
-						drawPoint(g2d,A);
-						drawCenteredCircle(g2d, A, r); 
+			Graphics2D g2d = bufferedScaled.createGraphics();
+			if(!listeCircle.isEmpty()){
+				for (Circle aListePoint : listeCircle) {
+					for(Point pt : aListePoint.ptCircle){	
+						//System.out.println(listePoint.get(i).getX()+" "+listePoint.get(i).getY());
+						drawPoint(g2d,pt); 
+						}
+					if(aListePoint.isDr()){
+						Point centerCircle=circleCenter(aListePoint.ptCircle.get(0), aListePoint.ptCircle.get(1), aListePoint.ptCircle.get(2));
+						int r = lenghtFrom2Points(centerCircle, aListePoint.ptCircle.get(0));
+						drawCenteredCircle(g2d, centerCircle, r);
 					}
-					g2d.dispose();
 				}
 			}
+			if(tmpCircle.ptCircle.size()!=0){
+				for(int i=0; i<tmpCircle.ptCircle.size();i++){
+					drawPoint(g2d, tmpCircle.ptCircle.get(i));
+				}
+			}
+
+			g2d.dispose();
 			//Image img = getImage().getScaledInstance((this.getWidth()/100)*ratioX, ((this.getHeight()/100)*ratioY),  Image.SCALE_SMOOTH);
 			getLabel().setIcon(new ImageIcon(bufferedScaled));
 			drawGraph(g);
@@ -320,8 +332,21 @@ class Panel extends JPanel {
 		this.currentTool = TypeOutil.POINT;
 	}
 
-	public ArrayList<Point> getListePoint() {
-		return listePoint;
+
+	public double getResY() {
+		return resY;
+	}
+
+	public void setResY(double resY) {
+		this.resY = resY;
+	}
+
+	public double getResX() {
+		return resX;
+	}
+
+	public void setResX(double resX) {
+		this.resX = resX;
 	}
 	
 }
