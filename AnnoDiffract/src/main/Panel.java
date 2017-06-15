@@ -189,6 +189,7 @@ class Panel extends JPanel {
 						}
 					if(aListePoint.isDr()){
 						Point centerCircle=circleCenter(aListePoint.ptCircle.get(0), aListePoint.ptCircle.get(1), aListePoint.ptCircle.get(2));
+						drawPoint(g2d, centerCircle);
 						int r = lenghtFrom2Points(centerCircle, aListePoint.ptCircle.get(0));
 						drawCenteredCircle(g2d, centerCircle, r);
 					}
