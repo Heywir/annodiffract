@@ -5,6 +5,8 @@ import com.sun.media.jai.codec.ImageCodec;
 import com.sun.media.jai.codec.ImageDecoder;
 import com.sun.media.jai.codec.SeekableStream;
 
+import sun.security.util.Length;
+
 import javax.media.jai.PlanarImage;
 import javax.swing.*;
 import java.awt.*;
@@ -32,8 +34,10 @@ class Panel extends JPanel {
 	private final Integer ratioY = 90;
 	private Image imageScaled = null;
 	private BufferedImage bufferedScaled;
-	public final ArrayList<Point> listePoint = new ArrayList<>();
-	public final ArrayList<Point> resPoint = new ArrayList<>();
+	public Circle tmpCircle = new Circle();
+	public final ArrayList<Circle> listeCircle = new ArrayList<>();
+	private double resX=0;
+	private double resY=0;
 	
 
 	Panel() {
@@ -70,12 +74,31 @@ class Panel extends JPanel {
             
             getLabel().setIcon(new ImageIcon(bufferedScaled));
             setLoaded(true);
+            in.close();
 		    repaint();
 			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
+	
+	private static BufferedImage toBufferedImage(Image img) {
+        if (img instanceof BufferedImage)
+        {
+            return (BufferedImage) img;
+        }
+
+        // Create a buffered image with transparency
+        BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+        // Draw the image on to the buffered image
+        Graphics2D bGr = bimage.createGraphics();
+        bGr.drawImage(img, 0, 0, null);
+        bGr.dispose();
+
+        // Return the buffered image
+        return bimage;
+    }
 	
 	//Methode pour charger l'image apres ca recuperation
 	private Image load(byte[] data) throws Exception{
@@ -94,15 +117,18 @@ class Panel extends JPanel {
 		    bufferedScaled = toBufferedImage(imageScaled);
 			Image img = bufferedScaled.getScaledInstance((this.getWidth()/100)*ratioX, ((this.getHeight()/100)*ratioY),  Image.SCALE_SMOOTH);
 			getLabel().setIcon(new ImageIcon(img));
-			if(!listePoint.isEmpty()){
-				for(int i= 0 ; i < listePoint.size(); i++ ){
-					System.out.println(getLabel().getWidth()+"/"+resPoint.get(i).getX()+"*"+listePoint.get(i).getX()+","+ getLabel().getHeight()+"/"+resPoint.get(i).getY()+"*"+listePoint.get(i).getY());
-					listePoint.get(i).setLocation(((getLabel().getWidth()/resPoint.get(i).getX())*listePoint.get(i).getX()), ((getLabel().getHeight()/resPoint.get(i).getY())*listePoint.get(i).getY()));
-					System.out.println(listePoint.get(i).getX()+" "+listePoint.get(i).getY());
-					resPoint.get(i).setLocation(getLabel().getWidth(), getLabel().getHeight());
+			if(!listeCircle.isEmpty()){
+				for(int i= 0 ; i < listeCircle.size(); i++ ){
+					for(int j=0 ; j < listeCircle.get(i).ptCircle.size();j++){
+					//System.out.println(getLabel().getWidth()+"/"+resX+"*"+listeCircle.get(i).ptCircle.get(j).getX()+","+ getLabel().getHeight()+"/"+resY+"*"+listeCircle.get(i).ptCircle.get(j).getY());
+					listeCircle.get(i).ptCircle.get(j).setLocation(((getLabel().getWidth()/resX)*listeCircle.get(i).ptCircle.get(j).getX()), ((getLabel().getHeight()/resY)*listeCircle.get(i).ptCircle.get(j).getY()));
+					System.out.println(listeCircle.get(i).ptCircle.get(j).getX()+" "+listeCircle.get(i).ptCircle.get(j).getY());
 				}
 			}
+			resX = getLabel().getWidth();
+			resY = getLabel().getHeight();
 			repaint();
+			}
 		}
 	}
 
@@ -122,38 +148,60 @@ class Panel extends JPanel {
 		}
 		return image;
 	}
+	
+	public void drawCenteredCircle(Graphics2D g, Point centerCircle, int r) {
+		  int x = (int) Math.round(centerCircle.getX()-(r));
+		  int y = (int) Math.round(centerCircle.getY()-(r));
+		  g.drawOval(x,y,2*r,2*r);
+		}
+	
+	public Point circleCenter(Point A, Point B, Point C) { 
+		float yDelta_a = B.y - A.y; 
+		float xDelta_a = B.x - A.x; 
+		float yDelta_b = C.y - B.y; 
+		float xDelta_b = C.x - B.x; 
+		int centerX;
+		int centerY;
+		Point center = new Point(0,0); 
+		float aSlope = yDelta_a/xDelta_a; 
+		float bSlope = yDelta_b/xDelta_b;
+		centerX = (int) Math.round((aSlope*bSlope*(A.y - C.y) + bSlope*(A.getX() + B.getX())- aSlope*(B.x+C.x) )/(2*(bSlope-aSlope) ));
+		centerY = (int) Math.round(-1*(centerX - (A.x+B.x)/2)/aSlope +  (A.y+B.y)/2);
+		center.setLocation(new Point(centerX, centerY)); 
+		
+		return center;
+	}
+	
+	public int lenghtFrom2Points(Point A, Point B) {
+		int lenght = (int) Math.sqrt((A.getX()-B.getX())*(A.getX()-B.getX()) + (A.getY()-B.getY())*(A.getY()-B.getY()));
+		return lenght; 
+	}
 
 	public void paintComponent(Graphics g) {
-		int x1,y1,x2,y2;
 		super.paintComponent(g);
 		if (isLoaded()) {
-			if(!listePoint.isEmpty()){
-				for (Point aListePoint : listePoint) {
-					//System.out.println(listePoint.get(i).getX()+" "+listePoint.get(i).getY());
-					Graphics2D g2d = bufferedScaled.createGraphics();
-					x1 = (int) Math.round(aListePoint.getX() - 3);
-					y1 = (int) Math.round(aListePoint.getY());
-					x2 = (int) Math.round(aListePoint.getX());
-					y2 = (int) Math.round(aListePoint.getY());
-					g2d.drawLine(x1, y1, x2, y2);
-					x1 = (int) Math.round(aListePoint.getX());
-					y1 = (int) Math.round(aListePoint.getY() - 3);
-					x2 = (int) Math.round(aListePoint.getX());
-					y2 = (int) Math.round(aListePoint.getY());
-					g2d.drawLine(x1, y1, x2, y2);
-					x1 = (int) Math.round(aListePoint.getX());
-					y1 = (int) Math.round(aListePoint.getY());
-					x2 = (int) Math.round(aListePoint.getX() + 3);
-					y2 = (int) Math.round(aListePoint.getY());
-					g2d.drawLine(x1, y1, x2, y2);
-					x1 = (int) Math.round(aListePoint.getX());
-					y1 = (int) Math.round(aListePoint.getY());
-					x2 = (int) Math.round(aListePoint.getX());
-					y2 = (int) Math.round(aListePoint.getY() + 3);
-					g2d.drawLine(x1, y1, x2, y2);
-					g2d.dispose();
+			Graphics2D g2d = bufferedScaled.createGraphics();
+			if(!listeCircle.isEmpty()){
+				for (Circle aListePoint : listeCircle) {
+					for(Point pt : aListePoint.ptCircle){	
+						//System.out.println(listePoint.get(i).getX()+" "+listePoint.get(i).getY());
+						drawPoint(g2d,pt); 
+						}
+					if(aListePoint.isDr()){
+						Point centerCircle=circleCenter(aListePoint.ptCircle.get(0), aListePoint.ptCircle.get(1), aListePoint.ptCircle.get(2));
+						drawPoint(g2d, centerCircle);
+						int r = lenghtFrom2Points(centerCircle, aListePoint.ptCircle.get(0));
+						drawCenteredCircle(g2d, centerCircle, r);
+					}
 				}
 			}
+			if(tmpCircle.ptCircle.size()!=0){
+				for(int i=0; i<tmpCircle.ptCircle.size();i++){
+					drawPoint(g2d, tmpCircle.ptCircle.get(i));
+				}
+			}
+
+			g2d.dispose();
 			//Image img = getImage().getScaledInstance((this.getWidth()/100)*ratioX, ((this.getHeight()/100)*ratioY),  Image.SCALE_SMOOTH);
 			getLabel().setIcon(new ImageIcon(bufferedScaled));
 			drawGraph(g);
@@ -227,23 +275,31 @@ class Panel extends JPanel {
 
 	}
 	
-	private static BufferedImage toBufferedImage(Image img) {
-        if (img instanceof BufferedImage)
-        {
-            return (BufferedImage) img;
-        }
+	private void drawPoint(Graphics2D g2d, Point e) {
+		int x1,y1,x2,y2;
+		x1 = (int) Math.round(e.getX() - 3);
+		y1 = (int) Math.round(e.getY());
+		x2 = (int) Math.round(e.getX());
+		y2 = (int) Math.round(e.getY());
+		g2d.drawLine(x1, y1, x2, y2);
+		x1 = (int) Math.round(e.getX());
+		y1 = (int) Math.round(e.getY() - 3);
+		x2 = (int) Math.round(e.getX());
+		y2 = (int) Math.round(e.getY());
+		g2d.drawLine(x1, y1, x2, y2);
+		x1 = (int) Math.round(e.getX());
+		y1 = (int) Math.round(e.getY());
+		x2 = (int) Math.round(e.getX() + 3);
+		y2 = (int) Math.round(e.getY());
+		g2d.drawLine(x1, y1, x2, y2);
+		x1 = (int) Math.round(e.getX());
+		y1 = (int) Math.round(e.getY());
+		x2 = (int) Math.round(e.getX());
+		y2 = (int) Math.round(e.getY() + 3);
+		g2d.drawLine(x1, y1, x2, y2);
+	}
+	
 
-        // Create a buffered image with transparency
-        BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-
-        // Draw the image on to the buffered image
-        Graphics2D bGr = bimage.createGraphics();
-        bGr.drawImage(img, 0, 0, null);
-        bGr.dispose();
-
-        // Return the buffered image
-        return bimage;
-    }
 	
 	private Image getImage() {
 		return image;
@@ -273,12 +329,25 @@ class Panel extends JPanel {
 		return currentTool;
 	}
 
-	public void setCurrentTool() {
+	public void setCurrentTool(TypeOutil point) {
 		this.currentTool = TypeOutil.POINT;
 	}
 
-	public ArrayList<Point> getListePoint() {
-		return listePoint;
+
+	public double getResY() {
+		return resY;
+	}
+
+	public void setResY(double resY) {
+		this.resY = resY;
+	}
+
+	public double getResX() {
+		return resX;
+	}
+
+	public void setResX(double resX) {
+		this.resX = resX;
 	}
 	
 }
