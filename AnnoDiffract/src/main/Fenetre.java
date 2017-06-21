@@ -1,14 +1,17 @@
 package main;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import javafx.scene.control.Slider;
 import main.Panel.TypeOutil;
 
 import java.awt.*;
 import java.awt.event.*;
 
-class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMotionListener, ComponentListener{
+class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMotionListener, ComponentListener, ChangeListener{
 
 	private Panel mainPanel = null;
 	private JMenuItem menuItemOuvrir = null;
@@ -16,6 +19,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	private JLabel statusLabel = null;
 	private int positionX=0;
 	private int positionY=0;
+	private JSlider brightSlide;
 
 	private Fenetre() {
 		
@@ -71,6 +75,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		JPanel toolBar = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
 		// ToolBar Bouttons
+		 brightSlide = new JSlider();
 		// 32 x 32
 
 		// Find Center
@@ -85,12 +90,15 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		menuBar.add(toolBar, BorderLayout.CENTER);
 		menuFile.add(menuItemOuvrir);
 		toolBar.add(findCenter);
+		toolBar.add(brightSlide);
 
 		// Listeners
 		getMainPanel().addComponentListener(this);
 		menuItemOuvrir.addActionListener(this);
 		findCenter.addActionListener(this);
 		mainPanel.getLabel().addMouseListener(this);
+		brightSlide.addChangeListener(this);
+		
 
 		return menuBar;
 	}
@@ -113,7 +121,10 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			//Case of file the user choose
 			if(returnVal == JFileChooser.APPROVE_OPTION) {
 					try {
+						brightSlide.setValue(50);
 						if (getMainPanel().isLoaded()) {
+
+							mainPanel.setBright(-1);
 							getMainPanel().getLabel().setIcon(null);
 							getMainPanel().setLoaded(false);
 						}
@@ -225,7 +236,15 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		// TODO Auto-generated method stub
 		
 	}
-
+	@Override
+	public void stateChanged(ChangeEvent arg0) {
+		// TODO Auto-generated method stub
+		if(arg0.getSource()==brightSlide){
+			if(mainPanel.isLoaded()){
+				mainPanel.setBrightness(5 * (float) brightSlide.getValue() / brightSlide.getMaximum());
+			}
+		}
+	}
     //Main
     public static void main(String[] args) {
 

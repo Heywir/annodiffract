@@ -12,6 +12,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
+import java.awt.image.RescaleOp;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -34,6 +35,8 @@ class Panel extends JPanel {
 	private final Integer ratioY = 90;
 	private Image imageScaled = null;
 	private BufferedImage bufferedScaled;
+	private BufferedImage bufferedScaled2;
+	private float bright=-1;
 	public Circle tmpCircle = new Circle();
 	public final ArrayList<Circle> listeCircle = new ArrayList<>();
 	private double resX=0;
@@ -68,9 +71,13 @@ class Panel extends JPanel {
 		    setImage(load(buffer.array()));
 		    imageScaled = getImage().getScaledInstance((this.getWidth()/100)*ratioX, ((this.getHeight()/100)*ratioY),  Image.SCALE_SMOOTH);
 		    
+		    
+		    //Convert Image to Gray
 		    bufferedScaled = toBufferedImage(imageScaled);
+		    bufferedScaled2 = toBufferedImage(imageScaled);
 		    BufferedImage tGray = toGray(bufferedScaled);
-            setImage(tGray);
+		    toGray(bufferedScaled2);
+		    setImage(tGray);
             
             getLabel().setIcon(new ImageIcon(bufferedScaled));
             setLoaded(true);
@@ -115,7 +122,11 @@ class Panel extends JPanel {
 		if (imageScaled != null) {
 			imageScaled = getImage().getScaledInstance((this.getWidth()/100)*ratioX, ((this.getHeight()/100)*ratioY),  Image.SCALE_SMOOTH);
 		    bufferedScaled = toBufferedImage(imageScaled);
-			Image img = bufferedScaled.getScaledInstance((this.getWidth()/100)*ratioX, ((this.getHeight()/100)*ratioY),  Image.SCALE_SMOOTH);
+		    bufferedScaled2 = toBufferedImage(imageScaled);
+		    if(bright!=-1){
+		    	setBrightness(bright);
+		    }
+		    Image img = bufferedScaled.getScaledInstance((this.getWidth()/100)*ratioX, ((this.getHeight()/100)*ratioY),  Image.SCALE_SMOOTH);
 			getLabel().setIcon(new ImageIcon(img));
 			if(!listeCircle.isEmpty()){
 				for(int i= 0 ; i < listeCircle.size(); i++ ){
@@ -299,7 +310,16 @@ class Panel extends JPanel {
 		g2d.drawLine(x1, y1, x2, y2);
 	}
 	
-
+	//Change Brightness
+	public void setBrightness(float scaleFactor){
+		//float value = (float) slider.getValue();
+        //float scaleFactor = 2 * value / slider.getMaximum();
+        RescaleOp op = new RescaleOp(scaleFactor, 0, null);
+        bufferedScaled = op.filter(bufferedScaled2, bufferedScaled);
+        toGray(bufferedScaled);
+        bright = scaleFactor;
+        repaint();
+	}
 	
 	private Image getImage() {
 		return image;
@@ -348,6 +368,14 @@ class Panel extends JPanel {
 
 	public void setResX(double resX) {
 		this.resX = resX;
+	}
+	
+	public float getBright(){
+		return bright;
+	}
+	
+	public void setBright(float e){
+		bright=e;
 	}
 	
 }
