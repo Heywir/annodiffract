@@ -149,11 +149,21 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	//A chaque fois que l'utilisateur bouge la souris, la position ou est placÃ©e la souris est mise Ã  jour
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
-		if (arg0.getSource() == mainPanel.getLabel()) {
-			positionX = arg0.getX();
-			positionY = arg0.getY();
-			statusLabel.setText("MouseX: " + arg0.getX() + " " + "MouseY: " + arg0.getY());
-		}
+        if (arg0.getSource() == mainPanel.getLabel()) {
+            //System.out.println("OrigiW: " + mainPanel.getBufferedOriginal().getWidth() + " OrigiH: " + mainPanel.getBufferedOriginal().getHeight());
+            //System.out.println("ScaledW: " + mainPanel.getBufferedScaled().getWidth() + " SclaedH: " + mainPanel.getBufferedScaled().getHeight());
+            Double imgWidth = (double) mainPanel.getBufferedOriginal().getWidth();
+            Double imgHeight = (double) mainPanel.getBufferedOriginal().getHeight();
+            Double scaledWidth = (double) mainPanel.getBufferedScaled().getWidth();
+            Double scaledHeight = (double) mainPanel.getBufferedScaled().getHeight();
+            Double ratioX = imgWidth / scaledWidth;
+            Double ratioY = imgHeight / scaledHeight;
+            Double mouseX = (double) arg0.getX();
+            Double mouseY = (double) arg0.getY();
+            Double newX = mouseX * ratioX;
+            Double newY = mouseY * ratioY;
+            statusLabel.setText("MouseX: " + newX + " " + "MouseY: " + newY);
+        }
 		
 	}
 	

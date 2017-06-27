@@ -10,6 +10,7 @@ import sun.security.util.Length;
 import javax.media.jai.PlanarImage;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.awt.image.RescaleOp;
@@ -34,6 +35,7 @@ class Panel extends JPanel {
 	private final Integer ratioX = 65;
 	private final Integer ratioY = 90;
 	private Image imageScaled = null;
+	private BufferedImage bufferedOriginal;
 	private BufferedImage bufferedScaled;
 	private BufferedImage bufferedScaled2;
 	private float bright=-1;
@@ -69,9 +71,10 @@ class Panel extends JPanel {
 			ByteBuffer buffer = ByteBuffer.allocate((int)channel.size());
 		    channel.read(buffer);
 		    setImage(load(buffer.array()));
+			bufferedOriginal = toBufferedImage(getImage());
 		    imageScaled = getImage().getScaledInstance((this.getWidth()/100)*ratioX, ((this.getHeight()/100)*ratioY),  Image.SCALE_SMOOTH);
-		    
-		    
+
+
 		    //Convert Image to Gray
 		    bufferedScaled = toBufferedImage(imageScaled);
 		    bufferedScaled2 = toBufferedImage(imageScaled);
@@ -228,8 +231,8 @@ class Panel extends JPanel {
 		int distance = 20;
 
 		// Pour le dÃ©coupage selon l'image
-		int indentationY = (getLabel().getHeight() / 100);
-		int indentationX = (getLabel().getWidth() / 100);
+		double indentationY = (bufferedOriginal.getHeight() / 100);
+		double indentationX = (bufferedOriginal.getWidth() / 100);
 		int tailleInden = 5;
 
 		// Point En haut Ã  gauche
@@ -243,9 +246,8 @@ class Panel extends JPanel {
 		int xFinX = yZeroX + getLabel().getIcon().getIconWidth();
 
 		// Longueur
-
-		int xLength = (xFinX - yZeroX) / indentationX;
-		int yLength = (yFinY - yZeroY) / indentationY;
+		double xLength = (xFinX - yZeroX) / indentationX;
+		double yLength = (yFinY - yZeroY) / indentationY;
 
 		// Dessin
 
@@ -268,20 +270,20 @@ class Panel extends JPanel {
 
 		int longueurMot;
 		for(int i = 0; i < indentationY +1; i++) {
-			g2.drawLine(yZeroX - tailleInden, yZeroY + (i * yLength), yZeroX + tailleInden, yZeroY + (i * yLength));
+			g2.draw(new Line2D.Double(yZeroX - tailleInden, yZeroY + (i * yLength), yZeroX + tailleInden, yZeroY + (i * yLength)));
 			FontMetrics fm = getFontMetrics(getFont());
 			longueurMot = fm.stringWidth(Integer.toString(i*100));
-			g2.drawString(Integer.toString(i*100), (yZeroX - distance) - longueurMot /2, yZeroY + (i * yLength));
+			g2.drawString(Integer.toString(i*100), (yZeroX - distance) - longueurMot /2, yZeroY + (int) (i * (yLength)));
 
 		}
 
 		// Numerotation X
 
 		for(int i = 0; i < indentationX +1; i++) {
-			g2.drawLine(yZeroX + (i * xLength), yFinY - tailleInden, yZeroX + (i * xLength), yFinY + tailleInden);
+			g2.draw(new Line2D.Double(yZeroX + (i * xLength), yFinY - tailleInden, yZeroX + (i * xLength), yFinY + tailleInden));
 			FontMetrics fm = getFontMetrics(getFont());
 			longueurMot = fm.stringWidth(Integer.toString(i*100));
-			g2.drawString(Integer.toString(i*100), yZeroX + (i * xLength) - longueurMot /2, yFinY + distance);
+			g2.drawString(Integer.toString(i*100), yZeroX + (int) (i * xLength) - longueurMot /2, yFinY + distance);
 		}
 
 	}
@@ -376,6 +378,14 @@ class Panel extends JPanel {
 	
 	public void setBright(float e){
 		bright=e;
+	}
+
+	public BufferedImage getBufferedOriginal() {
+		return bufferedOriginal;
+	}
+
+	public BufferedImage getBufferedScaled() {
+		return bufferedScaled;
 	}
 	
 }
