@@ -5,6 +5,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+
 import javafx.scene.control.Slider;
 import main.Panel.TypeOutil;
 
@@ -149,21 +153,11 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	//A chaque fois que l'utilisateur bouge la souris, la position ou est placÃƒÂ©e la souris est mise ÃƒÂ  jour
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
-        if (arg0.getSource() == mainPanel.getLabel()) {
-            //System.out.println("OrigiW: " + mainPanel.getBufferedOriginal().getWidth() + " OrigiH: " + mainPanel.getBufferedOriginal().getHeight());
-            //System.out.println("ScaledW: " + mainPanel.getBufferedScaled().getWidth() + " SclaedH: " + mainPanel.getBufferedScaled().getHeight());
-            Double imgWidth = (double) mainPanel.getBufferedOriginal().getWidth();
-            Double imgHeight = (double) mainPanel.getBufferedOriginal().getHeight();
-            Double scaledWidth = (double) mainPanel.getBufferedScaled().getWidth();
-            Double scaledHeight = (double) mainPanel.getBufferedScaled().getHeight();
-            Double ratioX = imgWidth / scaledWidth;
-            Double ratioY = imgHeight / scaledHeight;
-            Double mouseX = (double) arg0.getX();
-            Double mouseY = (double) arg0.getY();
-            Double newX = mouseX * ratioX;
-            Double newY = mouseY * ratioY;
-            statusLabel.setText("MouseX: " + newX + " " + "MouseY: " + newY);
-        }
+		if (arg0.getSource() == mainPanel.getLabel()) {
+			positionX = arg0.getX();
+			positionY = arg0.getY();
+			statusLabel.setText("MouseX: " + arg0.getX() + " " + "MouseY: " + arg0.getY());
+		}
 		
 	}
 	
@@ -257,10 +251,56 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	}
     //Main
     public static void main(String[] args) {
-
+    	File F = new File("1.txt"); 
+    	if(!F.exists()){
+    		int i;
+    		float j;
+    		JOptionPane n = new JOptionPane("Coucou");
+    		JOptionPane.showMessageDialog(n, "Bonjour cela est votre premiere utilisation du logiciel,"
+    				+ " veuillez rentrer les informations correspondantes"
+    				, "First Use", n.INFORMATION_MESSAGE);
+    		String Ppern = JOptionPane.showInputDialog(n,"Rentrer le pixel par metre de l'image");
+    		try{
+    			i = Integer.parseInt(Ppern);
+    		}catch(NumberFormatException z){
+    			JOptionPane.showMessageDialog(n, "Vous n'avez pas rentré un entier."
+    					+ " Nous allons mettre la valeur par défaut pour le pixel par metre qui est de 1491"
+        				, "Mauvaise valeur", n.INFORMATION_MESSAGE);
+    			Ppern="1491";
+    		}
+    		String V = JOptionPane.showInputDialog(n,"Veuillez rentrer la tension d'accélération des électrons  U (en V).");
+    		try{
+    			j = Float.parseFloat(V);
+    		}catch(NumberFormatException z){
+    			JOptionPane.showMessageDialog(n, "Vous n'avez pas rentré un entier. "
+    					+ "Nous allons mettre la valeur par défaut pour le voltage"
+        				, "Mauvaise valeur", n.INFORMATION_MESSAGE);
+    			V="120000";
+    		}
+    		String L = JOptionPane.showInputDialog(n,"Veuillez rentrer la longueur de caméra en Metre.");
+    		try{
+    			j = Float.parseFloat(L);
+    		}catch(NumberFormatException z){
+    			JOptionPane.showMessageDialog(n, "Vous n'avez pas rentré un entier. "
+    					+ "Nous allons mettre la valeur par défaut pour la longueur de caméra"
+        				, "Mauvaise valeur", n.INFORMATION_MESSAGE);
+    			L="0.05";
+    		}
+    		try{
+    		    PrintWriter writer = new PrintWriter(F, "UTF-8");
+    		    writer.println("Pixel par Metre : "+ Ppern);
+    		    writer.println("====================================");
+    		    writer.println("Tension d'accélération des électrons U : "+ V);
+    		    writer.println("====================================");
+    		    writer.println("Longueur de caméra en Metre "+ L);
+    		    writer.close();
+    		} catch (IOException e) {
+    		   // do something
+    		}
+    	}
         Fenetre window = new Fenetre();
         window.setVisible(true);
-
+        
     }
 }
 
