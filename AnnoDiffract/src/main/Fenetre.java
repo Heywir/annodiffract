@@ -6,8 +6,11 @@ import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.Scanner;
 
 import javafx.scene.control.Slider;
 import main.Panel.TypeOutil;
@@ -20,6 +23,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	private Panel mainPanel = null;
 	private JMenuItem menuItemOuvrir = null;
 	private JButton findCenter = null;
+	private JButton setParam = null;
 	private JLabel statusLabel = null;
 	private int positionX=0;
 	private int positionY=0;
@@ -81,24 +85,32 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		// ToolBar Bouttons
 		 brightSlide = new JSlider();
 		// 32 x 32
-
 		// Find Center
 		findCenter = new JButton(new ImageIcon(Fenetre.class.getResource("img/fc.png")));
 		findCenter.setPressedIcon(new ImageIcon(Fenetre.class.getResource("img/fcPressed.png")));
 		findCenter.setToolTipText("Find Center");
 		findCenter.setBorder(null);
 		findCenter.setContentAreaFilled(false);
+		
+		
+		setParam = new JButton(new ImageIcon(Fenetre.class.getResource("img/gear.png")));
+		setParam.setPressedIcon(new ImageIcon(Fenetre.class.getResource("img/gearPressed.png")));
+		setParam.setToolTipText("Set Parameters");
+		setParam.setBorder(null);
+		setParam.setContentAreaFilled(false);
 
 		// Ajouts
 		menuBar.add(menuFile, BorderLayout.NORTH);
 		menuBar.add(toolBar, BorderLayout.CENTER);
 		menuFile.add(menuItemOuvrir);
 		toolBar.add(findCenter);
+		toolBar.add(setParam);
 		toolBar.add(brightSlide);
 
 		// Listeners
 		getMainPanel().addComponentListener(this);
 		menuItemOuvrir.addActionListener(this);
+		setParam.addActionListener(this);
 		findCenter.addActionListener(this);
 		mainPanel.getLabel().addMouseListener(this);
 		brightSlide.addChangeListener(this);
@@ -106,7 +118,122 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 
 		return menuBar;
 	}
+	
+	public void firstUse(){
+		File F = new File("1.txt"); 
+		if(!F.exists()){
+    		int i;
+    		float j;
+    		JOptionPane n = new JOptionPane("Coucou");
+    		JOptionPane.showMessageDialog(n, "Bonjour cela est votre premiere utilisation du logiciel,"
+    				+ " veuillez rentrer les informations correspondantes"
+    				, "First Use", n.INFORMATION_MESSAGE);
+    		String Ppern = JOptionPane.showInputDialog(n,"Rentrer le pixel par metre de l'image");
+    		try{
+    			i = Integer.parseInt(Ppern);
+    		}catch(NumberFormatException z){
+    			JOptionPane.showMessageDialog(n, "Vous n'avez pas rentré un entier."
+    					+ " Nous allons mettre la valeur par défaut pour le pixel par metre qui est de 1491"
+        				, "Mauvaise valeur", n.ERROR_MESSAGE);
+    			Ppern="1491";
+    		}
+    		String V = JOptionPane.showInputDialog(n,"Veuillez rentrer la tension d'accélération des électrons  U (en V).");
+    		try{
+    			j = Float.parseFloat(V);
+    		}catch(NumberFormatException z){
+    			JOptionPane.showMessageDialog(n, "Vous n'avez pas rentré un entier. "
+    					+ "Nous allons mettre la valeur par défaut pour le voltage"
+        				, "Mauvaise valeur", n.ERROR_MESSAGE);
+    			V="120000";
+    		}
+    		String L = JOptionPane.showInputDialog(n,"Veuillez rentrer la longueur de caméra en Metre.");
+    		try{
+    			j = Float.parseFloat(L);
+    		}catch(NumberFormatException z){
+    			JOptionPane.showMessageDialog(n, "Vous n'avez pas rentré un chiffre. "
+    					+ "Nous allons mettre la valeur par défaut pour la longueur de caméra"
+        				, "Mauvaise valeur", n.ERROR_MESSAGE);
+    			L="0.05";
+    		}
+    		try{
+    		    PrintWriter writer = new PrintWriter(F, "UTF-8");
+    		    writer.println("Pixel par Metre : "+ Ppern);
+    		    writer.println("====================================");
+    		    writer.println("Tension d'acceleration des electrons U : "+ V);
+    		    writer.println("====================================");
+    		    writer.println("Longueur de camera en Metre : "+ L);
+    		    writer.close();
+    		} catch (IOException e) {
+    		   // do something
+    		}
+    	}
+	}
+	
+		public void changeParam(){
+			String p = null;
+			String v =null;
+			String l =null;
+		    File f = new File("1.txt");
+		    try{
+		    	Scanner sc = new Scanner(f);
+		    	p =  sc.nextLine();
+		    	p = p.replace("Pixel par Metre : ","");
+		    	System.out.println(p);
+		    	sc.nextLine();
+		    	v =  sc.nextLine();
+		    	v = v.replaceAll("Tension d'acceleration des electrons U : ", "");
+		    	System.out.println(v);
+		    	sc.nextLine();
+		    	l =  sc.nextLine();
+		    	l = l.replaceAll("Longueur de camera en Metre : ", "");
+		    	System.out.println(l);
+		    	sc.close();
+		    	
+		    }catch(FileNotFoundException fnf){
+		    	
+		    }
+		    JTextField pField = new JTextField(p,7);
+		    JTextField vField = new JTextField(v,7);
+		    JTextField lField = new JTextField(l,7);
 
+		    JPanel myPanel = new JPanel();
+		    myPanel.add(new JLabel("Pixel par Metre :"));
+		    myPanel.add(pField);
+		    myPanel.add(Box.createHorizontalStrut(15)); // a spacer
+		    myPanel.add(new JLabel("Tension d'accélération des électrons U:"));
+		    myPanel.add(vField);
+		    myPanel.add(Box.createHorizontalStrut(15)); // a spacer
+		    myPanel.add(new JLabel("Longueur de camera :"));
+		    myPanel.add(lField);
+		      
+		      int result = JOptionPane.showConfirmDialog(null, myPanel, 
+		               "Option", JOptionPane.OK_CANCEL_OPTION);
+		      if (result == JOptionPane.OK_OPTION) {
+		    	  PrintWriter writer;
+		    	  float j;
+				try {
+					j = Float.parseFloat(pField.getText());
+					j = Float.parseFloat(vField.getText());
+					j = Float.parseFloat(lField.getText());
+					writer = new PrintWriter(f, "UTF-8");
+					writer.println("Pixel par Metre : "+ pField.getText());
+	    		    writer.println("====================================");
+	    		    writer.println("Tension d'acceleration des electrons U : "+ vField.getText());
+	    		    writer.println("====================================");
+	    		    writer.println("Longueur de camera en Metre : "+ lField.getText());
+	    		    writer.close();
+				} catch (FileNotFoundException | UnsupportedEncodingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}catch(NumberFormatException z){
+					JOptionPane.showMessageDialog(null, "Vous n'avez pas rentré un chiffre. "
+	    					+ "Les valeurs sont inchangé"
+	        				, "Mauvaise valeur", JOptionPane.ERROR_MESSAGE);
+				}
+	    		    
+		       }
+		}
+	
 	//Action On button
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -117,7 +244,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			//Variable Chooser
 			JFileChooser chooser = new JFileChooser();
 			//Filter
-			FileNameExtensionFilter filter = new FileNameExtensionFilter("Image Files", "Jpeg", "jpg", "tif", "Tiff");
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("Image Files", "Jpeg", "jpg", "tif", "Tiff","PNG","png");
 			chooser.setFileFilter(filter);
 			//EndFilter
 			chooser.setAcceptAllFileFilterUsed(false);
@@ -142,6 +269,10 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			//Method to find center
 			mainPanel.setCurrentTool(TypeOutil.POINT);
 			System.out.println("Click FC"+mainPanel.getCurrentTool());
+		}
+		if (e.getSource() == setParam) {
+			//Method to find center
+			this.changeParam();
 		}
 	}
 
@@ -251,54 +382,9 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	}
     //Main
     public static void main(String[] args) {
-    	File F = new File("1.txt"); 
-    	if(!F.exists()){
-    		int i;
-    		float j;
-    		JOptionPane n = new JOptionPane("Coucou");
-    		JOptionPane.showMessageDialog(n, "Bonjour cela est votre premiere utilisation du logiciel,"
-    				+ " veuillez rentrer les informations correspondantes"
-    				, "First Use", n.INFORMATION_MESSAGE);
-    		String Ppern = JOptionPane.showInputDialog(n,"Rentrer le pixel par metre de l'image");
-    		try{
-    			i = Integer.parseInt(Ppern);
-    		}catch(NumberFormatException z){
-    			JOptionPane.showMessageDialog(n, "Vous n'avez pas rentré un entier."
-    					+ " Nous allons mettre la valeur par défaut pour le pixel par metre qui est de 1491"
-        				, "Mauvaise valeur", n.INFORMATION_MESSAGE);
-    			Ppern="1491";
-    		}
-    		String V = JOptionPane.showInputDialog(n,"Veuillez rentrer la tension d'accélération des électrons  U (en V).");
-    		try{
-    			j = Float.parseFloat(V);
-    		}catch(NumberFormatException z){
-    			JOptionPane.showMessageDialog(n, "Vous n'avez pas rentré un entier. "
-    					+ "Nous allons mettre la valeur par défaut pour le voltage"
-        				, "Mauvaise valeur", n.INFORMATION_MESSAGE);
-    			V="120000";
-    		}
-    		String L = JOptionPane.showInputDialog(n,"Veuillez rentrer la longueur de caméra en Metre.");
-    		try{
-    			j = Float.parseFloat(L);
-    		}catch(NumberFormatException z){
-    			JOptionPane.showMessageDialog(n, "Vous n'avez pas rentré un entier. "
-    					+ "Nous allons mettre la valeur par défaut pour la longueur de caméra"
-        				, "Mauvaise valeur", n.INFORMATION_MESSAGE);
-    			L="0.05";
-    		}
-    		try{
-    		    PrintWriter writer = new PrintWriter(F, "UTF-8");
-    		    writer.println("Pixel par Metre : "+ Ppern);
-    		    writer.println("====================================");
-    		    writer.println("Tension d'accélération des électrons U : "+ V);
-    		    writer.println("====================================");
-    		    writer.println("Longueur de caméra en Metre "+ L);
-    		    writer.close();
-    		} catch (IOException e) {
-    		   // do something
-    		}
-    	}
+    	
         Fenetre window = new Fenetre();
+        window.firstUse();
         window.setVisible(true);
         
     }
