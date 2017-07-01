@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import javafx.scene.control.Slider;
@@ -336,8 +337,13 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			}else{
 				mainPanel.tmpCircle.ptCircle.add(new Point(positionX,positionY));
 				mainPanel.tmpCircle.setDr(true);
+				Circle c = mainPanel.tmpCircle;
 				mainPanel.listeCircle.add(mainPanel.tmpCircle);
+				
 				mainPanel.tmpCircle = new Circle();
+				Graphics2D g2d = mainPanel.bufferedScaled.createGraphics();
+				Point centerCircle=mainPanel.circleCenter(c.ptCircle.get(0), c.ptCircle.get(1), c.ptCircle.get(2));
+				mainPanel.getAllpointWithCenter(g2d, centerCircle);
 				//mainPanel.tmpCircle.ptCircle.clear();
 			}
 			if(mainPanel.listeCircle.size()!=0 && mainPanel.tmpCircle.ptCircle.size()==1){

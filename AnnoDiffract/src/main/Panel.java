@@ -36,11 +36,12 @@ class Panel extends JPanel {
 	private final Integer ratioY = 90;
 	private Image imageScaled = null;
 	private BufferedImage bufferedOriginal;
-	private BufferedImage bufferedScaled;
+	public BufferedImage bufferedScaled;
 	private BufferedImage bufferedScaled2;
 	private float bright=-1;
 	public Circle tmpCircle = new Circle();
-	public final ArrayList<Circle> listeCircle = new ArrayList<>();
+	public  ArrayList<Circle> listeCircle = new ArrayList<>();
+	public final ArrayList<int[]> listeMoyen = new ArrayList<>();
 	private double resX=0;
 	private double resY=0;
 	
@@ -66,6 +67,8 @@ class Panel extends JPanel {
 	//Methode pour ouvrir l'image puis l'afficher avec une bonne dimension
 	void openImage(File file) throws Exception {
 		try {
+			tmpCircle.ptCircle.clear();
+			listeCircle.clear();
 			FileInputStream in = new FileInputStream(file.getPath());
 			FileChannel channel = in.getChannel();
 			ByteBuffer buffer = ByteBuffer.allocate((int)channel.size());
@@ -145,6 +148,36 @@ class Panel extends JPanel {
 			}
 		}
 	}
+	
+	public void getAllpointWithCenter(Graphics2D g2d, Point e){
+		float x =(int)Math.round(e.getX());
+		float y = (int)Math.round(e.getY());
+		float r =0;
+		int j =0;
+		int x1;
+		int y1;
+		ArrayList<Point> lP = new ArrayList<Point>();
+		for(j=1;j<=bufferedScaled.getWidth();j++){
+			//System.out.println(j);
+			lP.clear();
+			r=lenghtFrom2Points(e, new Point((int)Math.round(e.getX())+j,(int)Math.round(e.getY())));
+			for(float i=0;i<=2*Math.PI;i+=0.001){
+				x1 = (int) (x + r * Math.cos(i));
+				y1 = (int) (y + r * Math.sin(i));
+				//drawPoint(g2d, new Point(x1,y1));
+				repaint();
+				if(i!=0){
+					if(lP.get(lP.size()-1).getX()!=x1 && lP.get(lP.size()-1).getY()!=y1){
+						lP.add(new Point(x1,y1));
+						//System.out.println(x1+" "+y1+" ");
+					}
+				}else{
+					lP.add(new Point(x1,y1));
+					//System.out.println(x1+" "+y1+" ");
+				}
+			}
+		}
+	}
 
 	private BufferedImage toGray(BufferedImage image) {
 		int width = image.getWidth();
@@ -195,6 +228,7 @@ class Panel extends JPanel {
 		super.paintComponent(g);
 		if (isLoaded()) {
 			Graphics2D g2d = bufferedScaled.createGraphics();
+			g2d.setColor(Color.BLUE);
 			if(!listeCircle.isEmpty()){
 				for (Circle aListePoint : listeCircle) {
 					for(Point pt : aListePoint.ptCircle){	
