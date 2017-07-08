@@ -367,7 +367,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 						//System.out.println(moy);
 					}
 					i=i+4;
-				}
+				}  
 				mainPanel.tmpCircle.ptCircle.clear();
 			}
 			if(mainPanel.listeCircle.size()!=0 && mainPanel.tmpCircle.ptCircle.size()==1){

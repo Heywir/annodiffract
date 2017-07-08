@@ -50,9 +50,9 @@ class Panel extends JPanel {
 
 	public Panel(Fenetre f) {
 		
-		this.f = f;
+		this.f = f; 
 		
-		// Layout
+		// Layout 
 		
 		GridBagLayout layout = new GridBagLayout();
 		GridBagConstraints c = new GridBagConstraints();
