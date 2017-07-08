@@ -380,7 +380,7 @@ class Panel extends JPanel {
 	
 	private void drawPoint(Graphics2D g2d, Point e) {
 		int x1,y1,x2,y2;
-		x1 = (int) Math.round(e.getX() - 3);
+		x1 = (int) Math.round(e.getX() - 3); 
 		y1 = (int) Math.round(e.getY());
 		x2 = (int) Math.round(e.getX());
 		y2 = (int) Math.round(e.getY());

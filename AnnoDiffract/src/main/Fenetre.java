@@ -359,7 +359,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 						Color color=new Color(mainPanel.getBufferedOriginal().getRGB((int)(tmp.get(h).getX()), (int)tmp.get(h).getY()));
 						somme = somme + ((color.getRed() + color.getBlue()+ color.getGreen())/3);
 						//System.out.println(color.getRed() +" "+ color.getBlue()+" "+ color.getGreen());
-						//System.out.println(somme);
+						//System.out.println(somme); 
 					}
 					if(!tmp.isEmpty()){
 						moy = somme/tmp.size();
