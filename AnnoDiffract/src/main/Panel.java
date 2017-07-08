@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 class Panel extends JPanel {
 	public enum TypeOutil {
@@ -28,6 +29,7 @@ class Panel extends JPanel {
 		 NORMAL,/* L'utilisateur vient de lancer le software */
 		 POINT, /* L'utilisateur va placer des points */
 	}
+	private Fenetre f;
 	private TypeOutil currentTool = TypeOutil.NORMAL;
 	private JLabel label = null;
 	private Image image = null;
@@ -41,13 +43,15 @@ class Panel extends JPanel {
 	private float bright=-1;
 	public Circle tmpCircle = new Circle();
 	public  ArrayList<Circle> listeCircle = new ArrayList<>();
-	public final ArrayList<int[]> listeMoyen = new ArrayList<>();
+	public ArrayList<Integer> listeMoyen = new ArrayList<>();
 	private double resX=0;
 	private double resY=0;
 	
 
-	Panel() {
-
+	public Panel(Fenetre f) {
+		
+		this.f = f;
+		
 		// Layout
 		
 		GridBagLayout layout = new GridBagLayout();
@@ -75,8 +79,10 @@ class Panel extends JPanel {
 		    channel.read(buffer);
 		    setImage(load(buffer.array()));
 			bufferedOriginal = toBufferedImage(getImage());
-		    imageScaled = getImage().getScaledInstance((this.getWidth()/100)*ratioX, ((this.getHeight()/100)*ratioY),  Image.SCALE_SMOOTH);
-
+			Dimension d = resizeImage();
+		    //imageScaled = getImage().getScaledInstance((this.getWidth()/100)*ratioX, ((this.getHeight()/100)*ratioY),  Image.SCALE_SMOOTH);
+			//System.out.println(d.width+" "+d.height);
+			imageScaled = getImage().getScaledInstance(d.width, -1,  Image.SCALE_SMOOTH);
 
 		    //Convert Image to Gray
 		    bufferedScaled = toBufferedImage(imageScaled);
@@ -124,22 +130,40 @@ class Panel extends JPanel {
 	    return image;
 	  }
 	
+	public Dimension resizeImage(){
+		float Calneww = Float.MAX_VALUE, Calnewh = Float.MAX_VALUE, imWidth = bufferedOriginal.getWidth(), imHeight = bufferedOriginal.getHeight();
+		int neww,newh;
+		Calneww = (float) ((imWidth/imHeight)*(f.getHeight()/1.4));
+		//System.out.println(imWidth/imHeight +"  * " + f.getHeight()/1.4);
+		Calnewh = (float) ((imHeight/imWidth)*(f.getWidth()/1.4));
+		//System.out.println(imHeight/imWidth +"  * " + f.getWidth()/1.6);
+			
+		neww = (int) Math.round(Calneww);
+		newh = (int) Math.round(Calnewh);
+		//System.out.println(neww+" "+ newh);
+		return new Dimension(neww, newh);
+		
+	}
+	
 	void scale() {
 		if (imageScaled != null) {
-			imageScaled = getImage().getScaledInstance((this.getWidth()/100)*ratioX, ((this.getHeight()/100)*ratioY),  Image.SCALE_SMOOTH);
-		    bufferedScaled = toBufferedImage(imageScaled);
-		    bufferedScaled2 = toBufferedImage(imageScaled);
+			Dimension d = resizeImage();
+			imageScaled = bufferedOriginal.getScaledInstance(d.width, -1,  Image.SCALE_SMOOTH);
+			bufferedScaled = toBufferedImage(imageScaled);
+			toGray(bufferedScaled);
+		    bufferedScaled2 = toGray(toBufferedImage(imageScaled));
 		    if(bright!=-1){
 		    	setBrightness(bright);
 		    }
-		    Image img = bufferedScaled.getScaledInstance((this.getWidth()/100)*ratioX, ((this.getHeight()/100)*ratioY),  Image.SCALE_SMOOTH);
+		    Image img = bufferedScaled;
+		    //Image img = bufferedScaled.getScaledInstance((this.getWidth()/100)*ratioX, ((this.getHeight()/100)*ratioY),  Image.SCALE_SMOOTH);
 			getLabel().setIcon(new ImageIcon(img));
 			if(!listeCircle.isEmpty()){
 				for(int i= 0 ; i < listeCircle.size(); i++ ){
 					for(int j=0 ; j < listeCircle.get(i).ptCircle.size();j++){
 					//System.out.println(getLabel().getWidth()+"/"+resX+"*"+listeCircle.get(i).ptCircle.get(j).getX()+","+ getLabel().getHeight()+"/"+resY+"*"+listeCircle.get(i).ptCircle.get(j).getY());
 					listeCircle.get(i).ptCircle.get(j).setLocation(((getLabel().getWidth()/resX)*listeCircle.get(i).ptCircle.get(j).getX()), ((getLabel().getHeight()/resY)*listeCircle.get(i).ptCircle.get(j).getY()));
-					System.out.println(listeCircle.get(i).ptCircle.get(j).getX()+" "+listeCircle.get(i).ptCircle.get(j).getY());
+					//System.out.println(listeCircle.get(i).ptCircle.get(j).getX()+" "+listeCircle.get(i).ptCircle.get(j).getY());
 				}
 			}
 			resX = getLabel().getWidth();
@@ -149,34 +173,65 @@ class Panel extends JPanel {
 		}
 	}
 	
-	public void getAllpointWithCenter(Graphics2D g2d, Point e){
-		float x =(int)Math.round(e.getX());
-		float y = (int)Math.round(e.getY());
-		float r =0;
-		int j =0;
-		int x1;
-		int y1;
-		ArrayList<Point> lP = new ArrayList<Point>();
-		for(j=1;j<=bufferedScaled.getWidth();j++){
-			//System.out.println(j);
-			lP.clear();
-			r=lenghtFrom2Points(e, new Point((int)Math.round(e.getX())+j,(int)Math.round(e.getY())));
-			for(float i=0;i<=2*Math.PI;i+=0.001){
-				x1 = (int) (x + r * Math.cos(i));
-				y1 = (int) (y + r * Math.sin(i));
-				//drawPoint(g2d, new Point(x1,y1));
-				repaint();
-				if(i!=0){
-					if(lP.get(lP.size()-1).getX()!=x1 && lP.get(lP.size()-1).getY()!=y1){
-						lP.add(new Point(x1,y1));
-						//System.out.println(x1+" "+y1+" ");
-					}
-				}else{
-					lP.add(new Point(x1,y1));
-					//System.out.println(x1+" "+y1+" ");
-				}
-			}
-		}
+	public ArrayList<Point> getPointWithCenter(int x_centre, int y_centre, int r){
+		
+		ArrayList<Point> pixels = new ArrayList<Point>();
+	    
+		int width = bufferedScaled.getWidth();
+		int height = bufferedScaled.getHeight();
+		
+	    int x = 0;
+	    int y = r;
+	    int d = r - 1;
+	    
+	    while(y >= x)
+	    {
+	    	if((x_centre + x > 0 && width > x_centre + x ) && ( y_centre + y > 0 && height > y_centre + y ) ){
+	    		pixels.add( new Point( x_centre + x, y_centre + y ));
+	    		//System.out.println(Math.addExact(x_centre, x) + " "+Math.addExact(y_centre, y));
+	    	}
+	    	if((x_centre + y > 0 && width > x_centre + y ) && ( y_centre + x > 0 && height > y_centre + x ) ){
+	    		pixels.add( new Point( x_centre + y, y_centre + x));
+	    		//drawPoint(g2d, new Point( x_centre + y, y_centre + x));
+	    	}
+	    	if((x_centre - x > 0 && width > x_centre - x ) && ( y_centre + y > 0 && height > y_centre + y ) ){
+	    		pixels.add( new Point( x_centre - x, y_centre + y ));
+	    		//System.out.println(x_centre - x + " "+ y_centre + y );
+	    	}
+	    	if((x_centre - y > 0 && width > x_centre - y ) && ( y_centre + x > 0 && height > y_centre + x ) ){
+	    		pixels.add( new Point( x_centre - y, y_centre + x ));
+	    	}
+	    	if((x_centre + x > 0 && width > x_centre  + x ) && ( y_centre - y > 0 && height > y_centre - y ) ){
+	    		pixels.add( new Point( x_centre + x, y_centre - y ));
+	    	}
+	    	if((x_centre + y > 0 && width > x_centre  + y ) && ( y_centre - x > 0 && height > y_centre - x ) ){
+	    		pixels.add( new Point( x_centre + y, y_centre - x ));
+	    	}
+	    	if((x_centre - x > 0 && width > x_centre  - x ) && ( y_centre - y > 0 && height > y_centre - y ) ){
+	    		pixels.add( new Point( x_centre - x, y_centre - y ));
+	    	}
+	    	if((x_centre - y > 0 && width > x_centre  - y ) && ( y_centre - x > 0 && height > y_centre - x ) ){
+	    		pixels.add( new Point( x_centre - y, y_centre - x ));
+	    	}
+	        
+	        if (d >= 2*x)
+	        {
+	            d -= 2*x + 1;
+	            x ++;
+	        }
+	        else if (d < 2 * (r-y))
+	        {
+	            d += 2*y - 1;
+	            y --;
+	        }
+	        else
+	        {
+	            d += 2*(y - x - 1);
+	            y --;
+	            x ++;
+	        }
+	    }
+		return pixels;
 	}
 
 	private BufferedImage toGray(BufferedImage image) {
@@ -250,8 +305,9 @@ class Panel extends JPanel {
 			}
 
 			g2d.dispose();
-			//Image img = getImage().getScaledInstance((this.getWidth()/100)*ratioX, ((this.getHeight()/100)*ratioY),  Image.SCALE_SMOOTH);
-			getLabel().setIcon(new ImageIcon(bufferedScaled));
+			Image img = bufferedScaled;
+		    //Image img = bufferedScaled.getScaledInstance((this.getWidth()/100)*ratioX, ((this.getHeight()/100)*ratioY),  Image.SCALE_SMOOTH);
+			getLabel().setIcon(new ImageIcon(img));
 			drawGraph(g);
 		}
 		repaint();

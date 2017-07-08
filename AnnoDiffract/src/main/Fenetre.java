@@ -37,7 +37,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		Rectangle bounds = env.getMaximumWindowBounds();
 		
 		// Composants
-		setMainPanel(new Panel());
+		setMainPanel(new Panel(this));
 		JMenuBar mainMenuBar = buildMenuBar();
 		JPanel statusPanel = new JPanel(new BorderLayout());
 		statusLabel = new JLabel();
@@ -61,7 +61,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		this.add(mainMenuBar, BorderLayout.NORTH);
 		this.add(getMainPanel(), BorderLayout.CENTER);
 		this.add(statusPanel, BorderLayout.SOUTH);
-		
+		mainPanel.setSize(new Dimension(this.getWidth(), this.getHeight()));
 		
 	
 	}
@@ -307,6 +307,12 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 
 	@Override
 	public void componentResized(ComponentEvent e) {
+
+		//if(this.getWidth()>100 && this.getHeight()>100){
+			//float h = this.getHeight()/2  , w = this.getWidth()/2;
+			//int h1 = Math.round(h),w1 = Math.round(w);
+			//mainPanel.setSize(new Dimension(h1, w1));
+		//}
 		
 		if (e.getSource() == getMainPanel()) {
 			mainPanel.scale();
@@ -339,12 +345,30 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 				mainPanel.tmpCircle.setDr(true);
 				Circle c = mainPanel.tmpCircle;
 				mainPanel.listeCircle.add(mainPanel.tmpCircle);
-				
 				mainPanel.tmpCircle = new Circle();
 				Graphics2D g2d = mainPanel.bufferedScaled.createGraphics();
 				Point centerCircle=mainPanel.circleCenter(c.ptCircle.get(0), c.ptCircle.get(1), c.ptCircle.get(2));
-				mainPanel.getAllpointWithCenter(g2d, centerCircle);
-				//mainPanel.tmpCircle.ptCircle.clear();
+				int i=1;
+				int j=0;
+				while(i<mainPanel.bufferedScaled.getWidth()){
+					mainPanel.lenghtFrom2Points(centerCircle, new Point((int)(centerCircle.getX()+i),(int)(centerCircle.getY())));
+					ArrayList<Point> tmp = mainPanel.getPointWithCenter((int)centerCircle.getX(),(int)centerCircle.getY(),i);
+					float somme = 0,moy;
+					for(int h = 0; h<=tmp.size()-1;h++){
+						//somme = somme +mainPanel.getBufferedOriginal().getRGB(tmp.get(h).getX(), tmp.get(h).getY());
+						Color color=new Color(mainPanel.getBufferedOriginal().getRGB((int)(tmp.get(h).getX()), (int)tmp.get(h).getY()));
+						somme = somme + ((color.getRed() + color.getBlue()+ color.getGreen())/3);
+						//System.out.println(color.getRed() +" "+ color.getBlue()+" "+ color.getGreen());
+						//System.out.println(somme);
+					}
+					if(!tmp.isEmpty()){
+						moy = somme/tmp.size();
+						mainPanel.listeMoyen.add(Math.round(moy));
+						//System.out.println(moy);
+					}
+					i=i+4;
+				}
+				mainPanel.tmpCircle.ptCircle.clear();
 			}
 			if(mainPanel.listeCircle.size()!=0 && mainPanel.tmpCircle.ptCircle.size()==1){
 				mainPanel.setResX(mainPanel.getLabel().getWidth());
