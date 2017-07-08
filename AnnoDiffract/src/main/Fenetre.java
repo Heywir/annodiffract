@@ -37,7 +37,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		Rectangle bounds = env.getMaximumWindowBounds();
 		
 		// Composants
-		setMainPanel(new Panel());
+		setMainPanel(new Panel(this));
 		JMenuBar mainMenuBar = buildMenuBar();
 		JPanel statusPanel = new JPanel(new BorderLayout());
 		statusLabel = new JLabel();
@@ -61,7 +61,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		this.add(mainMenuBar, BorderLayout.NORTH);
 		this.add(getMainPanel(), BorderLayout.CENTER);
 		this.add(statusPanel, BorderLayout.SOUTH);
-		
+		mainPanel.setSize(new Dimension(this.getWidth(), this.getHeight()));
 		
 	
 	}
@@ -307,6 +307,12 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 
 	@Override
 	public void componentResized(ComponentEvent e) {
+
+		//if(this.getWidth()>100 && this.getHeight()>100){
+			//float h = this.getHeight()/2  , w = this.getWidth()/2;
+			//int h1 = Math.round(h),w1 = Math.round(w);
+			//mainPanel.setSize(new Dimension(h1, w1));
+		//}
 		
 		if (e.getSource() == getMainPanel()) {
 			mainPanel.scale();
@@ -339,7 +345,6 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 				mainPanel.tmpCircle.setDr(true);
 				Circle c = mainPanel.tmpCircle;
 				mainPanel.listeCircle.add(mainPanel.tmpCircle);
-				
 				mainPanel.tmpCircle = new Circle();
 				Graphics2D g2d = mainPanel.bufferedScaled.createGraphics();
 				Point centerCircle=mainPanel.circleCenter(c.ptCircle.get(0), c.ptCircle.get(1), c.ptCircle.get(2));
