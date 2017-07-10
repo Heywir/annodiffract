@@ -34,8 +34,6 @@ class Panel extends JPanel {
 	private JLabel label = null;
 	private Image image = null;
 	private boolean loaded = false;
-	private final Integer ratioX = 65;
-	private final Integer ratioY = 90;
 	private Image imageScaled = null;
 	private BufferedImage bufferedOriginal;
 	public BufferedImage bufferedScaled;
@@ -80,14 +78,13 @@ class Panel extends JPanel {
 		    setImage(load(buffer.array()));
 			bufferedOriginal = toBufferedImage(getImage());
 			Dimension d = resizeImage();
-		    //imageScaled = getImage().getScaledInstance((this.getWidth()/100)*ratioX, ((this.getHeight()/100)*ratioY),  Image.SCALE_SMOOTH);
-			//System.out.println(d.width+" "+d.height);
 			imageScaled = getImage().getScaledInstance(d.width, -1,  Image.SCALE_SMOOTH);
 
 		    //Convert Image to Gray
 		    bufferedScaled = toBufferedImage(imageScaled);
 		    bufferedScaled2 = toBufferedImage(imageScaled);
 		    BufferedImage tGray = toGray(bufferedScaled);
+		    toGray(bufferedOriginal);
 		    toGray(bufferedScaled2);
 		    setImage(tGray);
             
@@ -133,9 +130,9 @@ class Panel extends JPanel {
 	public Dimension resizeImage(){
 		float Calneww = Float.MAX_VALUE, Calnewh = Float.MAX_VALUE, imWidth = bufferedOriginal.getWidth(), imHeight = bufferedOriginal.getHeight();
 		int neww,newh;
-		Calneww = (float) ((imWidth/imHeight)*(f.getHeight()/1.4));
+		Calneww = (float) ((imWidth/imHeight)*(f.getHeight()/1.5));
 		//System.out.println(imWidth/imHeight +"  * " + f.getHeight()/1.4);
-		Calnewh = (float) ((imHeight/imWidth)*(f.getWidth()/1.4));
+		Calnewh = (float) ((imHeight/imWidth)*(f.getWidth()/1.5));
 		//System.out.println(imHeight/imWidth +"  * " + f.getWidth()/1.6);
 			
 		neww = (int) Math.round(Calneww);
@@ -177,8 +174,8 @@ class Panel extends JPanel {
 		
 		ArrayList<Point> pixels = new ArrayList<Point>();
 	    
-		int width = bufferedScaled.getWidth();
-		int height = bufferedScaled.getHeight();
+		int width = bufferedOriginal.getWidth();
+		int height = bufferedOriginal.getHeight();
 		
 	    int x = 0;
 	    int y = r;
@@ -251,10 +248,10 @@ class Panel extends JPanel {
 		return image;
 	}
 	
-	public void drawCenteredCircle(Graphics2D g, Point centerCircle, int r) {
+	public void drawCenteredCircle(Graphics2D g, Point centerCircle, float r) {
 		  int x = (int) Math.round(centerCircle.getX()-(r));
 		  int y = (int) Math.round(centerCircle.getY()-(r));
-		  g.drawOval(x,y,2*r,2*r);
+		  g.drawOval(x,y,2*(int)r,2*(int)r);
 		}
 	
 	public Point circleCenter(Point A, Point B, Point C) { 
@@ -274,8 +271,8 @@ class Panel extends JPanel {
 		return center;
 	}
 	
-	public int lenghtFrom2Points(Point A, Point B) {
-		int lenght = (int) Math.sqrt((A.getX()-B.getX())*(A.getX()-B.getX()) + (A.getY()-B.getY())*(A.getY()-B.getY()));
+	public float lenghtFrom2Points(Point A, Point B) {
+		float lenght = (float)Math.sqrt((A.getX()-B.getX())*(A.getX()-B.getX()) + (A.getY()-B.getY())*(A.getY()-B.getY()));
 		return lenght; 
 	}
 
@@ -293,7 +290,7 @@ class Panel extends JPanel {
 					if(aListePoint.isDr()){
 						Point centerCircle=circleCenter(aListePoint.ptCircle.get(0), aListePoint.ptCircle.get(1), aListePoint.ptCircle.get(2));
 						drawPoint(g2d, centerCircle);
-						int r = lenghtFrom2Points(centerCircle, aListePoint.ptCircle.get(0));
+						float r = lenghtFrom2Points(centerCircle, aListePoint.ptCircle.get(0));
 						drawCenteredCircle(g2d, centerCircle, r);
 					}
 				}

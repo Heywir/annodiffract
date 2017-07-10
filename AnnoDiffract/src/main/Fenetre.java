@@ -13,7 +13,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import javafx.scene.control.Slider;
 import main.Panel.TypeOutil;
 
 import java.awt.*;
@@ -341,17 +340,30 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			if(mainPanel.tmpCircle.ptCircle.size()<2){
 				mainPanel.tmpCircle.ptCircle.add(new Point(positionX,positionY));
 			}else{
+				
 				mainPanel.tmpCircle.ptCircle.add(new Point(positionX,positionY));
 				mainPanel.tmpCircle.setDr(true);
 				Circle c = mainPanel.tmpCircle;
 				mainPanel.listeCircle.add(mainPanel.tmpCircle);
 				mainPanel.tmpCircle = new Circle();
-				Graphics2D g2d = mainPanel.bufferedScaled.createGraphics();
-				Point centerCircle=mainPanel.circleCenter(c.ptCircle.get(0), c.ptCircle.get(1), c.ptCircle.get(2));
-				int i=1;
-				int j=0;
-				while(i<mainPanel.bufferedScaled.getWidth()){
-					mainPanel.lenghtFrom2Points(centerCircle, new Point((int)(centerCircle.getX()+i),(int)(centerCircle.getY())));
+				mainPanel.tmpCircle.ptCircle.clear();
+				if(mainPanel.listeCircle.size()!=0){
+					mainPanel.setResX(mainPanel.getLabel().getWidth());
+					mainPanel.setResY(mainPanel.getLabel().getHeight());
+				}
+				//Graphics2D g2d = mainPanel.bufferedScaled.createGraphics();
+				Point centerCircle=mainPanel.circleCenter(
+						new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*c.ptCircle.get(0).getX()),
+								(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*c.ptCircle.get(0).getY())),
+						new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*c.ptCircle.get(1).getX()),
+								(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*c.ptCircle.get(1).getY())),
+						new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*c.ptCircle.get(2).getX()),
+								(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*c.ptCircle.get(2).getY())));
+				System.out.println(centerCircle.getX() + " " + centerCircle.getY());
+				int i=0;
+				//float j=0;
+				while(i<mainPanel.getBufferedOriginal().getWidth()+centerCircle.getY()){
+					//j=mainPanel.lenghtFrom2Points(centerCircle, new Point((int)(centerCircle.getX()+i),(int)(centerCircle.getY())));
 					ArrayList<Point> tmp = mainPanel.getPointWithCenter((int)centerCircle.getX(),(int)centerCircle.getY(),i);
 					float somme = 0,moy;
 					for(int h = 0; h<=tmp.size()-1;h++){
@@ -364,16 +376,13 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 					if(!tmp.isEmpty()){
 						moy = somme/tmp.size();
 						mainPanel.listeMoyen.add(Math.round(moy));
-						//System.out.println(moy);
+						System.out.println(moy);
 					}
-					i=i+4;
+					i++;
 				}  
-				mainPanel.tmpCircle.ptCircle.clear();
+				
 			}
-			if(mainPanel.listeCircle.size()!=0 && mainPanel.tmpCircle.ptCircle.size()==1){
-				mainPanel.setResX(mainPanel.getLabel().getWidth());
-				mainPanel.setResY(mainPanel.getLabel().getHeight());
-			}
+			
 			
 		}
 	}
