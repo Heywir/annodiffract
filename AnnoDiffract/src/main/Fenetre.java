@@ -1,6 +1,7 @@
 package main;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -10,8 +11,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.*;
 
 import main.Panel.TypeOutil;
 
@@ -22,6 +22,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 
 	private Panel mainPanel = null;
 	private JMenuItem menuItemOuvrir = null;
+	private JMenuItem menuGraphOpen = null;
 	private JButton findCenter = null;
 	private JButton setParam = null;
 	private JLabel statusLabel = null;
@@ -68,8 +69,9 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	private JMenuBar buildMenuBar() {
 
 		// Menu Bar
+		JMenuBar newMenuBar = new JMenuBar();
 		JMenuBar menuBar = new JMenuBar();
-		//menuBar.setBorder(null);
+		menuBar.setBorder(null);
 
 		// Layout
 		BorderLayout barLayout = new BorderLayout();
@@ -78,6 +80,11 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		// Menus
 		JMenu menuFile = new JMenu("Fichier");
 		menuItemOuvrir = new JMenuItem("Ouvrir");
+
+		// Graph
+		JMenu menuGraph = new JMenu("Graph");
+		menuGraphOpen = new JMenuItem("Ouvrir");
+		menuGraphOpen.setEnabled(true);
 
 		// ToolBar
 		JPanel toolBar = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -100,9 +107,12 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		setParam.setContentAreaFilled(false);
 
 		// Ajouts
-		menuBar.add(menuFile, BorderLayout.NORTH);
+		newMenuBar.add(menuFile);
+		newMenuBar.add(menuGraph);
+		menuBar.add(newMenuBar, BorderLayout.NORTH);
 		menuBar.add(toolBar, BorderLayout.CENTER);
 		menuFile.add(menuItemOuvrir);
+		menuGraph.add(menuGraphOpen);
 		toolBar.add(findCenter);
 		toolBar.add(setParam);
 		toolBar.add(brightSlide);
@@ -110,6 +120,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		// Listeners
 		getMainPanel().addComponentListener(this);
 		menuItemOuvrir.addActionListener(this);
+		menuGraphOpen.addActionListener(this);
 		setParam.addActionListener(this);
 		findCenter.addActionListener(this);
 		mainPanel.getLabel().addMouseListener(this);
@@ -132,26 +143,26 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
     		try{
     			i = Integer.parseInt(Ppern);
     		}catch(NumberFormatException z){
-    			JOptionPane.showMessageDialog(n, "Vous n'avez pas rentré un entier."
-    					+ " Nous allons mettre la valeur par défaut pour le pixel par metre qui est de 1491"
+    			JOptionPane.showMessageDialog(n, "Vous n'avez pas rentrï¿½ un entier."
+    					+ " Nous allons mettre la valeur par dï¿½faut pour le pixel par metre qui est de 1491"
         				, "Mauvaise valeur", n.ERROR_MESSAGE);
     			Ppern="1491";
     		}
-    		String V = JOptionPane.showInputDialog(n,"Veuillez rentrer la tension d'accélération des électrons  U (en V).");
+    		String V = JOptionPane.showInputDialog(n,"Veuillez rentrer la tension d'accï¿½lï¿½ration des ï¿½lectrons  U (en V).");
     		try{
     			j = Float.parseFloat(V);
     		}catch(NumberFormatException z){
-    			JOptionPane.showMessageDialog(n, "Vous n'avez pas rentré un entier. "
-    					+ "Nous allons mettre la valeur par défaut pour le voltage"
+    			JOptionPane.showMessageDialog(n, "Vous n'avez pas rentrï¿½ un entier. "
+    					+ "Nous allons mettre la valeur par dï¿½faut pour le voltage"
         				, "Mauvaise valeur", n.ERROR_MESSAGE);
     			V="120000";
     		}
-    		String L = JOptionPane.showInputDialog(n,"Veuillez rentrer la longueur de caméra en Metre.");
+    		String L = JOptionPane.showInputDialog(n,"Veuillez rentrer la longueur de camï¿½ra en Metre.");
     		try{
     			j = Float.parseFloat(L);
     		}catch(NumberFormatException z){
-    			JOptionPane.showMessageDialog(n, "Vous n'avez pas rentré un chiffre. "
-    					+ "Nous allons mettre la valeur par défaut pour la longueur de caméra"
+    			JOptionPane.showMessageDialog(n, "Vous n'avez pas rentrï¿½ un chiffre. "
+    					+ "Nous allons mettre la valeur par dï¿½faut pour la longueur de camï¿½ra"
         				, "Mauvaise valeur", n.ERROR_MESSAGE);
     			L="0.05";
     		}
@@ -200,7 +211,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		    myPanel.add(new JLabel("Pixel par Metre :"));
 		    myPanel.add(pField);
 		    myPanel.add(Box.createHorizontalStrut(15)); // a spacer
-		    myPanel.add(new JLabel("Tension d'accélération des électrons U:"));
+		    myPanel.add(new JLabel("Tension d'accï¿½lï¿½ration des ï¿½lectrons U:"));
 		    myPanel.add(vField);
 		    myPanel.add(Box.createHorizontalStrut(15)); // a spacer
 		    myPanel.add(new JLabel("Longueur de camera :"));
@@ -226,8 +237,8 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}catch(NumberFormatException z){
-					JOptionPane.showMessageDialog(null, "Vous n'avez pas rentré un chiffre. "
-	    					+ "Les valeurs sont inchangé"
+					JOptionPane.showMessageDialog(null, "Vous n'avez pas rentrï¿½ un chiffre. "
+	    					+ "Les valeurs sont inchangï¿½"
 	        				, "Mauvaise valeur", JOptionPane.ERROR_MESSAGE);
 				}
 	    		    
@@ -273,6 +284,31 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		if (e.getSource() == setParam) {
 			//Method to find center
 			this.changeParam();
+		}
+		if (e.getSource() == menuGraphOpen) {
+			if (getMainPanel().getLabel().getIcon() != null) {
+				// Le code qui suit sert juste a generer une liste de point alÃ©atoire
+				java.util.List<Double> scores = new ArrayList<>();
+				Random random = new Random();
+				int maxDataPoints = 40;
+				int maxScore = 10;
+				for (int i = 0; i < maxDataPoints; i++) {
+					scores.add((double) random.nextDouble() * maxScore);
+				}
+				//
+				Graph graph = new Graph(scores);
+				// Le code qui suit peut Ãªtre remplacÃ© et Ãªtre foutue dans une methode
+				graph.setPreferredSize(new Dimension(800, 600));
+				JFrame frame = new JFrame("Graph");
+				frame.getContentPane().add(graph);
+				frame.pack();
+				frame.setLocationRelativeTo(null);
+				frame.setVisible(true);
+				//
+			}
+			else {
+				System.out.println("Empty");
+			}
 		}
 	}
 
