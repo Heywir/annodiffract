@@ -14,6 +14,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 import main.Panel.TypeOutil;
+import org.jfree.ui.RefineryUtilities;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -287,24 +288,18 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		}
 		if (e.getSource() == menuGraphOpen) {
 			if (getMainPanel().getLabel().getIcon() != null) {
-				// Le code qui suit sert juste a generer une liste de point aléatoire
-				java.util.List<Double> scores = new ArrayList<>();
-				Random random = new Random();
-				int maxDataPoints = 40;
-				int maxScore = 10;
-				for (int i = 0; i < maxDataPoints; i++) {
-					scores.add((double) random.nextDouble() * maxScore);
+				ArrayList<Double> x = new ArrayList<>();
+				ArrayList<Double> y = new ArrayList<>();
+				for (int i=0; i<10; i++) {
+					x.add((double)i);
 				}
-				//
-				Graph graph = new Graph(scores);
-				// Le code qui suit peut être remplacé et être foutue dans une methode
-				graph.setPreferredSize(new Dimension(800, 600));
-				JFrame frame = new JFrame("Graph");
-				frame.getContentPane().add(graph);
-				frame.pack();
-				frame.setLocationRelativeTo(null);
-				frame.setVisible(true);
-				//
+				for (int i = 10; i>0; i--) {
+					y.add((double)i);
+				}
+				Graph graph = new Graph("Graph", "Intensite Moyenne par exemple", x, y);
+				graph.pack();
+				 RefineryUtilities.centerFrameOnScreen( graph );
+				graph.setVisible( true );
 			}
 			else {
 				System.out.println("Empty");
