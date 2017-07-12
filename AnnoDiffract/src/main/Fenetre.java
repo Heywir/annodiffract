@@ -212,7 +212,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		    myPanel.add(new JLabel("Pixel par Metre :"));
 		    myPanel.add(pField);
 		    myPanel.add(Box.createHorizontalStrut(15)); // a spacer
-		    myPanel.add(new JLabel("Tension d'accï¿½lï¿½ration des ï¿½lectrons U:"));
+		    myPanel.add(new JLabel("Tension d'acceleration des electrons (en U) :"));
 		    myPanel.add(vField);
 		    myPanel.add(Box.createHorizontalStrut(15)); // a spacer
 		    myPanel.add(new JLabel("Longueur de camera :"));
@@ -238,8 +238,8 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}catch(NumberFormatException z){
-					JOptionPane.showMessageDialog(null, "Vous n'avez pas rentrï¿½ un chiffre. "
-	    					+ "Les valeurs sont inchangï¿½"
+					JOptionPane.showMessageDialog(null, "Vous n'avez pas rentré un chiffre. "
+	    					+ "Les valeurs sont inchangé"
 	        				, "Mauvaise valeur", JOptionPane.ERROR_MESSAGE);
 				}
 	    		    
@@ -288,7 +288,12 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		}
 		if (e.getSource() == menuGraphOpen) {
 			if (getMainPanel().getLabel().getIcon() != null && !mainPanel.listeMoyen.isEmpty()) {
-				ArrayList<Double> x = new ArrayList<>();
+				if(graph!=null){
+					if(graph.getDataset()!=null){
+						graph.getDataset().removeSeries(0);
+						graph.XY.clear();
+					}
+				}
 				graph = new Graph("Graph", "Intensite en fonction du rayon",mainPanel.listeRayon, mainPanel.listeMoyen);
 				graph.pack();
 				 RefineryUtilities.centerFrameOnScreen( graph );
@@ -331,12 +336,6 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	@Override
 	public void componentResized(ComponentEvent e) {
 
-		//if(this.getWidth()>100 && this.getHeight()>100){
-			//float h = this.getHeight()/2  , w = this.getWidth()/2;
-			//int h1 = Math.round(h),w1 = Math.round(w);
-			//mainPanel.setSize(new Dimension(h1, w1));
-		//}
-		
 		if (e.getSource() == getMainPanel()) {
 			mainPanel.scale();
 		}
@@ -375,7 +374,6 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 					mainPanel.setResX(mainPanel.getLabel().getWidth());
 					mainPanel.setResY(mainPanel.getLabel().getHeight());
 				}
-				//Graphics2D g2d = mainPanel.bufferedScaled.createGraphics();
 				Point centerCircle=mainPanel.circleCenter(
 						new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*c.ptCircle.get(0).getX()),
 								(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*c.ptCircle.get(0).getY())),
@@ -384,23 +382,48 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 						new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*c.ptCircle.get(2).getX()),
 								(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*c.ptCircle.get(2).getY())));
 				System.out.println(centerCircle.getX() + " " + centerCircle.getY());
-				int i=0;
+				String p = null;
+				double pInt = 0;
+				String v =null;
+				String l =null;
+			    File f = new File("1.txt");
+			    try{
+			    	Scanner sc = new Scanner(f);
+			    	p =  sc.nextLine();
+			    	p = p.replace("Pixel par Metre : ","");
+			    	System.out.println(p);
+			    	sc.nextLine();
+			    	v =  sc.nextLine();
+			    	v = v.replaceAll("Tension d'acceleration des electrons U : ", "");
+			    	System.out.println(v);
+			    	sc.nextLine();
+			    	l =  sc.nextLine();
+			    	l = l.replaceAll("Longueur de camera en Metre : ", "");
+			    	System.out.println(l);
+			    	sc.close();
+			    	pInt = Double.parseDouble(p);
+			    }catch(FileNotFoundException fnf){
+			    	
+			    }
+				double i=0;
+				double j=0;
+				mainPanel.listeMoyen.clear();
+				mainPanel.listeRayon.clear();
 				while(i<mainPanel.getBufferedOriginal().getWidth()+centerCircle.getY()){
-					//j=mainPanel.lenghtFrom2Points(centerCircle, new Point((int)(centerCircle.getX()+i),(int)(centerCircle.getY())));
-					ArrayList<Point> tmp = mainPanel.getPointWithCenter((int)centerCircle.getX(),(int)centerCircle.getY(),i);
+					ArrayList<Point> tmp = mainPanel.getPointWithCenter((int)centerCircle.getX(),(int)centerCircle.getY(),(int)i);
 					Double somme = 0.0 ,moy;
 					for(int h = 0; h<=tmp.size()-1;h++){
-						//somme = somme +mainPanel.getBufferedOriginal().getRGB(tmp.get(h).getX(), tmp.get(h).getY());
 						Color color=new Color(mainPanel.getBufferedOriginal().getRGB((int)(tmp.get(h).getX()), (int)tmp.get(h).getY()));
 						somme = somme + ((color.getRed() + color.getBlue()+ color.getGreen())/3);
 						//System.out.println(color.getRed() +" "+ color.getBlue()+" "+ color.getGreen());
 						//System.out.println(somme); 
 					}
 					if(!tmp.isEmpty()){
-						mainPanel.listeRayon.add((double)i);
-						moy = somme/tmp.size();
+						j = i/pInt;
+						mainPanel.listeRayon.add(j);
+						moy = (somme/tmp.size())/255;
 						mainPanel.listeMoyen.add(moy);
-						System.out.println(moy);
+						//System.out.println((i+" " +pInt));
 					}
 					i++;
 				}  
