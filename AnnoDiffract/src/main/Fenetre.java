@@ -287,16 +287,13 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			this.changeParam();
 		}
 		if (e.getSource() == menuGraphOpen) {
-			if (getMainPanel().getLabel().getIcon() != null) {
+			if (getMainPanel().getLabel().getIcon() != null && !mainPanel.listeMoyen.isEmpty()) {
 				ArrayList<Double> x = new ArrayList<>();
-				ArrayList<Double> y = new ArrayList<>();
-				for (int i=0; i<10; i++) {
-					x.add((double)i);
-				}
-				for (int i = 10; i>0; i--) {
-					y.add((double)i);
-				}
-				Graph graph = new Graph("Graph", "Intensite Moyenne par exemple", x, y);
+				
+				/*for (double i = 0; i<mainPanel.listeMoyen.size()-1; i++) {
+					x.add(i);
+				}*/
+				Graph graph = new Graph("Graph", "Intensite Moyenne par exemple",mainPanel.listeRayon, mainPanel.listeMoyen);
 				graph.pack();
 				 RefineryUtilities.centerFrameOnScreen( graph );
 				graph.setVisible( true );
@@ -392,11 +389,10 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 								(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*c.ptCircle.get(2).getY())));
 				System.out.println(centerCircle.getX() + " " + centerCircle.getY());
 				int i=0;
-				//float j=0;
 				while(i<mainPanel.getBufferedOriginal().getWidth()+centerCircle.getY()){
 					//j=mainPanel.lenghtFrom2Points(centerCircle, new Point((int)(centerCircle.getX()+i),(int)(centerCircle.getY())));
 					ArrayList<Point> tmp = mainPanel.getPointWithCenter((int)centerCircle.getX(),(int)centerCircle.getY(),i);
-					float somme = 0,moy;
+					Double somme = 0.0 ,moy;
 					for(int h = 0; h<=tmp.size()-1;h++){
 						//somme = somme +mainPanel.getBufferedOriginal().getRGB(tmp.get(h).getX(), tmp.get(h).getY());
 						Color color=new Color(mainPanel.getBufferedOriginal().getRGB((int)(tmp.get(h).getX()), (int)tmp.get(h).getY()));
@@ -405,8 +401,9 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 						//System.out.println(somme); 
 					}
 					if(!tmp.isEmpty()){
+						mainPanel.listeRayon.add((double)i);
 						moy = somme/tmp.size();
-						mainPanel.listeMoyen.add(Math.round(moy));
+						mainPanel.listeMoyen.add(moy);
 						System.out.println(moy);
 					}
 					i++;

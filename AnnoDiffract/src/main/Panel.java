@@ -41,7 +41,8 @@ class Panel extends JPanel {
 	private float bright=-1;
 	public Circle tmpCircle = new Circle();
 	public  ArrayList<Circle> listeCircle = new ArrayList<>();
-	public ArrayList<Integer> listeMoyen = new ArrayList<>();
+	public ArrayList<Double> listeMoyen = new ArrayList<>();
+	public ArrayList<Double> listeRayon = new ArrayList<>();
 	private double resX=0;
 	private double resY=0;
 	
