@@ -13,7 +13,6 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
-import main.Panel.TypeOutil;
 import org.jfree.ui.RefineryUtilities;
 
 import java.awt.*;
@@ -30,7 +29,8 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	private int positionX=0;
 	private int positionY=0;
 	private JSlider brightSlide;
-
+	Graph graph = null;
+	
 	private Fenetre() {
 		
 		// Taille Ecran
@@ -289,11 +289,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		if (e.getSource() == menuGraphOpen) {
 			if (getMainPanel().getLabel().getIcon() != null && !mainPanel.listeMoyen.isEmpty()) {
 				ArrayList<Double> x = new ArrayList<>();
-				
-				/*for (double i = 0; i<mainPanel.listeMoyen.size()-1; i++) {
-					x.add(i);
-				}*/
-				Graph graph = new Graph("Graph", "Intensite Moyenne par exemple",mainPanel.listeRayon, mainPanel.listeMoyen);
+				graph = new Graph("Graph", "Intensite en fonction du rayon",mainPanel.listeRayon, mainPanel.listeMoyen);
 				graph.pack();
 				 RefineryUtilities.centerFrameOnScreen( graph );
 				graph.setVisible( true );

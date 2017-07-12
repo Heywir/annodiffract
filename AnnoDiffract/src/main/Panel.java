@@ -23,12 +23,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 class Panel extends JPanel {
-	public enum TypeOutil {
-		
-		 /* Outil principaux */
-		 NORMAL,/* L'utilisateur vient de lancer le software */
-		 POINT, /* L'utilisateur va placer des points */
-	}
 	private Fenetre f;
 	private TypeOutil currentTool = TypeOutil.NORMAL;
 	private JLabel label = null;
