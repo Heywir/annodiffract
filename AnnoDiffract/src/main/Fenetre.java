@@ -29,9 +29,39 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	private int positionX=0;
 	private int positionY=0;
 	private JSlider brightSlide;
+	private String p = null;
+	private String v =null;
+	private String l =null;
+	private double lambda;
 	Graph graph = null;
 	
 	private Fenetre() {
+		
+		//Prise des parametres du fichier texte
+		File F = new File("1.txt"); 
+		System.out.println("fsdfs");
+		if(F.exists()){
+			try{
+		    	Scanner sc = new Scanner(F);
+		    	p =  sc.nextLine();
+		    	p = p.replace("Pixel par Metre : ","");
+		    	System.out.println(p);
+		    	sc.nextLine();
+		    	v =  sc.nextLine();
+		    	v = v.replaceAll("Tension d'acceleration des electrons U : ", "");
+		    	System.out.println(v);
+		    	sc.nextLine();
+		    	l =  sc.nextLine();
+		    	l = l.replaceAll("Longueur de camera en Metre : ", "");
+		    	System.out.println(l);
+		    	sc.close();
+		    	
+		    }catch(FileNotFoundException fnf){
+		    	
+		    }
+		}
+		//Calcul lambda
+		
 		
 		// Taille Ecran
 		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -144,26 +174,26 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
     		try{
     			i = Integer.parseInt(Ppern);
     		}catch(NumberFormatException z){
-    			JOptionPane.showMessageDialog(n, "Vous n'avez pas rentr� un entier."
-    					+ " Nous allons mettre la valeur par d�faut pour le pixel par metre qui est de 1491"
+    			JOptionPane.showMessageDialog(n, "Vous n'avez pas rentrer un entier."
+    					+ " Nous allons mettre la valeur par defaut pour le pixel par metre qui est de 1491"
         				, "Mauvaise valeur", n.ERROR_MESSAGE);
-    			Ppern="1491";
+    			Ppern="87503";
     		}
     		String V = JOptionPane.showInputDialog(n,"Veuillez rentrer la tension d'acc�l�ration des �lectrons  U (en V).");
     		try{
     			j = Float.parseFloat(V);
     		}catch(NumberFormatException z){
-    			JOptionPane.showMessageDialog(n, "Vous n'avez pas rentr� un entier. "
-    					+ "Nous allons mettre la valeur par d�faut pour le voltage"
+    			JOptionPane.showMessageDialog(n, "Vous n'avez pas rentrer un entier. "
+    					+ "Nous allons mettre la valeur par defaut pour le voltage"
         				, "Mauvaise valeur", n.ERROR_MESSAGE);
     			V="120000";
     		}
-    		String L = JOptionPane.showInputDialog(n,"Veuillez rentrer la longueur de cam�ra en Metre.");
+    		String L = JOptionPane.showInputDialog(n,"Veuillez rentrer la longueur de camera en Metre.");
     		try{
     			j = Float.parseFloat(L);
     		}catch(NumberFormatException z){
-    			JOptionPane.showMessageDialog(n, "Vous n'avez pas rentr� un chiffre. "
-    					+ "Nous allons mettre la valeur par d�faut pour la longueur de cam�ra"
+    			JOptionPane.showMessageDialog(n, "Vous n'avez pas rentrer un chiffre. "
+    					+ "Nous allons mettre la valeur par d�faut pour la longueur de camera"
         				, "Mauvaise valeur", n.ERROR_MESSAGE);
     			L="0.05";
     		}
@@ -182,28 +212,8 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	}
 	
 		public void changeParam(){
-			String p = null;
-			String v =null;
-			String l =null;
 		    File f = new File("1.txt");
-		    try{
-		    	Scanner sc = new Scanner(f);
-		    	p =  sc.nextLine();
-		    	p = p.replace("Pixel par Metre : ","");
-		    	System.out.println(p);
-		    	sc.nextLine();
-		    	v =  sc.nextLine();
-		    	v = v.replaceAll("Tension d'acceleration des electrons U : ", "");
-		    	System.out.println(v);
-		    	sc.nextLine();
-		    	l =  sc.nextLine();
-		    	l = l.replaceAll("Longueur de camera en Metre : ", "");
-		    	System.out.println(l);
-		    	sc.close();
-		    	
-		    }catch(FileNotFoundException fnf){
-		    	
-		    }
+		    
 		    JTextField pField = new JTextField(p,7);
 		    JTextField vField = new JTextField(v,7);
 		    JTextField lField = new JTextField(l,7);
@@ -234,6 +244,10 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	    		    writer.println("====================================");
 	    		    writer.println("Longueur de camera en Metre : "+ lField.getText());
 	    		    writer.close();
+	    		    p=pField.getText();
+	    		    v=vField.getText();
+	    		    l=lField.getText();
+	    		    
 				} catch (FileNotFoundException | UnsupportedEncodingException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -409,8 +423,9 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 				double j=0;
 				mainPanel.listeMoyen.clear();
 				mainPanel.listeRayon.clear();
-				while(i<mainPanel.getBufferedOriginal().getWidth()+centerCircle.getY()){
-					ArrayList<Point> tmp = mainPanel.getPointWithCenter((int)centerCircle.getX(),(int)centerCircle.getY(),(int)i);
+				ArrayList<Point> tmp = mainPanel.getPointWithCenter((int)centerCircle.getX(),(int)centerCircle.getY(),(int)1);
+				while(!tmp.isEmpty()){
+					tmp = mainPanel.getPointWithCenter((int)centerCircle.getX(),(int)centerCircle.getY(),(int)i);
 					Double somme = 0.0 ,moy;
 					for(int h = 0; h<=tmp.size()-1;h++){
 						Color color=new Color(mainPanel.getBufferedOriginal().getRGB((int)(tmp.get(h).getX()), (int)tmp.get(h).getY()));
@@ -419,11 +434,10 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 						//System.out.println(somme); 
 					}
 					if(!tmp.isEmpty()){
-						j = i/pInt;
+						j = (i/pInt);
 						mainPanel.listeRayon.add(j);
 						moy = (somme/tmp.size())/255;
 						mainPanel.listeMoyen.add(moy);
-						//System.out.println((i+" " +pInt));
 					}
 					i++;
 				}  
