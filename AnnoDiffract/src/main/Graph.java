@@ -47,7 +47,6 @@ public class Graph extends JFrame implements ChartMouseListener{
         plot.setRangeCrosshairVisible(true);        
         
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer( );
-        renderer.setser
         renderer.setSeriesPaint( 0 , Color.BLACK );
         renderer.setSeriesOutlineStroke(0, new BasicStroke(0.1f));
         renderer.setSeriesStroke( 0 , new BasicStroke( 1.0f ) );
