@@ -37,6 +37,7 @@ class Panel extends JPanel {
 	public  ArrayList<Circle> listeCircle = new ArrayList<>();
 	public ArrayList<Double> listeMoyen = new ArrayList<>();
 	public ArrayList<Double> listeRayon = new ArrayList<>();
+	public ArrayList<Double> listeDistInter = new ArrayList<>();
 	private double resX=0;
 	private double resY=0;
 	
@@ -165,45 +166,45 @@ class Panel extends JPanel {
 		}
 	}
 	
-	public ArrayList<Point> getPointWithCenter(int x_centre, int y_centre, int r){
+	public ArrayList<Point> getPointWithCenter(int x_centre, int y_centre, double r){
 		
 		ArrayList<Point> pixels = new ArrayList<Point>();
 	    
 		int width = bufferedOriginal.getWidth();
 		int height = bufferedOriginal.getHeight();
 		
-	    int x = 0;
-	    int y = r;
-	    int d = r - 1;
+	    double x = 0;
+	    double y = r;
+	    double d = r - 1;
 	    
 	    while(y >= x)
 	    {
 	    	if((x_centre + x > 0 && width > x_centre + x ) && ( y_centre + y > 0 && height > y_centre + y ) ){
-	    		pixels.add( new Point( x_centre + x, y_centre + y ));
+	    		pixels.add( new Point( (int)Math.round(x_centre + x), (int)Math.round(y_centre + y )));
 	    		//System.out.println(Math.addExact(x_centre, x) + " "+Math.addExact(y_centre, y));
 	    	}
 	    	if((x_centre + y > 0 && width > x_centre + y ) && ( y_centre + x > 0 && height > y_centre + x ) ){
-	    		pixels.add( new Point( x_centre + y, y_centre + x));
+	    		pixels.add( new Point( (int)Math.round(x_centre + y), (int)Math.round(y_centre + x)));
 	    		//drawPoint(g2d, new Point( x_centre + y, y_centre + x));
 	    	}
 	    	if((x_centre - x > 0 && width > x_centre - x ) && ( y_centre + y > 0 && height > y_centre + y ) ){
-	    		pixels.add( new Point( x_centre - x, y_centre + y ));
+	    		pixels.add( new Point( (int)Math.round(x_centre - x), (int)Math.round(y_centre + y )));
 	    		//System.out.println(x_centre - x + " "+ y_centre + y );
 	    	}
 	    	if((x_centre - y > 0 && width > x_centre - y ) && ( y_centre + x > 0 && height > y_centre + x ) ){
-	    		pixels.add( new Point( x_centre - y, y_centre + x ));
+	    		pixels.add( new Point( (int)Math.round(x_centre - y), (int)Math.round(y_centre + x )));
 	    	}
 	    	if((x_centre + x > 0 && width > x_centre  + x ) && ( y_centre - y > 0 && height > y_centre - y ) ){
-	    		pixels.add( new Point( x_centre + x, y_centre - y ));
+	    		pixels.add( new Point( (int)Math.round(x_centre + x), (int)Math.round(y_centre - y )));
 	    	}
 	    	if((x_centre + y > 0 && width > x_centre  + y ) && ( y_centre - x > 0 && height > y_centre - x ) ){
-	    		pixels.add( new Point( x_centre + y, y_centre - x ));
+	    		pixels.add( new Point( (int)Math.round(x_centre + y), (int)Math.round(y_centre - x) ));
 	    	}
 	    	if((x_centre - x > 0 && width > x_centre  - x ) && ( y_centre - y > 0 && height > y_centre - y ) ){
-	    		pixels.add( new Point( x_centre - x, y_centre - y ));
+	    		pixels.add( new Point( (int)Math.round(x_centre - x), (int)Math.round(y_centre - y) ));
 	    	}
 	    	if((x_centre - y > 0 && width > x_centre  - y ) && ( y_centre - x > 0 && height > y_centre - x ) ){
-	    		pixels.add( new Point( x_centre - y, y_centre - x ));
+	    		pixels.add( new Point( (int)Math.round(x_centre - y), (int)Math.round(y_centre - x) ));
 	    	}
 	        
 	        if (d >= 2*x)
@@ -243,7 +244,7 @@ class Panel extends JPanel {
 		return image;
 	}
 	
-	public void drawCenteredCircle(Graphics2D g, Point centerCircle, float r) {
+	public void drawCenteredCircle(Graphics2D g, Point centerCircle, double r) {
 		  int x = (int) Math.round(centerCircle.getX()-(r));
 		  int y = (int) Math.round(centerCircle.getY()-(r));
 		  g.drawOval(x,y,2*(int)r,2*(int)r);
@@ -266,8 +267,8 @@ class Panel extends JPanel {
 		return center;
 	}
 	
-	public float lenghtFrom2Points(Point A, Point B) {
-		float lenght = (float)Math.sqrt((A.getX()-B.getX())*(A.getX()-B.getX()) + (A.getY()-B.getY())*(A.getY()-B.getY()));
+	public double lenghtFrom2Points(Point A, Point B) {
+		double lenght = (float)Math.sqrt((A.getX()-B.getX())*(A.getX()-B.getX()) + (A.getY()-B.getY())*(A.getY()-B.getY()));
 		return lenght; 
 	}
 
@@ -285,7 +286,7 @@ class Panel extends JPanel {
 					if(aListePoint.isDr()){
 						Point centerCircle=circleCenter(aListePoint.ptCircle.get(0), aListePoint.ptCircle.get(1), aListePoint.ptCircle.get(2));
 						drawPoint(g2d, centerCircle);
-						float r = lenghtFrom2Points(centerCircle, aListePoint.ptCircle.get(0));
+						double r = lenghtFrom2Points(centerCircle, aListePoint.ptCircle.get(0));
 						drawCenteredCircle(g2d, centerCircle, r);
 					}
 				}

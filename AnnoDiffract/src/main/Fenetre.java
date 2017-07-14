@@ -60,8 +60,12 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		    	
 		    }
 		}
-		//Calcul lambda
+		Double vDouble=Double.parseDouble(v);
 		
+		//Calcul lambda
+		lambda = (6.62*Math.pow(10,-19))/
+				(Math.sqrt((2.9149*Math.pow(10,-19))*(vDouble*1000)*(1+(9.7714*Math.pow(10,-7))*(vDouble*1000))));
+		System.out.println(lambda);
 		
 		// Taille Ecran
 		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -308,7 +312,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 						graph.XY.clear();
 					}
 				}
-				graph = new Graph("Graph", "Intensite en fonction du rayon",mainPanel.listeRayon, mainPanel.listeMoyen);
+				graph = new Graph("Graph", "Intensite en fonction du rayon",mainPanel.listeDistInter, mainPanel.listeMoyen);
 				graph.pack();
 				 RefineryUtilities.centerFrameOnScreen( graph );
 				graph.setVisible( true );
@@ -397,9 +401,10 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 								(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*c.ptCircle.get(2).getY())));
 				System.out.println(centerCircle.getX() + " " + centerCircle.getY());
 				String p = null;
-				double pInt = 0;
+				double pDouble = 0;
 				String v =null;
 				String l =null;
+				double vDouble = 0;
 			    File f = new File("1.txt");
 			    try{
 			    	Scanner sc = new Scanner(f);
@@ -415,18 +420,26 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			    	l = l.replaceAll("Longueur de camera en Metre : ", "");
 			    	System.out.println(l);
 			    	sc.close();
-			    	pInt = Double.parseDouble(p);
+			    	pDouble = Double.parseDouble(p);
+			    	vDouble = Double.parseDouble(v);
 			    }catch(FileNotFoundException fnf){
 			    	
 			    }
 				double i=0;
+				int k = 0;
 				double j=0;
+				double lenght;
 				mainPanel.listeMoyen.clear();
 				mainPanel.listeRayon.clear();
-				ArrayList<Point> tmp = mainPanel.getPointWithCenter((int)centerCircle.getX(),(int)centerCircle.getY(),(int)1);
+				mainPanel.listeDistInter.clear();
+				ArrayList<Point> tmp = mainPanel.getPointWithCenter((int)centerCircle.getX(),(int)centerCircle.getY(),(int)0);
 				while(!tmp.isEmpty()){
-					tmp = mainPanel.getPointWithCenter((int)centerCircle.getX(),(int)centerCircle.getY(),(int)i);
-					Double somme = 0.0 ,moy;
+					lenght = mainPanel.lenghtFrom2Points(centerCircle, new Point((int)(centerCircle.getX()-i),(int)(centerCircle.getY()-i)));
+					tmp = mainPanel.getPointWithCenter((int)centerCircle.getX(),(int)centerCircle.getY(),lenght);
+					Double somme = 0.0 ,moy=0.0;
+					for(int h = 0; h<=tmp.size()-1;h++){
+						if()
+					}
 					for(int h = 0; h<=tmp.size()-1;h++){
 						Color color=new Color(mainPanel.getBufferedOriginal().getRGB((int)(tmp.get(h).getX()), (int)tmp.get(h).getY()));
 						somme = somme + ((color.getRed() + color.getBlue()+ color.getGreen())/3);
@@ -434,9 +447,13 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 						//System.out.println(somme); 
 					}
 					if(!tmp.isEmpty()){
-						j = (i/pInt);
+						j = (lenght/(pDouble*39.3701));
+						//System.out.println(lenght);
+						System.out.println(((lambda*vDouble*100)/j)*Math.pow(10,6));
+						mainPanel.listeDistInter.add(1/(((lambda*vDouble*100)/j)*Math.pow(10,6)));
 						mainPanel.listeRayon.add(j);
 						moy = (somme/tmp.size())/255;
+						//System.out.println(moy);
 						mainPanel.listeMoyen.add(moy);
 					}
 					i++;
