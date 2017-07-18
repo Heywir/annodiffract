@@ -25,15 +25,17 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	private JMenuItem menuGraphOpen = null;
 	private JButton findCenter = null;
 	private JButton setParam = null;
+	private JButton zoom = null;
 	private JLabel statusLabel = null;
 	private int positionX=0;
 	private int positionY=0;
-	private JSlider brightSlide;
+	public JSlider brightSlide;
 	private String p = null;
 	private String v =null;
 	private String l =null;
 	private double lambda;
-	Graph graph = null;
+	private Graph graph = null;
+	private ZoomImage z=null;
 	
 	private Fenetre() {
 		
@@ -78,7 +80,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		statusLabel = new JLabel();
 
 		// Window Settings
-		this.setSize((bounds.width/100)*90, (bounds.height/100)*90);
+		this.setSize((bounds.width/100)*50, (bounds.height/100)*80);
 		this.setTitle("AnnoDiffract");
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -97,7 +99,6 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		this.add(getMainPanel(), BorderLayout.CENTER);
 		this.add(statusPanel, BorderLayout.SOUTH);
 		mainPanel.setSize(new Dimension(this.getWidth(), this.getHeight()));
-		
 	
 	}
 
@@ -141,6 +142,12 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		setParam.setBorder(null);
 		setParam.setContentAreaFilled(false);
 
+		zoom = new JButton(new ImageIcon(Fenetre.class.getResource("img/loupe.png")));
+		zoom.setPressedIcon(new ImageIcon(Fenetre.class.getResource("img/loupe.png")));
+		zoom.setToolTipText("Get Zoom");
+		zoom.setBorder(null);
+		zoom.setContentAreaFilled(false);
+		
 		// Ajouts
 		newMenuBar.add(menuFile);
 		newMenuBar.add(menuGraph);
@@ -150,6 +157,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		menuGraph.add(menuGraphOpen);
 		toolBar.add(findCenter);
 		toolBar.add(setParam);
+		toolBar.add(zoom);
 		toolBar.add(brightSlide);
 
 		// Listeners
@@ -157,6 +165,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		menuItemOuvrir.addActionListener(this);
 		menuGraphOpen.addActionListener(this);
 		setParam.addActionListener(this);
+		zoom.addActionListener(this);
 		findCenter.addActionListener(this);
 		mainPanel.getLabel().addMouseListener(this);
 		brightSlide.addChangeListener(this);
@@ -298,11 +307,20 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		if (e.getSource() == findCenter) {
 			//Method to find center
 			mainPanel.setCurrentTool(TypeOutil.POINT);
-			System.out.println("Click FC"+mainPanel.getCurrentTool());
+			if(z!=null){
+				z.dispose();
+			}
 		}
 		if (e.getSource() == setParam) {
 			//Method to find center
 			this.changeParam();
+		}
+		if (e.getSource() == zoom) {
+			//Method to find center with zoom
+			mainPanel.setCurrentTool(TypeOutil.ZOOM);
+			z = new ZoomImage(this);
+			z.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+			z.setVisible(true);
 		}
 		if (e.getSource() == menuGraphOpen) {
 			if (getMainPanel().getLabel().getIcon() != null && !mainPanel.listeMoyen.isEmpty()) {
@@ -425,41 +443,50 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			    }catch(FileNotFoundException fnf){
 			    	
 			    }
-				double i=0;
-				int k = 0;
-				double j=0;
-				double lenght;
-				mainPanel.listeMoyen.clear();
-				mainPanel.listeRayon.clear();
-				mainPanel.listeDistInter.clear();
-				ArrayList<Point> tmp = mainPanel.getPointWithCenter((int)centerCircle.getX(),(int)centerCircle.getY(),(int)0);
-				while(!tmp.isEmpty()){
-					lenght = mainPanel.lenghtFrom2Points(centerCircle, new Point((int)(centerCircle.getX()-i),(int)(centerCircle.getY()-i)));
-					tmp = mainPanel.getPointWithCenter((int)centerCircle.getX(),(int)centerCircle.getY(),lenght);
-					Double somme = 0.0 ,moy=0.0;
-					for(int h = 0; h<=tmp.size()-1;h++){
-						Color color=new Color(mainPanel.getBufferedOriginal().getRGB((int)(tmp.get(h).getX()), (int)tmp.get(h).getY()));
-						somme = somme + ((color.getRed() + color.getBlue()+ color.getGreen())/3);
-						//System.out.println(color.getRed() +" "+ color.getBlue()+" "+ color.getGreen());
-						//System.out.println(somme); 
-					}
-					if(!tmp.isEmpty()){
-						j = (lenght/(pDouble*39.3701));
-						//System.out.println(lenght);
-						System.out.println(((lambda*vDouble*100)/j)*Math.pow(10,6));
-						mainPanel.listeDistInter.add(1/(((lambda*vDouble*100)/j)*Math.pow(10,6)));
-						mainPanel.listeRayon.add(j);
-						moy = (somme/tmp.size())/255;
-						//System.out.println(moy);
-						mainPanel.listeMoyen.add(moy);
-					}
-					i++;
-				}  
-				
+			    CalculMoyAndRadius(centerCircle,pDouble, vDouble);
 			}
-			
-			
+		}else if(mainPanel.getCurrentTool()==TypeOutil.ZOOM){
+			if(mainPanel.listeCircle.isEmpty()){
+				mainPanel.setResX(mainPanel.getLabel().getWidth());
+				mainPanel.setResY(mainPanel.getLabel().getHeight());
+			}
+			z.getSubImage(mainPanel.getBufferedOriginal2(), (int)((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*positionX),
+					(int)((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*positionY));
 		}
+	}
+	
+	/**Methode Qui Calcule la Moyenne par cercle ainsi que le radius**/
+	public void CalculMoyAndRadius(Point centerCircle, double pDouble, double vDouble){
+		double i=0;
+		int k = 0;
+		double j=0;
+		double lenght;
+		mainPanel.listeMoyen.clear();
+		mainPanel.listeRayon.clear();
+		mainPanel.listeDistInter.clear();
+		ArrayList<Point> tmp = mainPanel.getPointWithCenter((int)centerCircle.getX(),(int)centerCircle.getY(),(int)0);
+		while(!tmp.isEmpty()){
+			//lenght = mainPanel.lenghtFrom2Points(centerCircle, new Point((int)(centerCircle.getX()-i),(int)(centerCircle.getY()-i)));
+			tmp = mainPanel.getPointWithCenter((int)centerCircle.getX(),(int)centerCircle.getY(),i);
+			Double somme = 0.0 ,moy=0.0;
+			for(int h = 0; h<=tmp.size()-1;h++){
+				Color color=new Color(mainPanel.getBufferedOriginal().getRGB((int)(tmp.get(h).getX()), (int)tmp.get(h).getY()));
+				somme = somme + ((color.getRed() + color.getBlue()+ color.getGreen())/3);
+				//System.out.println(color.getRed() +" "+ color.getBlue()+" "+ color.getGreen());
+				//System.out.println(somme); 
+			}
+			if(!tmp.isEmpty()){
+				j = (i/(pDouble*(double)39.3701));
+				//System.out.println(lenght);
+				System.out.println(((lambda*vDouble*(double)100)/j)*(double)Math.pow(10,6));
+				mainPanel.listeDistInter.add((double)1/(((lambda*vDouble*(double)100)/j)*(double)Math.pow(10,6)));
+				mainPanel.listeRayon.add(j);
+				moy = (somme/tmp.size());
+				//System.out.println(moy);
+				mainPanel.listeMoyen.add(moy);
+			}
+			i++;
+		}  
 	}
 
 	@Override
@@ -490,7 +517,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		// TODO Auto-generated method stub
 		if(arg0.getSource()==brightSlide){
 			if(mainPanel.isLoaded()){
-				mainPanel.setBrightness(5 * (float) brightSlide.getValue() / brightSlide.getMaximum());
+				mainPanel.setBrightness(2* (float) brightSlide.getValue() / brightSlide.getMaximum());
 			}
 		}
 	}
@@ -502,5 +529,18 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
         window.setVisible(true);
         
     }
+
+	public ZoomImage getZ() {
+		return z;
+	}
+
+	public void setZ(ZoomImage z) {
+		this.z = z;
+	}
+	
+	public Panel getMainPanel2() {
+		return mainPanel;
+	}
+
 }
 

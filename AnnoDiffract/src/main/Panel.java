@@ -30,6 +30,7 @@ class Panel extends JPanel {
 	private boolean loaded = false;
 	private Image imageScaled = null;
 	private BufferedImage bufferedOriginal;
+	private BufferedImage bufferedOriginal2;
 	public BufferedImage bufferedScaled;
 	private BufferedImage bufferedScaled2;
 	private float bright=-1;
@@ -73,6 +74,12 @@ class Panel extends JPanel {
 		    channel.read(buffer);
 		    setImage(load(buffer.array()));
 			bufferedOriginal = toBufferedImage(getImage());
+			
+			//Redesiner l'image sur une autre variable pour ne pas modifier l'image originale 
+			bufferedOriginal2  = new BufferedImage(bufferedOriginal.getWidth(),
+			bufferedOriginal.getHeight(), BufferedImage.TYPE_INT_RGB);
+			Graphics g = bufferedOriginal2.createGraphics();
+			g.drawImage(bufferedOriginal, 0, 0, null);
 			Dimension d = resizeImage();
 			imageScaled = getImage().getScaledInstance(d.width, -1,  Image.SCALE_SMOOTH);
 
@@ -81,9 +88,11 @@ class Panel extends JPanel {
 		    bufferedScaled2 = toBufferedImage(imageScaled);
 		    BufferedImage tGray = toGray(bufferedScaled);
 		    toGray(bufferedOriginal);
+		    //toGray(bufferedOriginal2);
 		    toGray(bufferedScaled2);
 		    setImage(tGray);
             
+		    //Put Image Rezize On Panel
             getLabel().setIcon(new ImageIcon(bufferedScaled));
             setLoaded(true);
             in.close();
@@ -138,6 +147,7 @@ class Panel extends JPanel {
 		
 	}
 	
+	// Methode Pour Mettre Les points à la bonne position par rapport à la nouvelle taille de fenetre
 	void scale() {
 		if (imageScaled != null) {
 			Dimension d = resizeImage();
@@ -166,6 +176,7 @@ class Panel extends JPanel {
 		}
 	}
 	
+	// Methode d'Andres Pour avoir tout les points aux bords d'un cercle
 	public ArrayList<Point> getPointWithCenter(int x_centre, int y_centre, double r){
 		
 		ArrayList<Point> pixels = new ArrayList<Point>();
@@ -227,7 +238,7 @@ class Panel extends JPanel {
 		return pixels;
 	}
 
-	private BufferedImage toGray(BufferedImage image) {
+	public BufferedImage toGray(BufferedImage image) {
 		int width = image.getWidth();
 		int height = image.getHeight();
 		for(int i=0; i<height; i++){
@@ -371,7 +382,7 @@ class Panel extends JPanel {
 
 	}
 	
-	private void drawPoint(Graphics2D g2d, Point e) {
+	public void drawPoint(Graphics2D g2d, Point e) {
 		int x1,y1,x2,y2;
 		x1 = (int) Math.round(e.getX() - 3); 
 		y1 = (int) Math.round(e.getY());
@@ -397,8 +408,6 @@ class Panel extends JPanel {
 	
 	//Change Brightness
 	public void setBrightness(float scaleFactor){
-		//float value = (float) slider.getValue();
-        //float scaleFactor = 2 * value / slider.getMaximum();
         RescaleOp op = new RescaleOp(scaleFactor, 0, null);
         bufferedScaled = op.filter(bufferedScaled2, bufferedScaled);
         toGray(bufferedScaled);
@@ -435,7 +444,7 @@ class Panel extends JPanel {
 	}
 
 	public void setCurrentTool(TypeOutil point) {
-		this.currentTool = TypeOutil.POINT;
+		this.currentTool = point;
 	}
 
 
@@ -469,6 +478,14 @@ class Panel extends JPanel {
 
 	public BufferedImage getBufferedScaled() {
 		return bufferedScaled;
+	}
+
+	public BufferedImage getBufferedOriginal2() {
+		return bufferedOriginal2;
+	}
+
+	public void setBufferedOriginal2(BufferedImage bufferedOriginal2) {
+		this.bufferedOriginal2 = bufferedOriginal2;
 	}
 	
 }
