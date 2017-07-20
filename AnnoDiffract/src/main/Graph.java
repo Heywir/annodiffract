@@ -36,7 +36,7 @@ public class Graph extends JFrame implements ChartMouseListener{
                 chartTitle ,
                 "Rayon" ,
                 "intensité" ,
-                createDataset(ListeRayon, Intensity) ,
+                createDataset(ListeRayon, Intensity),
                 PlotOrientation.VERTICAL ,
                 true , true , false);
 
