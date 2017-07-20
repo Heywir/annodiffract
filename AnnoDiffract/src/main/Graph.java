@@ -29,14 +29,14 @@ public class Graph extends JFrame implements ChartMouseListener{
 	private XYSeriesCollection dataset;
 	private ChartPanel chartPanel;
     
-	public Graph(String title, String chartTitle, ArrayList<Double> x, ArrayList<Double> y) {
+	public Graph(String title, String chartTitle, ArrayList<Double> Intensity, ArrayList<Double> ListeRayon, ArrayList<Double> ListeD, ArrayList<Double> ListeS) {
         super(title);
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         JFreeChart xylineChart = ChartFactory.createXYLineChart(
                 chartTitle ,
                 "Rayon" ,
                 "intensité" ,
-                createDataset(x, y) ,
+                createDataset(ListeRayon, Intensity) ,
                 PlotOrientation.VERTICAL ,
                 true , true , false);
 

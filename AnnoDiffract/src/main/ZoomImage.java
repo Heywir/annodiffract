@@ -186,6 +186,7 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 				String v =null;
 				String l =null;
 				double vDouble = 0;
+				double lDouble = 0;
 			    File f = new File("1.txt");
 			    try{
 			    	Scanner sc = new Scanner(f);
@@ -203,10 +204,11 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 			    	sc.close();
 			    	pDouble = Double.parseDouble(p);
 			    	vDouble = Double.parseDouble(v);
+			    	lDouble = Double.parseDouble(l);
 			    }catch(FileNotFoundException fnf){
 			    	
 			    }
-			    this.f.CalculMoyAndRadius(centerCircle,pDouble, vDouble);
+			    this.f.CalculMoyAndRadius(centerCircle,pDouble, vDouble, lDouble);
 			}
 			f.getMainPanel2().repaint();
 		}

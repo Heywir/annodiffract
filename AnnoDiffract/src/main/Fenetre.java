@@ -11,6 +11,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.util.*;
 
 import org.jfree.ui.RefineryUtilities;
@@ -33,7 +34,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	private String p = null;
 	private String v =null;
 	private String l =null;
-	private double lambda;
+	private BigDecimal lambda;
 	private Graph graph = null;
 	private ZoomImage z=null;
 	
@@ -65,8 +66,8 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		Double vDouble=Double.parseDouble(v);
 		
 		//Calcul lambda
-		lambda = (6.62*Math.pow(10,-19))/
-				(Math.sqrt((2.9149*Math.pow(10,-19))*(vDouble*1000)*(1+(9.7714*Math.pow(10,-7))*(vDouble*1000))));
+		lambda = new BigDecimal((6.62*Math.pow(10,-19))/
+				(Math.sqrt((2.9149*Math.pow(10,-19))*(vDouble*1000)*(1+(9.7714*Math.pow(10,-7))*(vDouble*1000)))));
 		System.out.println(lambda);
 		
 		// Taille Ecran
@@ -330,7 +331,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 						graph.XY.clear();
 					}
 				}
-				graph = new Graph("Graph", "Intensite en fonction du rayon",mainPanel.listeDistInter, mainPanel.listeMoyen);
+				graph = new Graph("Graph", "Intensite en fonction du rayon",mainPanel.listeMoyen, mainPanel.listeS, mainPanel.listeD, mainPanel.listeS);
 				graph.pack();
 				 RefineryUtilities.centerFrameOnScreen( graph );
 				graph.setVisible( true );
@@ -423,6 +424,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 				String v =null;
 				String l =null;
 				double vDouble = 0;
+				double lDouble = 0;
 			    File f = new File("1.txt");
 			    try{
 			    	Scanner sc = new Scanner(f);
@@ -440,10 +442,11 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			    	sc.close();
 			    	pDouble = Double.parseDouble(p);
 			    	vDouble = Double.parseDouble(v);
+			    	lDouble = Double.parseDouble(l);
 			    }catch(FileNotFoundException fnf){
 			    	
 			    }
-			    CalculMoyAndRadius(centerCircle,pDouble, vDouble);
+			    CalculMoyAndRadius(centerCircle,pDouble, vDouble, lDouble);
 			}
 		}else if(mainPanel.getCurrentTool()==TypeOutil.ZOOM){
 			if(mainPanel.listeCircle.isEmpty()){
@@ -456,14 +459,18 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	}
 	
 	/**Methode Qui Calcule la Moyenne par cercle ainsi que le radius**/
-	public void CalculMoyAndRadius(Point centerCircle, double pDouble, double vDouble){
+	public void CalculMoyAndRadius(Point centerCircle, double pDouble, double vDouble, double lDouble){
 		double i=0;
 		int k = 0;
 		double j=0;
-		double lenght;
+		double lenght=0;
+		double theta2 = 0;
+		pDouble = (pDouble*(double)39.370079);
 		mainPanel.listeMoyen.clear();
 		mainPanel.listeRayon.clear();
-		mainPanel.listeDistInter.clear();
+		mainPanel.listeD.clear();
+		mainPanel.listeS.clear();
+		
 		ArrayList<Point> tmp = mainPanel.getPointWithCenter((int)centerCircle.getX(),(int)centerCircle.getY(),(int)0);
 		while(!tmp.isEmpty()){
 			//lenght = mainPanel.lenghtFrom2Points(centerCircle, new Point((int)(centerCircle.getX()-i),(int)(centerCircle.getY()-i)));
@@ -476,10 +483,12 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 				//System.out.println(somme); 
 			}
 			if(!tmp.isEmpty()){
-				j = (i/(pDouble*(double)39.3701));
-				//System.out.println(lenght);
-				System.out.println(((lambda*vDouble*(double)100)/j)*(double)Math.pow(10,6));
-				mainPanel.listeDistInter.add((double)1/(((lambda*vDouble*(double)100)/j)*(double)Math.pow(10,6)));
+				j = (i/pDouble);
+				//System.out.println(((lambda.doubleValue()*vDouble*(double)100)/j)*(double)Math.pow(10,6));
+				theta2 = Math.atan((j/(lDouble*(double)1000))/((double)180)*Math.PI);
+				//System.out.println(theta2);
+				mainPanel.listeS.add(((double)2*Math.toRadians(Math.sin(((theta2/(double)180)*Math.PI))))/lambda.doubleValue());
+				mainPanel.listeD.add((((lambda.doubleValue()*vDouble*(double)100)/j)*(double)Math.pow(10,6)));
 				mainPanel.listeRayon.add(j);
 				moy = (somme/tmp.size());
 				//System.out.println(moy);

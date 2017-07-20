@@ -38,7 +38,8 @@ class Panel extends JPanel {
 	public  ArrayList<Circle> listeCircle = new ArrayList<>();
 	public ArrayList<Double> listeMoyen = new ArrayList<>();
 	public ArrayList<Double> listeRayon = new ArrayList<>();
-	public ArrayList<Double> listeDistInter = new ArrayList<>();
+	public ArrayList<Double> listeD = new ArrayList<>();
+	public ArrayList<Double> listeS = new ArrayList<>();
 	private double resX=0;
 	private double resY=0;
 	
