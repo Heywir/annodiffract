@@ -5,6 +5,7 @@ import java.awt.BasicStroke;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
+import javax.swing.JSpinner.ListEditor;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -28,15 +29,23 @@ public class Graph extends JFrame implements ChartMouseListener{
 	public XYSeries XY;
 	private XYSeriesCollection dataset;
 	private ChartPanel chartPanel;
-    
+	private ArrayList<Double> Intensity; 
+	private ArrayList<Double> ListeRayon;
+	private ArrayList<Double> ListeD;
+	private ArrayList<Double> ListeS;
+	
 	public Graph(String title, String chartTitle, ArrayList<Double> Intensity, ArrayList<Double> ListeRayon, ArrayList<Double> ListeD, ArrayList<Double> ListeS) {
         super(title);
+        this.Intensity = Intensity;
+        this.ListeD = ListeD;
+        this.ListeRayon = ListeRayon;
+        this.ListeS = ListeS;
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         JFreeChart xylineChart = ChartFactory.createXYLineChart(
                 chartTitle ,
                 "Rayon" ,
                 "intensité" ,
-                createDataset(ListeRayon, Intensity),
+                createDataset(ListeS, Intensity),
                 PlotOrientation.VERTICAL ,
                 true , true , false);
 
@@ -96,7 +105,8 @@ public class Graph extends JFrame implements ChartMouseListener{
             XYDataset d = e1.getDataset();
             int s = e1.getSeriesIndex();
             int i = e1.getItem();
-            System.out.println("X:" + d.getX(s, i) + ", Y:" + d.getY(s, i));
+            //System.out.println("X:" + d.getX(s, i) + ", Y:" + d.getY(s, i));
+            System.out.println(ListeD.get(i));
         }
     }
 

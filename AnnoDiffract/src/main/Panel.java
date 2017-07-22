@@ -67,8 +67,13 @@ class Panel extends JPanel {
 	//Methode pour ouvrir l'image puis l'afficher avec une bonne dimension
 	void openImage(File file) throws Exception {
 		try {
+			
 			tmpCircle.ptCircle.clear();
 			listeCircle.clear();
+			listeMoyen.clear();
+			listeRayon.clear();
+			listeS.clear();
+			listeD.clear();
 			FileInputStream in = new FileInputStream(file.getPath());
 			FileChannel channel = in.getChannel();
 			ByteBuffer buffer = ByteBuffer.allocate((int)channel.size());
