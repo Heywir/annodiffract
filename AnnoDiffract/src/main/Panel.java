@@ -37,9 +37,11 @@ class Panel extends JPanel {
 	public Circle tmpCircle = new Circle();
 	public  ArrayList<Circle> listeCircle = new ArrayList<>();
 	public ArrayList<Double> listeMoyen = new ArrayList<>();
+	public ArrayList<Double> listeMoyenBeam = new ArrayList<>();
 	public ArrayList<Double> listeRayon = new ArrayList<>();
 	public ArrayList<Double> listeD = new ArrayList<>();
 	public ArrayList<Double> listeS = new ArrayList<>();
+	public ArrayList<Double> liste2theta = new ArrayList<>();
 	private double resX=0;
 	private double resY=0;
 	

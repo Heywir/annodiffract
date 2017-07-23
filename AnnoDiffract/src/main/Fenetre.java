@@ -68,9 +68,8 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		Double vDouble=Double.parseDouble(v);
 		
 		//Calcul lambda
-		lambda = new BigDecimal((6.62*Math.pow(10,-19))/
-				(Math.sqrt((2.9149*Math.pow(10,-19))*(vDouble*1000)*(1+(9.7714*Math.pow(10,-7))*(vDouble*1000)))));
-		//System.out.println(lambda);
+		lambda = new BigDecimal(((double)6.62*Math.pow(10,-34))/
+				(Math.sqrt(((double)2.9149*Math.pow(10,-49))*(vDouble*(double)1000)*((double)1+((double)9.7714*Math.pow(10,-7))*(vDouble*(double)1000)))));
 		
 		// Taille Ecran
 		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -307,7 +306,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 					}
 			    }
 		}
-		if (e.getSource() == findCenter) {
+		/*if (e.getSource() == findCenter) {
 			//Method to find center
 			if(mainPanel.isLoaded()){
 				mainPanel.setCurrentTool(TypeOutil.POINT);
@@ -315,7 +314,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 					z.dispose();
 				}
 			}
-		}
+		}*/
 		if (e.getSource() == setParam) {
 			//Method to find center
 			this.changeParam();
@@ -329,21 +328,22 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 				z.setVisible(true);
 			}
 		}
-		/*if (e.getSource() == findCenter) {
+		if (e.getSource() == findCenter) {
 			//Method to find center with zoom
 			if(mainPanel.isLoaded()){
 				mainPanel.setCurrentTool(TypeOutil.BEAMSTOP);
 			}
-		}*/
+		}
 		if (e.getSource() == menuGraphOpen) {
 			if (getMainPanel().getLabel().getIcon() != null && !mainPanel.listeMoyen.isEmpty()) {
-				if(graph!=null){
+				/*if(graph!=null){
 					if(graph.getDataset()!=null){
 						graph.getDataset().removeSeries(0);
 						graph.XY.clear();
 					}
-				}
-				graph = new Graph("Graph", "Intensite en fonction du rayon",mainPanel.listeMoyen, mainPanel.listeRayon, mainPanel.listeD, mainPanel.listeS);
+				}*/
+				graph = new Graph("Graphique", "Profile Intensité",mainPanel.listeMoyen, mainPanel.listeRayon,
+						mainPanel.listeD, mainPanel.listeS, mainPanel.liste2theta, mainPanel.listeMoyenBeam);
 				graph.pack();
 				 RefineryUtilities.centerFrameOnScreen( graph );
 				graph.setVisible( true );
@@ -370,38 +370,12 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	}
 	
 	@Override
-	public void componentHidden(ComponentEvent e) {
-		
-		
-	}
-
-	@Override
-	public void componentMoved(ComponentEvent e) {
-		
-		
-	}
-
-	@Override
 	public void componentResized(ComponentEvent e) {
 		//A chaque fois que la fenetre change de taille le panel est mis à jour
 		if (e.getSource() == getMainPanel()) {
 			mainPanel.scale();
 		}
 		
-	}
-
-	@Override
-	public void componentShown(ComponentEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private Panel getMainPanel() {
-		return mainPanel;
-	}
-
-	private void setMainPanel(Panel mainPanel) {
-		this.mainPanel = mainPanel;
 	}
 
 	@Override
@@ -507,7 +481,8 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	//** Ici on calcule la moyenne d'intensité de tout les cercles ainsi que leur rayon
     //** et trois autres paramètres étant la Distance interarticulaire l'Angle de diffraction 2theta et le Vecteur de diffusion S  
     public void CalculMoyAndRadius(Point centerCircle, double pDouble, double vDouble, double lDouble){
-		double i=0;
+		int l =0;
+    	double i=0;
 		double j=0;
 		double theta2 = 0;
 		double lenght = 0;
@@ -516,59 +491,43 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		mainPanel.listeRayon.clear();
 		mainPanel.listeD.clear();
 		mainPanel.listeS.clear();
+		mainPanel.liste2theta.clear();
+		mainPanel.listeMoyenBeam.clear();
 		
 		ArrayList<Point> tmp = mainPanel.getPointWithCenter((int)centerCircle.getX(),(int)centerCircle.getY(),(int)0);
 		while(i<mainPanel.getBufferedOriginal().getWidth()){
+			l=0;
 			lenght = mainPanel.lenghtFrom2Points(centerCircle, new Point((int)(centerCircle.getX()+i), (int)centerCircle.getY()));
 			tmp = mainPanel.getPointWithCenter((int)centerCircle.getX(),(int)centerCircle.getY(),lenght);
-			Double somme = 0.0 ,moy=0.0;
+			Double somme = 0.0,sommeBeam= 0.0 ,moy=0.0, moyBeam = 0.0;
 			for(int h = 0; h<=tmp.size()-1;h++){
 				Color color=new Color(mainPanel.getBufferedOriginal().getRGB((int)(tmp.get(h).getX()), (int)tmp.get(h).getY()));
 				int c = (color.getRed() + color.getBlue()+ color.getGreen())/3;
 				if(minBS !=-1){
 					if(c<minBS || c>maxBS){
-						somme = somme + c;
+						sommeBeam = sommeBeam + c;
+						l=l+1;
 					}
-				}else{
-					somme = somme + c;
 				}
+				somme = somme + c;
 			}
 			if(!tmp.isEmpty()){
 				j = (lenght/pDouble);
-				theta2 = Math.atan((j/(lDouble*(double)1000))/((double)180)*Math.PI);
+				theta2 = Math.tan((j/(lDouble*(double)1000))/((double)180)*Math.PI);
+				mainPanel.liste2theta.add(theta2); 
 				mainPanel.listeS.add(((double)2*Math.toRadians(Math.sin(((theta2/(double)180)*Math.PI))))/lambda.doubleValue());
 				mainPanel.listeD.add((((lambda.doubleValue()*lDouble*(double)100)/j)*(double)Math.pow(10,5)));
 				mainPanel.listeRayon.add(j);
 				moy = (somme/tmp.size());
+				moyBeam = (sommeBeam/l);
 				mainPanel.listeMoyen.add(moy);
+				mainPanel.listeMoyenBeam.add(moyBeam);
+				
 			}
 			i++;
 		}  
 	}
 
-	@Override
-	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mousePressed(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
 	@Override
 	public void stateChanged(ChangeEvent arg0) {
 		// TODO Auto-generated method stub
@@ -587,6 +546,32 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
         
     }
 
+    @Override
+	public void componentHidden(ComponentEvent e) {
+		
+		
+	}
+
+	@Override
+	public void componentMoved(ComponentEvent e) {
+
+	}
+    
+	@Override
+	public void componentShown(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private Panel getMainPanel() {
+		return mainPanel;
+	}
+
+	private void setMainPanel(Panel mainPanel) {
+		this.mainPanel = mainPanel;
+	}
+
+    
 	public ZoomImage getZ() {
 		return z;
 	}
@@ -613,6 +598,30 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 
 	public void setMaxBS(double maxBS) {
 		this.maxBS = maxBS;
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
