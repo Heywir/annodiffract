@@ -204,7 +204,7 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 			xylineChartS = ChartFactory.createXYLineChart(
 	                chartTitle ,
 	                "Vecteur de Diffraction" ,
-	                "Intensitï¿½" ,
+	                "Intensité" ,
 	                dataset,
 	                PlotOrientation.VERTICAL ,
 	                true , true , false);
@@ -220,7 +220,7 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 		        XY.add(Liste2theta.get(i), Intensity.get(i));
 	        }
 			dataset.addSeries(XY);
-			xylineChartS = ChartFactory.createXYLineChart(
+			xylineChart2theta = ChartFactory.createXYLineChart(
 	                chartTitle ,
 	                "Angle de diffraction 2 theta" ,
 	                "Intensitï¿½" ,
