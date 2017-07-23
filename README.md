@@ -6,7 +6,7 @@ AnnoDiffract is a school project made by third year students in computer science
 Current Stage
 =============
 
-![alt text](https://ibb.co/dRnZN5)
+![alt text](https://image.ibb.co/gsPs9k/finaldiffract.jpg)
 
 TODO
 =============
