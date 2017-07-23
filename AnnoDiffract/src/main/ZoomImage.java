@@ -2,10 +2,8 @@ package main;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -25,11 +23,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
@@ -37,12 +33,11 @@ import javax.swing.event.ChangeListener;
 
 public class ZoomImage extends JFrame implements ActionListener, MouseListener, MouseMotionListener, ComponentListener, ChangeListener{
 	private Fenetre f=null;
-	private JPanel p=null;
 	private int pX;
 	private int pY;
 	private BufferedImage img = null;
 	private BufferedImage img2 = null;
-	private JLabel jL = new JLabel();
+	private final JLabel jL = new JLabel();
 	private double positionX;
 	private double positionY;
 	
@@ -61,8 +56,8 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 				// Layout
 				BorderLayout layout = new BorderLayout();
 				this.setLayout(layout);
-				
-				p = new JPanel(layout);
+
+		JPanel p = new JPanel(layout);
 				setContentPane(p);
 				// Layout 
 				
@@ -137,7 +132,7 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 				
 				f.getMainPanel2().tmpCircle.ptCircle.add(new Point((int)((f.getMainPanel2().getResX()/f.getMainPanel2().getBufferedOriginal().getWidth())*(pX+positionX)),
 						(int)((f.getMainPanel2().getResY()/f.getMainPanel2().getBufferedOriginal().getHeight())*(pY+positionY))));
-				f.getMainPanel2().tmpCircle.setDr(true);
+				f.getMainPanel2().tmpCircle.setDr();
 				Circle c = f.getMainPanel2().tmpCircle;
 				f.getMainPanel2().listeCircle.add(f.getMainPanel2().tmpCircle);
 				f.getMainPanel2().tmpCircle = new Circle();
@@ -174,7 +169,7 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 			    	pDouble = Double.parseDouble(p);
 			    	vDouble = Double.parseDouble(v);
 			    	lDouble = Double.parseDouble(l);
-			    }catch(FileNotFoundException fnf){
+			    }catch(FileNotFoundException ignored){
 			    	
 			    }
 			    this.f.CalculMoyAndRadius(centerCircle,pDouble, vDouble, lDouble);
@@ -230,7 +225,7 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 	}
 
 
-	public void setF(Fenetre f) {
+	private void setF(Fenetre f) {
 		this.f = f;
 	}
 
@@ -256,7 +251,7 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 		return positionX;
 	}
 
-	public void setPositionX(double positionX) {
+	private void setPositionX(double positionX) {
 		this.positionX = positionX;
 	}
 
@@ -264,7 +259,7 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 		return positionY;
 	}
 
-	public void setPositionY(double positionY) {
+	private void setPositionY(double positionY) {
 		this.positionY = positionY;
 	}
 	@Override

@@ -1,7 +1,6 @@
 package main;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -34,10 +33,9 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	private String p = null;
 	private String v =null;
 	private String l =null;
-	private BigDecimal lambda;
-	private Graph graph = null;
+	private final BigDecimal lambda;
 	private ZoomImage z=null;
-	public ArrayList<Double> tmpBeamStop = new ArrayList<>();
+	private final ArrayList<Double> tmpBeamStop = new ArrayList<>();
 	private double minBS=-1;
 	private double maxBS=-1;
 	
@@ -61,15 +59,15 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		    	//System.out.println(l);
 		    	sc.close();
 		    	
-		    }catch(FileNotFoundException fnf){
+		    }catch(FileNotFoundException ignored){
 		    	
 		    }
 		}
 		Double vDouble=Double.parseDouble(v);
 		
 		//Calcul lambda
-		lambda = new BigDecimal(((double)6.62*Math.pow(10,-34))/
-				(Math.sqrt(((double)2.9149*Math.pow(10,-49))*(vDouble*(double)1000)*((double)1+((double)9.7714*Math.pow(10,-7))*(vDouble*(double)1000)))));
+		lambda = new BigDecimal((6.62 *Math.pow(10,-34))/
+				(Math.sqrt((2.9149 *Math.pow(10,-49))*(vDouble*(double)1000)*((double)1+(9.7714 *Math.pow(10,-7))*(vDouble*(double)1000)))));
 		
 		// Taille Ecran
 		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -176,7 +174,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		return menuBar;
 	}
 	
-	public void firstUse(){
+	private void firstUse(){
 		File F = new File("1.txt"); 
 		if(!F.exists()){
     		int i;
@@ -184,14 +182,14 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
     		JOptionPane n = new JOptionPane("Coucou");
     		JOptionPane.showMessageDialog(n, "Bonjour cela est votre premiere utilisation du logiciel,"
     				+ " veuillez rentrer les informations correspondantes"
-    				, "First Use", n.INFORMATION_MESSAGE);
+    				, "First Use", JOptionPane.INFORMATION_MESSAGE);
     		String Ppern = JOptionPane.showInputDialog(n,"Rentrer le pixel par metre de l'image");
     		try{
     			i = Integer.parseInt(Ppern);
     		}catch(NumberFormatException z){
     			JOptionPane.showMessageDialog(n, "Vous n'avez pas rentrer un entier."
     					+ " Nous allons mettre la valeur par defaut pour le pixel par metre qui est de 1491"
-        				, "Mauvaise valeur", n.ERROR_MESSAGE);
+        				, "Mauvaise valeur", JOptionPane.ERROR_MESSAGE);
     			Ppern="87503";
     		}
     		String V = JOptionPane.showInputDialog(n,"Veuillez rentrer la tension d'accï¿½lï¿½ration des ï¿½lectrons  U (en V).");
@@ -200,7 +198,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
     		}catch(NumberFormatException z){
     			JOptionPane.showMessageDialog(n, "Vous n'avez pas rentrer un entier. "
     					+ "Nous allons mettre la valeur par defaut pour le voltage"
-        				, "Mauvaise valeur", n.ERROR_MESSAGE);
+        				, "Mauvaise valeur", JOptionPane.ERROR_MESSAGE);
     			V="120000";
     		}
     		String L = JOptionPane.showInputDialog(n,"Veuillez rentrer la longueur de camera en Metre.");
@@ -209,7 +207,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
     		}catch(NumberFormatException z){
     			JOptionPane.showMessageDialog(n, "Vous n'avez pas rentrer un chiffre. "
     					+ "Nous allons mettre la valeur par dï¿½faut pour la longueur de camera"
-        				, "Mauvaise valeur", n.ERROR_MESSAGE);
+        				, "Mauvaise valeur", JOptionPane.ERROR_MESSAGE);
     			L="0.05";
     		}
     		try{
@@ -226,7 +224,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
     	}
 	}
 	
-		public void changeParam(){
+		private void changeParam(){
 		    File f = new File("1.txt");
 		    
 		    JTextField pField = new JTextField(p,7);
@@ -342,10 +340,10 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 						graph.XY.clear();
 					}
 				}*/
-				graph = new Graph("Graphique", "Profile Intensité",mainPanel.listeMoyen, mainPanel.listeRayon,
+				Graph graph = new Graph(mainPanel.listeMoyen, mainPanel.listeRayon,
 						mainPanel.listeD, mainPanel.listeS, mainPanel.liste2theta, mainPanel.listeMoyenBeam);
 				graph.pack();
-				 RefineryUtilities.centerFrameOnScreen( graph );
+				 RefineryUtilities.centerFrameOnScreen(graph);
 				graph.setVisible( true );
 			}else{
 				System.out.println("Empty");
@@ -390,7 +388,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 				//** Si c'est le troisième point que l'utilisateur place nous placons le cercle dans
 				//** un tableau pour pouvoir le repaint lorsque la fenetre change de taille
 				mainPanel.tmpCircle.ptCircle.add(new Point(positionX,positionY));
-				mainPanel.tmpCircle.setDr(true);
+				mainPanel.tmpCircle.setDr();
 				Circle c = mainPanel.tmpCircle;
 				mainPanel.listeCircle.add(mainPanel.tmpCircle);
 				mainPanel.tmpCircle = new Circle();
@@ -432,7 +430,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			    	pDouble = Double.parseDouble(p);
 			    	vDouble = Double.parseDouble(v);
 			    	lDouble = Double.parseDouble(l);
-			    }catch(FileNotFoundException fnf){
+			    }catch(FileNotFoundException ignored){
 			    	
 			    }
 			    //** Ici on calcule la moyenne d'intensité de tout les cercles ainsi que leur rayon
@@ -486,7 +484,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		double j=0;
 		double theta2 = 0;
 		double lenght = 0;
-		pDouble = (pDouble*(double)39.370079);
+		pDouble = (pDouble* 39.370079);
 		mainPanel.listeMoyen.clear();
 		mainPanel.listeRayon.clear();
 		mainPanel.listeD.clear();
@@ -494,7 +492,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		mainPanel.liste2theta.clear();
 		mainPanel.listeMoyenBeam.clear();
 		
-		ArrayList<Point> tmp = mainPanel.getPointWithCenter((int)centerCircle.getX(),(int)centerCircle.getY(),(int)0);
+		ArrayList<Point> tmp = mainPanel.getPointWithCenter((int)centerCircle.getX(),(int)centerCircle.getY(), 0);
 		while(i<mainPanel.getBufferedOriginal().getWidth()){
 			l=0;
 			lenght = mainPanel.lenghtFrom2Points(centerCircle, new Point((int)(centerCircle.getX()+i), (int)centerCircle.getY()));
@@ -516,7 +514,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 				theta2 = Math.tan((j/(lDouble*(double)1000))/((double)180)*Math.PI);
 				mainPanel.liste2theta.add(theta2); 
 				mainPanel.listeS.add(((double)2*Math.toRadians(Math.sin(((theta2/(double)180)*Math.PI))))/lambda.doubleValue());
-				mainPanel.listeD.add((((lambda.doubleValue()*lDouble*(double)100)/j)*(double)Math.pow(10,5)));
+				mainPanel.listeD.add((((lambda.doubleValue()*lDouble*(double)100)/j)* Math.pow(10,5)));
 				mainPanel.listeRayon.add(j);
 				moy = (somme/tmp.size());
 				moyBeam = (sommeBeam/l);

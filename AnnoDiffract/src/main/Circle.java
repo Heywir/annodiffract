@@ -6,14 +6,14 @@ import java.util.ArrayList;
 public class Circle {
 	private boolean dr=false;
 	
-	public ArrayList<Point> ptCircle = new ArrayList<Point>();
+	public final ArrayList<Point> ptCircle = new ArrayList<>();
 	
 	public boolean isDr() {
 		return dr;
 	}
 	
-	public void setDr(boolean dr) {
-		this.dr = dr;
+	public void setDr() {
+		this.dr = true;
 	}
 	
 	public Circle(){

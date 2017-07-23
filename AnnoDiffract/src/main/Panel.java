@@ -5,8 +5,6 @@ import com.sun.media.jai.codec.ImageCodec;
 import com.sun.media.jai.codec.ImageDecoder;
 import com.sun.media.jai.codec.SeekableStream;
 
-import sun.security.util.Length;
-
 import javax.media.jai.PlanarImage;
 import javax.swing.*;
 import java.awt.*;
@@ -20,10 +18,9 @@ import java.io.FileNotFoundException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-import java.util.HashSet;
 
 class Panel extends JPanel {
-	private Fenetre f;
+	private final Fenetre f;
 	private TypeOutil currentTool = TypeOutil.NORMAL;
 	private JLabel label = null;
 	private Image image = null;
@@ -31,17 +28,17 @@ class Panel extends JPanel {
 	private Image imageScaled = null;
 	private BufferedImage bufferedOriginal;
 	private BufferedImage bufferedOriginal2;
-	public BufferedImage bufferedScaled;
+	private BufferedImage bufferedScaled;
 	private BufferedImage bufferedScaled2;
 	private float bright=-1;
 	public Circle tmpCircle = new Circle();
-	public  ArrayList<Circle> listeCircle = new ArrayList<>();
-	public ArrayList<Double> listeMoyen = new ArrayList<>();
-	public ArrayList<Double> listeMoyenBeam = new ArrayList<>();
-	public ArrayList<Double> listeRayon = new ArrayList<>();
-	public ArrayList<Double> listeD = new ArrayList<>();
-	public ArrayList<Double> listeS = new ArrayList<>();
-	public ArrayList<Double> liste2theta = new ArrayList<>();
+	public final ArrayList<Circle> listeCircle = new ArrayList<>();
+	public final ArrayList<Double> listeMoyen = new ArrayList<>();
+	public final ArrayList<Double> listeMoyenBeam = new ArrayList<>();
+	public final ArrayList<Double> listeRayon = new ArrayList<>();
+	public final ArrayList<Double> listeD = new ArrayList<>();
+	public final ArrayList<Double> listeS = new ArrayList<>();
+	public final ArrayList<Double> liste2theta = new ArrayList<>();
 	private double resX=0;
 	private double resY=0;
 	
@@ -140,7 +137,7 @@ class Panel extends JPanel {
 	    return image;
 	  }
 	
-	public Dimension resizeImage(){
+	private Dimension resizeImage(){
 		float Calneww = Float.MAX_VALUE, Calnewh = Float.MAX_VALUE, imWidth = bufferedOriginal.getWidth(), imHeight = bufferedOriginal.getHeight();
 		int neww,newh;
 		Calneww = (float) ((imWidth/imHeight)*(f.getHeight()/1.5));
@@ -148,14 +145,14 @@ class Panel extends JPanel {
 		Calnewh = (float) ((imHeight/imWidth)*(f.getWidth()/1.5));
 		//System.out.println(imHeight/imWidth +"  * " + f.getWidth()/1.6);
 			
-		neww = (int) Math.round(Calneww);
-		newh = (int) Math.round(Calnewh);
+		neww = Math.round(Calneww);
+		newh = Math.round(Calnewh);
 		//System.out.println(neww+" "+ newh);
 		return new Dimension(neww, newh);
 		
 	}
 	
-	// Methode Pour Mettre Les points à la bonne position par rapport à la nouvelle taille de fenetre
+	// Methode Pour Mettre Les points ï¿½ la bonne position par rapport ï¿½ la nouvelle taille de fenetre
 	void scale() {
 		if (imageScaled != null) {
 			Dimension d = resizeImage();
@@ -170,13 +167,13 @@ class Panel extends JPanel {
 		    //Image img = bufferedScaled.getScaledInstance((this.getWidth()/100)*ratioX, ((this.getHeight()/100)*ratioY),  Image.SCALE_SMOOTH);
 			getLabel().setIcon(new ImageIcon(img));
 			if(!listeCircle.isEmpty()){
-				for(int i= 0 ; i < listeCircle.size(); i++ ){
-					for(int j=0 ; j < listeCircle.get(i).ptCircle.size();j++){
-					//System.out.println(getLabel().getWidth()+"/"+resX+"*"+listeCircle.get(i).ptCircle.get(j).getX()+","+ getLabel().getHeight()+"/"+resY+"*"+listeCircle.get(i).ptCircle.get(j).getY());
-					listeCircle.get(i).ptCircle.get(j).setLocation(((getLabel().getWidth()/resX)*listeCircle.get(i).ptCircle.get(j).getX()), ((getLabel().getHeight()/resY)*listeCircle.get(i).ptCircle.get(j).getY()));
-					//System.out.println(listeCircle.get(i).ptCircle.get(j).getX()+" "+listeCircle.get(i).ptCircle.get(j).getY());
+				for (Circle aListeCircle : listeCircle) {
+					for (int j = 0; j < aListeCircle.ptCircle.size(); j++) {
+						//System.out.println(getLabel().getWidth()+"/"+resX+"*"+listeCircle.get(i).ptCircle.get(j).getX()+","+ getLabel().getHeight()+"/"+resY+"*"+listeCircle.get(i).ptCircle.get(j).getY());
+						aListeCircle.ptCircle.get(j).setLocation(((getLabel().getWidth() / resX) * aListeCircle.ptCircle.get(j).getX()), ((getLabel().getHeight() / resY) * aListeCircle.ptCircle.get(j).getY()));
+						//System.out.println(listeCircle.get(i).ptCircle.get(j).getX()+" "+listeCircle.get(i).ptCircle.get(j).getY());
+					}
 				}
-			}
 			resX = getLabel().getWidth();
 			resY = getLabel().getHeight();
 			repaint();
@@ -187,7 +184,7 @@ class Panel extends JPanel {
 	// Methode d'Andres Pour avoir tout les points aux bords d'un cercle
 	public ArrayList<Point> getPointWithCenter(int x_centre, int y_centre, double r){
 		
-		ArrayList<Point> pixels = new ArrayList<Point>();
+		ArrayList<Point> pixels = new ArrayList<>();
 	    
 		int width = bufferedOriginal.getWidth();
 		int height = bufferedOriginal.getHeight();
@@ -263,7 +260,7 @@ class Panel extends JPanel {
 		return image;
 	}
 	
-	public void drawCenteredCircle(Graphics2D g, Point centerCircle, double r) {
+	private void drawCenteredCircle(Graphics2D g, Point centerCircle, double r) {
 		  int x = (int) Math.round(centerCircle.getX()-(r));
 		  int y = (int) Math.round(centerCircle.getY()-(r));
 		  g.drawOval(x,y,2*(int)r,2*(int)r);
@@ -280,15 +277,14 @@ class Panel extends JPanel {
 		float aSlope = yDelta_a/xDelta_a; 
 		float bSlope = yDelta_b/xDelta_b;
 		centerX = (int) Math.round((aSlope*bSlope*(A.y - C.y) + bSlope*(A.getX() + B.getX())- aSlope*(B.x+C.x) )/(2*(bSlope-aSlope) ));
-		centerY = (int) Math.round(-1*(centerX - (A.x+B.x)/2)/aSlope +  (A.y+B.y)/2);
+		centerY = Math.round(-1*(centerX - (A.x+B.x)/2)/aSlope +  (A.y+B.y)/2);
 		center.setLocation(new Point(centerX, centerY)); 
 		
 		return center;
 	}
 	
 	public double lenghtFrom2Points(Point A, Point B) {
-		double lenght = (float)Math.sqrt((A.getX()-B.getX())*(A.getX()-B.getX()) + (A.getY()-B.getY())*(A.getY()-B.getY()));
-		return lenght; 
+		return (double) (float)Math.sqrt((A.getX()-B.getX())*(A.getX()-B.getX()) + (A.getY()-B.getY())*(A.getY()-B.getY()));
 	}
 
 	public void paintComponent(Graphics g) {
@@ -390,7 +386,7 @@ class Panel extends JPanel {
 
 	}
 	
-	public void drawPoint(Graphics2D g2d, Point e) {
+	private void drawPoint(Graphics2D g2d, Point e) {
 		int x1,y1,x2,y2;
 		x1 = (int) Math.round(e.getX() - 3); 
 		y1 = (int) Math.round(e.getY());
