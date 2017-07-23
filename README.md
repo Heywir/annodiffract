@@ -6,10 +6,13 @@ AnnoDiffract is a school project made by third year students in computer science
 Current Stage
 =============
 
-![alt text](http://zupimages.net/up/17/21/n98p.jpg)
+![alt text](https://image.ibb.co/gsPs9k/finaldiffract.jpg)
 
-- Must add some toolbar
-- Must start to calculate the intensity (after finding the center of all the rings)
+TODO
+=============
+
+- Tweaks here and there
+- Documentation.
 
 Requirements
 ============
@@ -21,24 +24,20 @@ For Contribution
 
 - JAI Library : http://maven.ibiblio.org/maven/geoserver/jai/jars/
 - JDK 8u73 : http://filehippo.com/fr/download_java_development_kit/tech/66101/
+- Jfree Chart
 
 Installation
 ============
 
 Download one of the version, or compile the code yourself :)
 
-Usage
-=====
-
-WIP
-
 Credits
 =======
 
-* My mate Morteum
+* Morteum
 * Myself
 * Physics Teachers
 * Dev Teachers
-* The University
+* The University of New Caledonia
 
 Copyright © UNC-NC 2017
