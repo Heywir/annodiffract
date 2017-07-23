@@ -507,7 +507,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 					}
 					double pDouble = Double.parseDouble(p);
 					double vDouble = Double.parseDouble(v);
-					double lDouble = Double.parseDouble(l);
+					double lDouble = Double.parseDouble(l); 
 					if(!mainPanel.listeMoyen.isEmpty()){
 						centerCircle=mainPanel.circleCenter(
 								new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(0).getX()),

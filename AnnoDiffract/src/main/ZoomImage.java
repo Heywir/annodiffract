@@ -178,7 +178,7 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 			    	sc.close();
 			    	pDouble = Double.parseDouble(p);
 			    	vDouble = Double.parseDouble(v);
-			    	lDouble = Double.parseDouble(l);
+			    	lDouble = Double.parseDouble(l); 
 			    }catch(FileNotFoundException ignored){
 			    	
 			    }
