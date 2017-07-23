@@ -2,12 +2,10 @@ package main;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -26,8 +24,6 @@ import java.util.Scanner;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JToolBar;
@@ -44,7 +40,7 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 	private final JLabel jL = new JLabel();
 	private double positionX;
 	private double positionY;
-	private JSlider brightSlide;
+	private final JSlider brightSlide;
 	
 	public ZoomImage(Fenetre f){
 		this.setF(f);
@@ -65,6 +61,8 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 				JToolBar light = new JToolBar();
 				this.add(light,BorderLayout.NORTH);
 				brightSlide = new JSlider();
+				brightSlide.setToolTipText("Luminosité");
+				light.add(new JLabel("Brightness"));
 				light.add(brightSlide);
 
 				// Layout 
@@ -92,20 +90,25 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 		this.img = j;
 		jL.setIcon(new ImageIcon(this.img));
 		this.img2 = j1;
+
+		//On garde la luminosite ajuste par nouveau clique
+		setBrightness();
 	}
 	
-	
+	private void setBrightness() {
+		RescaleOp op = new RescaleOp(((float)25 * (float) brightSlide.getValue() / (float)f.brightSlide.getMaximum()), 0, null);
+		this.img = op.filter(img2, this.img);
+		f.getMainPanel2().toGray(this.img);
+		jL.setIcon(new ImageIcon(this.img));
+		repaint();
+	}
+
 	@Override
 	public void stateChanged(ChangeEvent arg0) {
 
 		if(arg0.getSource()==brightSlide){
 			if(f.getMainPanel2().isLoaded()){
-				RescaleOp op = new RescaleOp(((float)10 * (float) brightSlide.getValue() / (float)f.brightSlide.getMaximum()), 0, null);
-				this.img = op.filter(img2, img);
-				f.getMainPanel2().toGray(img);
-				Image img = this.img;
-				jL.setIcon(new ImageIcon(img));
-				repaint();
+				setBrightness();
 			}
 		}
 		
@@ -151,10 +154,10 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 						new Point((int)Math.round((f.getMainPanel2().getBufferedOriginal().getWidth()/f.getMainPanel2().getResX())*c.ptCircle.get(2).getX()),
 								(int)Math.round((f.getMainPanel2().getBufferedOriginal().getHeight()/f.getMainPanel2().getResY())*c.ptCircle.get(2).getY())));
 				System.out.println(centerCircle.getX() + " " + centerCircle.getY());
-				String p = null;
+				String p;
 				double pDouble = 0;
-				String v =null;
-				String l =null;
+				String v;
+				String l;
 				double vDouble = 0;
 				double lDouble = 0;
 			    File f = new File("1.txt");

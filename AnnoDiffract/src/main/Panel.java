@@ -138,7 +138,7 @@ class Panel extends JPanel {
 	  }
 	
 	private Dimension resizeImage(){
-		float Calneww = Float.MAX_VALUE, Calnewh = Float.MAX_VALUE, imWidth = bufferedOriginal.getWidth(), imHeight = bufferedOriginal.getHeight();
+		float Calneww, Calnewh, imWidth = bufferedOriginal.getWidth(), imHeight = bufferedOriginal.getHeight();
 		int neww,newh;
 		Calneww = (float) ((imWidth/imHeight)*(f.getHeight()/1.5));
 		//System.out.println(imWidth/imHeight +"  * " + f.getHeight()/1.4);
@@ -412,7 +412,7 @@ class Panel extends JPanel {
 	
 	//Change Brightness
 	public void setBrightness(float scaleFactor){
-        RescaleOp op = new RescaleOp(scaleFactor, 0, null);
+        RescaleOp op = new RescaleOp(2*scaleFactor, 0, null);
         bufferedScaled = op.filter(bufferedScaled2, bufferedScaled);
         toGray(bufferedScaled);
         bright = scaleFactor;
