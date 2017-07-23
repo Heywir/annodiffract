@@ -85,7 +85,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		this.setTitle("AnnoDiffract");
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		// En attendant
-		this.setResizable(false);
+		//this.setResizable(false);
 
 		// Layout
 		BorderLayout layout = new BorderLayout();
