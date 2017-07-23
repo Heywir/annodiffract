@@ -6,13 +6,12 @@ AnnoDiffract is a school project made by third year students in computer science
 Current Stage
 =============
 
-![alt text](https://img15.hostingpics.net/pics/232574annodiffract.jpg)
+![alt text](https://ibb.co/dRnZN5)
 
 TODO
 =============
-- Full scaling, i mean showing a scaled image (to fit on every screen) and having precise information from the original image.
-- Redraw when resize.
-- More buttons, menus (graph, recentering ...)
+
+- Tweaks here and there
 - Documentation.
 
 Requirements
@@ -25,24 +24,20 @@ For Contribution
 
 - JAI Library : http://maven.ibiblio.org/maven/geoserver/jai/jars/
 - JDK 8u73 : http://filehippo.com/fr/download_java_development_kit/tech/66101/
+- Jfree Chart
 
 Installation
 ============
 
 Download one of the version, or compile the code yourself :)
 
-Usage
-=====
-
-WIP
-
 Credits
 =======
 
-* My mate Morteum
+* Morteum
 * Myself
 * Physics Teachers
 * Dev Teachers
-* The University
+* The University of New Caledonia
 
 Copyright © UNC-NC 2017
