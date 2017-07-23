@@ -355,6 +355,11 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 					z.setLocationRelativeTo(null);
 					z.setVisible(true);
 				}
+				else {
+					if (!z.isVisible()) {
+						z.setVisible(true);
+					}
+				}
 			}
 		}
 		if (e.getSource() == findCenter) {
@@ -520,7 +525,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 						CalculMoyAndRadius(centerCircle, pDouble, vDouble, lDouble);
 					}
 					tmpBeamStop.clear();
-					JOptionPane.showMessageDialog(null, "BeamStop Ok. ", "Vous avez défini le BeamStop", JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(null, "BeamStop Ok. ", "Vous avez dï¿½fini le BeamStop", JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
 		}
