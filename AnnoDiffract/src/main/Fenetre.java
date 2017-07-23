@@ -126,7 +126,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		JPanel toolBar = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
 		// ToolBar Bouttons
-		 brightSlide = new JSlider();
+		brightSlide = new JSlider();
 		// 32 x 32
 		// Find Center
 		findCenter = new JButton(new ImageIcon(Fenetre.class.getResource("img/fc.png")));

@@ -26,7 +26,11 @@ import java.util.Scanner;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.JToolBar;
 import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -40,6 +44,7 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 	private final JLabel jL = new JLabel();
 	private double positionX;
 	private double positionY;
+	private JSlider brightSlide;
 	
 	public ZoomImage(Fenetre f){
 		this.setF(f);
@@ -57,24 +62,25 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 				BorderLayout layout = new BorderLayout();
 				this.setLayout(layout);
 
-		JPanel p = new JPanel(layout);
-				setContentPane(p);
+				JToolBar light = new JToolBar();
+				this.add(light,BorderLayout.NORTH);
+				brightSlide = new JSlider();
+				light.add(brightSlide);
+
 				// Layout 
-				
+				JPanel p = new JPanel(layout);
 				GridBagLayout layout1 = new GridBagLayout();
 				GridBagConstraints c = new GridBagConstraints();
 				p.setLayout(layout1);
 				
-
 				// Panel Image
-				p.add(jL);
-
-				// Ajouts
-				p.setSize(new Dimension(this.getWidth(), this.getHeight()));
+				p.add(jL,c);
+				
+				this.add(p,BorderLayout.CENTER);
 				
 				jL.addMouseMotionListener(this);
 				jL.addMouseListener(this);
-				f.brightSlide.addChangeListener(this);
+				brightSlide.addChangeListener(this);
 				
 	}
 	
@@ -92,9 +98,9 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 	@Override
 	public void stateChanged(ChangeEvent arg0) {
 
-		if(arg0.getSource()==f.brightSlide){
+		if(arg0.getSource()==brightSlide){
 			if(f.getMainPanel2().isLoaded()){
-				RescaleOp op = new RescaleOp(((float)4 * (float) f.brightSlide.getValue() / (float)f.brightSlide.getMaximum()), 0, null);
+				RescaleOp op = new RescaleOp(((float)10 * (float) brightSlide.getValue() / (float)f.brightSlide.getMaximum()), 0, null);
 				this.img = op.filter(img2, img);
 				f.getMainPanel2().toGray(img);
 				Image img = this.img;
