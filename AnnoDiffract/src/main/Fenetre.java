@@ -34,11 +34,12 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	private String p = null;
 	private String v =null;
 	private String l =null;
-	private final BigDecimal lambda;
+	private BigDecimal lambda;
 	private ZoomImage z=null;
-	private final ArrayList<Double> tmpBeamStop = new ArrayList<>();
+	private ArrayList<Double> tmpBeamStop = new ArrayList<>();
 	private double minBS=-1;
 	private double maxBS=-1;
+	private Point centerCircle;
 	
 	private Fenetre() {
 		
@@ -59,17 +60,15 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		    	l = l.replaceAll("Longueur de camera en Metre : ", "");
 		    	//System.out.println(l);
 		    	sc.close();
+		    	Double vDouble=Double.parseDouble(v);
 		    	
 		    }catch(FileNotFoundException ignored){
 		    	
 		    }
 		}
-		Double vDouble=Double.parseDouble(v);
+		
 		
 		//Calcul lambda
-		lambda = new BigDecimal((6.62 *Math.pow(10,-34))/
-				(Math.sqrt((2.9149 *Math.pow(10,-49))*(vDouble*(double)1000)*((double)1+(9.7714 *Math.pow(10,-7))*(vDouble*(double)1000)))));
-		
 		// Taille Ecran
 		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		Rectangle bounds = env.getMaximumWindowBounds();
@@ -213,6 +212,10 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
         				, "Mauvaise valeur", JOptionPane.ERROR_MESSAGE);
     			V="120000";
     		}
+    		lambda = new BigDecimal((6.62 *Math.pow(10,-34))/
+					(Math.sqrt((2.9149 *Math.pow(10,-49))*((double)Float.parseFloat(V)*(double)1000)*
+							((double)1+(9.7714 *Math.pow(10,-7))*((double)Float.parseFloat(V)*(double)1000)))));
+			
     		String L = JOptionPane.showInputDialog(n,"Veuillez rentrer la longueur de camera en Metre.");
     		try{
     			j = Float.parseFloat(L);
@@ -281,7 +284,19 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	    					+ "Les valeurs sont inchangé"
 	        				, "Mauvaise valeur", JOptionPane.ERROR_MESSAGE);
 				}
-	    		    
+				if(!mainPanel.listeCircle.isEmpty()){
+					centerCircle=mainPanel.circleCenter(
+							new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(0).getX()),
+									(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(0).getY())),
+							new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(1).getX()),
+									(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(1).getY())),
+							new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(2).getX()),
+									(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(2).getY())));
+					
+					Double pDouble = Double.parseDouble(p), vDouble = Double.parseDouble(v), lDouble = Double.parseDouble(l);
+					System.out.println(pDouble+" "+vDouble+" "+ lDouble);
+					CalculMoyAndRadius(centerCircle, pDouble, vDouble, lDouble);
+				}
 		       }
 		}
 	
@@ -415,7 +430,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 					mainPanel.setResY(mainPanel.getLabel().getHeight());
 				}
 				//** Ici on calcule le centre avec les coordonnées de la vrai image pour nos calcul
-				Point centerCircle=mainPanel.circleCenter(
+				centerCircle=mainPanel.circleCenter(
 						new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*c.ptCircle.get(0).getX()),
 								(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*c.ptCircle.get(0).getY())),
 						new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*c.ptCircle.get(1).getX()),
@@ -450,9 +465,12 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			    }catch(FileNotFoundException ignored){
 			    	
 			    }
+			    lambda = new BigDecimal((6.62 *Math.pow(10,-34))/
+						(Math.sqrt((2.9149 *Math.pow(10,-49))*(vDouble*(double)1000)*
+								((double)1+(9.7714 *Math.pow(10,-7))*(vDouble*(double)1000)))));
 			    //** Ici on calcule la moyenne d'intensité de tout les cercles ainsi que leur rayon
 			    //** et trois autres paramètres étant la Distance interarticulaire l'Angle de diffraction 2theta
-			    //** et le Vecteur de diffusion S  
+			    //** et le Vecteur de diffusion S
 			    CalculMoyAndRadius(centerCircle,pDouble, vDouble, lDouble);
 			}
 		}else if(mainPanel.getCurrentTool()==TypeOutil.ZOOM){
@@ -487,8 +505,22 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 						maxBS = c;
 						minBS=tmpBeamStop.get(0);
 					}
+					double pDouble = Double.parseDouble(p);
+					double vDouble = Double.parseDouble(v);
+					double lDouble = Double.parseDouble(l);
+					if(!mainPanel.listeMoyen.isEmpty()){
+						centerCircle=mainPanel.circleCenter(
+								new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(0).getX()),
+										(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(0).getY())),
+								new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(1).getX()),
+										(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(1).getY())),
+								new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(2).getX()),
+										(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(2).getY())));
+						
+						CalculMoyAndRadius(centerCircle, pDouble, vDouble, lDouble);
+					}
 					tmpBeamStop.clear();
-					System.out.println(minBS+" "+maxBS);
+					JOptionPane.showMessageDialog(null, "BeamStop Ok. ", "Vous avez d�fini le BeamStop", JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
 		}
@@ -502,14 +534,14 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		double theta2;
 		double lenght;
 		pDouble = (pDouble* 39.370079);
+		//System.out.println(centerCircle.getX()+" "+centerCircle.getY());
 		mainPanel.listeMoyen.clear();
 		mainPanel.listeRayon.clear();
 		mainPanel.listeD.clear();
 		mainPanel.listeS.clear();
 		mainPanel.liste2theta.clear();
 		mainPanel.listeMoyenBeam.clear();
-		
-		ArrayList<Point> tmp = mainPanel.getPointWithCenter((int)centerCircle.getX(),(int)centerCircle.getY(), 0);
+		ArrayList<Point> tmp ;
 		while(i<mainPanel.getBufferedOriginal().getWidth()){
 			l=0;
 			lenght = mainPanel.lenghtFrom2Points(centerCircle, new Point((int)(centerCircle.getX()+i), (int)centerCircle.getY()));
@@ -630,7 +662,15 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		// TODO Auto-generated method stub
 		
 	}
+	
+	public BigDecimal getLambda(){
+		return lambda;
+	}
 
+	public void setLambda(BigDecimal lambda){
+		this.lambda=lambda;
+	}
+	
 	//Main
 	public static void main(String[] args) {
 
