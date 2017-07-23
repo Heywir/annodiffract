@@ -11,7 +11,6 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JSpinner.ListEditor;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -26,22 +25,19 @@ import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import javafx.scene.chart.NumberAxis;
-
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 
 
-public class Graph extends JFrame implements ChartMouseListener, ActionListener{
-	public XYSeries XY;
-	private String chartTitle;
-	private ChartPanel chartPanel;
-	private ArrayList<Double> Intensity; 
-	private ArrayList<Double> IntensityBeam; 
-	private ArrayList<Double> ListeRayon;
-	private ArrayList<Double> ListeD;
-	private ArrayList<Double> ListeS;
-	private ArrayList<Double> Liste2theta;
-	private JMenuBar menu = null;
+class Graph extends JFrame implements ChartMouseListener, ActionListener{
+	private XYSeries XY;
+	private final String chartTitle;
+	private final ChartPanel chartPanel;
+	private final ArrayList<Double> Intensity;
+	private final ArrayList<Double> IntensityBeam;
+	private final ArrayList<Double> ListeRayon;
+	private final ArrayList<Double> ListeD;
+	private final ArrayList<Double> ListeS;
+	private final ArrayList<Double> Liste2theta;
 	private JMenuItem setRayon = null;
 	private JMenuItem setS = null;
 	private JMenuItem set2theta = null;
@@ -51,13 +47,13 @@ public class Graph extends JFrame implements ChartMouseListener, ActionListener{
 	private JFreeChart xylineChartRayon = null;
 	private JFreeChart xylineChart2theta = null;
 	
-	public Graph(String title, String chartTitle, ArrayList<Double> Intensity, 
-			ArrayList<Double> ListeRayon, ArrayList<Double> ListeD, 
-			ArrayList<Double> ListeS, ArrayList<Double> Liste2theta, 
-			ArrayList<Double> IntensityBeam) {
+	public Graph(ArrayList<Double> Intensity,
+				 ArrayList<Double> ListeRayon, ArrayList<Double> ListeD,
+				 ArrayList<Double> ListeS, ArrayList<Double> Liste2theta,
+				 ArrayList<Double> IntensityBeam) {
 		//Construction du Graphique
-		super(title);
-		this.chartTitle = chartTitle;
+		super("Graphique");
+		this.chartTitle = "Profile IntensitÃ©";
         
 		// Layout Fenetre
      	BorderLayout layout = new BorderLayout();
@@ -99,13 +95,13 @@ public class Graph extends JFrame implements ChartMouseListener, ActionListener{
         
     	
         //Construction fenetre
-      	menu = new JMenuBar();
+		JMenuBar menu = new JMenuBar();
       	menu.setBorder(null);
-      		
+
       	// Layout
       	BorderLayout barLayout = new BorderLayout();
-     	menu.setLayout(barLayout);
-     	
+     	this.setLayout(barLayout);
+
      	// Menus
      	JMenu menuFile = new JMenu("Abscisse");
      	JMenu menuBeam = new JMenu("BeamStop");
@@ -130,7 +126,7 @@ public class Graph extends JFrame implements ChartMouseListener, ActionListener{
         setBeam.addActionListener(this);
         setNoBeam.addActionListener(this);
         
-     	//Ajout à la fenetre
+     	//Ajout ï¿½ la fenetre
      	menu.add(menuFile);
      	menu.add(menuBeam);
      	this.add(menu,BorderLayout.NORTH);
@@ -140,7 +136,7 @@ public class Graph extends JFrame implements ChartMouseListener, ActionListener{
 
     private XYDataset createDataset(ArrayList<Double> x, ArrayList<Double> y ) {
 
-        XY = new XYSeries( "Moyenne et Intensité" );
+        XY = new XYSeries( "Moyenne et Intensitï¿½" );
         for (int i=0; i<x.size();i++){
 	        XY.add(x.get(i), y.get(i));
         }
@@ -175,12 +171,12 @@ public class Graph extends JFrame implements ChartMouseListener, ActionListener{
 		}
 		if(e.getSource() == setBeam){
 			XYSeriesCollection dataset = new XYSeriesCollection();
-			XY = new XYSeries( "Moyenne et Intensité" );
+			XY = new XYSeries( "Moyenne et Intensitï¿½" );
 			for (int i=0; i<ListeRayon.size();i++){
 		        XY.add(ListeRayon.get(i), IntensityBeam.get(i));
 	        }
 			dataset.addSeries(XY);
-			XY = new XYSeries( "Moyenne et Intensité" );
+			XY = new XYSeries( "Moyenne et Intensitï¿½" );
 			for (int i=0; i<ListeRayon.size();i++){
 		        XY.add(ListeRayon.get(i), Intensity.get(i));
 	        }
@@ -188,7 +184,7 @@ public class Graph extends JFrame implements ChartMouseListener, ActionListener{
 			xylineChartRayon = ChartFactory.createXYLineChart(
 	                chartTitle ,
 	                "Rayon" ,
-	                "Intensité" ,
+	                "Intensitï¿½" ,
 	                dataset,
 	                PlotOrientation.VERTICAL ,
 	                true , true , false);
@@ -208,7 +204,7 @@ public class Graph extends JFrame implements ChartMouseListener, ActionListener{
 			xylineChartS = ChartFactory.createXYLineChart(
 	                chartTitle ,
 	                "Vecteur de Diffraction" ,
-	                "Intensité" ,
+	                "Intensitï¿½" ,
 	                dataset,
 	                PlotOrientation.VERTICAL ,
 	                true , true , false);
@@ -227,7 +223,7 @@ public class Graph extends JFrame implements ChartMouseListener, ActionListener{
 			xylineChartS = ChartFactory.createXYLineChart(
 	                chartTitle ,
 	                "Angle de diffraction 2 theta" ,
-	                "Intensité" ,
+	                "Intensitï¿½" ,
 	                dataset,
 	                PlotOrientation.VERTICAL ,
 	                true , true , false);
@@ -239,26 +235,26 @@ public class Graph extends JFrame implements ChartMouseListener, ActionListener{
 		}
 	}
 
-	public void withoutBeam(){
+	private void withoutBeam(){
         //On creer les Charts que l'utilisateur pourra afficher s'il le souhaite
         xylineChartRayon = ChartFactory.createXYLineChart(
                 chartTitle ,
                 "Rayon" ,
-                "intensité" ,
+                "intensitï¿½" ,
                 createDataset(ListeRayon, Intensity),
                 PlotOrientation.VERTICAL ,
                 true , true , false);
         xylineChartS = ChartFactory.createXYLineChart(
                 chartTitle ,
                 "Vecteur de distance S" ,
-                "intensité" ,
+                "intensitï¿½" ,
                 createDataset(ListeS, Intensity),
                 PlotOrientation.VERTICAL ,
                 true , true , false);
         xylineChart2theta = ChartFactory.createXYLineChart(
                 chartTitle ,
                 "Angle de Diffraction 2theta" ,
-                "intensité" ,
+                "intensitï¿½" ,
                 createDataset(Liste2theta, Intensity),
                 PlotOrientation.VERTICAL ,
                 true , true , false);
