@@ -19,6 +19,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.math.BigDecimal;
 import java.util.Scanner;
 
 import javax.swing.ImageIcon;
@@ -177,10 +178,19 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 			    	sc.close();
 			    	pDouble = Double.parseDouble(p);
 			    	vDouble = Double.parseDouble(v);
-			    	lDouble = Double.parseDouble(l);
+			    	lDouble = Double.parseDouble(l); 
 			    }catch(FileNotFoundException ignored){
 			    	
 			    }
+			    this.f.setLambda(new BigDecimal((6.62 *Math.pow(10,-34))/
+						(Math.sqrt((2.9149 *Math.pow(10,-49))*(vDouble*(double)1000)*
+								((double)1+(9.7714 *Math.pow(10,-7))*(vDouble*(double)1000))))));
+			    this.f.getMainPanel2().listeMoyen.clear();
+			    this.f.getMainPanel2().listeRayon.clear();
+			    this.f.getMainPanel2().listeD.clear();
+			    this.f.getMainPanel2().listeS.clear();
+			    this.f.getMainPanel2().liste2theta.clear();
+			    this.f.getMainPanel2().listeMoyenBeam.clear();
 			    this.f.CalculMoyAndRadius(centerCircle,pDouble, vDouble, lDouble);
 			}
 			f.getMainPanel2().repaint();
