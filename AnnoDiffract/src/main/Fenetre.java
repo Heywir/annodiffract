@@ -1,24 +1,48 @@
 package main;
 
-import javax.swing.*;
-import javax.swing.Timer;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GraphicsEnvironment;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.image.RescaleOp;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+import javax.swing.Box;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
+import javax.swing.WindowConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.jfree.ui.RefineryUtilities;
-
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.RescaleOp;
 
 class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMotionListener, ComponentListener, ChangeListener{
 
@@ -28,6 +52,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	private JButton findCenter = null;
 	private JButton setParam = null;
 	private JButton zoom = null;
+	private JButton beam = null;
 	private JLabel statusLabel = null;
 	private JLabel outilLabel;
 	private int positionX=0;
@@ -159,6 +184,13 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		zoom.setBorder(null);
 		zoom.setContentAreaFilled(false);
 		
+		beam = new JButton(new ImageIcon(Fenetre.class.getResource("img/beam.png")));
+		beam.setPressedIcon(new ImageIcon(Fenetre.class.getResource("img/beam.png")));
+		beam.setToolTipText("Correction On BeamStop");
+		beam.setBorder(null);
+		beam.setContentAreaFilled(false);
+		
+		
 		// Ajouts
 		newMenuBar.add(menuFile);
 		newMenuBar.add(menuGraph);
@@ -167,8 +199,9 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		menuFile.add(menuItemOuvrir);
 		menuGraph.add(menuGraphOpen);
 		toolBar.add(findCenter);
-		toolBar.add(setParam);
 		toolBar.add(zoom);
+		toolBar.add(beam);
+		toolBar.add(setParam);
 		toolBar.add(new JLabel("Brightness:"));
 		toolBar.add(brightSlide);
 		toolBar.add(outilLabel);
@@ -180,9 +213,9 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		setParam.addActionListener(this);
 		zoom.addActionListener(this);
 		findCenter.addActionListener(this);
+		beam.addActionListener(this);
 		mainPanel.getLabel().addMouseListener(this);
 		brightSlide.addChangeListener(this);
-		
 
 		return menuBar;
 	}
@@ -339,7 +372,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 					}
 			    }
 		}
-		/*if (e.getSource() == findCenter) {
+		if (e.getSource() == findCenter) {
 			//Method to find center
 			if(mainPanel.isLoaded()){
 				mainPanel.setCurrentTool(TypeOutil.POINT);
@@ -347,7 +380,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 					z.dispose();
 				}
 			}
-		}*/
+		}
 		if (e.getSource() == setParam) {
 			//Method to find center
 			this.changeParam();
@@ -370,7 +403,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 				}
 			}
 		}
-		if (e.getSource() == findCenter) {
+		if (e.getSource() == beam) {
 			//Method to find center with zoom
 			if(mainPanel.isLoaded()){
 				mainPanel.setCurrentTool(TypeOutil.BEAMSTOP);
@@ -549,7 +582,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		int l;
     	double i=0;
 		double j;
-		double theta2;
+		BigDecimal theta2;
 		double lenght;
 		pDouble = (pDouble* 39.370079);
 		//System.out.println(centerCircle.getX()+" "+centerCircle.getY());
@@ -562,8 +595,8 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		ArrayList<Point> tmp ;
 		while(i<mainPanel.getBufferedOriginal().getWidth()){
 			l=0;
-			lenght = mainPanel.lenghtFrom2Points(centerCircle, new Point((int)(centerCircle.getX()+i), (int)centerCircle.getY()));
-			tmp = mainPanel.getPointWithCenter((int)centerCircle.getX(),(int)centerCircle.getY(),lenght);
+			//lenght = mainPanel.lenghtFrom2Points(centerCircle, new Point((int)(centerCircle.getX()+i), (int)centerCircle.getY()));
+			tmp = mainPanel.getPointWithCenter((int)centerCircle.getX(),(int)centerCircle.getY(),i);
 			Double somme = 0.0,sommeBeam= 0.0 ,moy, moyBeam;
 			for(int h = 0; h<=tmp.size()-1;h++){
 				Color color=new Color(mainPanel.getBufferedOriginal().getRGB((int)(tmp.get(h).getX()), (int)tmp.get(h).getY()));
@@ -577,11 +610,11 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 				somme = somme + c;
 			}
 			if(!tmp.isEmpty()){
-				j = (lenght/pDouble);
-				theta2 = Math.tan((j/(lDouble*(double)1000))/((double)180)*Math.PI);
-				mainPanel.liste2theta.add(theta2); 
-				mainPanel.listeS.add(((double)2*Math.toRadians(Math.sin(((theta2/(double)180)*Math.PI))))/lambda.doubleValue());
-				mainPanel.listeD.add((((lambda.doubleValue()*lDouble*(double)100)/j)* Math.pow(10,5)));
+				j = (i/pDouble);
+				theta2 = BigDecimal.valueOf(Math.atan((j/((double)lDouble*(double)1000))/((double)180)*Math.PI));
+				mainPanel.liste2theta.add(theta2.doubleValue()); 
+				mainPanel.listeS.add(((double)2*Math.toRadians(Math.sin(((theta2.doubleValue()/(double)180)*Math.PI))))/lambda.doubleValue());
+				mainPanel.listeD.add((((lambda.doubleValue()*(double)lDouble*(double)100)/j)* Math.pow(10,6)));
 				mainPanel.listeRayon.add(j);
 				moy = (somme/tmp.size());
 				moyBeam = (sommeBeam/l);

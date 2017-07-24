@@ -1,6 +1,8 @@
 package main;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Paint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.BasicStroke;
@@ -8,12 +10,16 @@ import java.awt.BorderLayout;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.annotations.XYTextAnnotation;
+import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.data.xy.XYDataset;
@@ -24,7 +30,7 @@ import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeriesCollection;
-
+import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 
 
@@ -46,6 +52,8 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 	private JFreeChart xylineChartS = null;
 	private JFreeChart xylineChartRayon = null;
 	private JFreeChart xylineChart2theta = null;
+	private JLabel statusLabel;
+	private XYPlot plot;
 	
 	public Graph(ArrayList<Double> Intensity,
 				 ArrayList<Double> ListeRayon, ArrayList<Double> ListeD,
@@ -76,6 +84,8 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
         //Construction fenetre
 		JMenuBar menu = new JMenuBar();
       	menu.setBorder(null);
+      	JPanel statusPanel = new JPanel(new BorderLayout());
+		statusLabel = new JLabel();
 
       	// Layout
       	BorderLayout barLayout = new BorderLayout();
@@ -90,6 +100,8 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
      	setBeam = new JMenuItem("Correction Beamstop");
      	setNoBeam = new JMenuItem("Sans correction Beamstop");
      	
+     	// Status Bar
+     	statusPanel.add(statusLabel, BorderLayout.EAST);
      	
      	menuFile.add(setRayon);
      	menuFile.add(setS);
@@ -110,6 +122,7 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
      	menu.add(menuBeam);
      	this.add(menu,BorderLayout.NORTH);
      	this.add(chartPanel, BorderLayout.CENTER);
+     	this.add(statusPanel, BorderLayout.SOUTH);
      	
 	}
 
@@ -125,28 +138,99 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
         return dataset;
     }
 
-	private void report(ChartMouseEvent e) {
-        ChartEntity ce = e.getEntity();
+
+
+	private void withoutBeam(){
+        //On creer les Charts que l'utilisateur pourra afficher s'il le souhaite
+        xylineChartRayon = ChartFactory.createXYLineChart(
+                chartTitle ,
+                "Rayon" ,
+                "intensitï¿½" ,
+                createDataset(ListeRayon, Intensity),
+                PlotOrientation.VERTICAL ,
+                true , true , false);
+        xylineChartS = ChartFactory.createXYLineChart(
+                chartTitle ,
+                "Vecteur de distance S" ,
+                "intensitï¿½" ,
+                createDataset(ListeS, Intensity),
+                PlotOrientation.VERTICAL ,
+                true , true , false);
+        xylineChart2theta = ChartFactory.createXYLineChart(
+                chartTitle ,
+                "Angle de Diffraction 2theta" ,
+                "intensitï¿½" ,
+                createDataset(Liste2theta, Intensity),
+                PlotOrientation.VERTICAL ,
+                true , true , false);
+        graphicOption();
+	}
+
+	public void graphicOption(){
+		
+		//Viseur, couleur et épaisseur
+        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer( );
+        renderer.setSeriesPaint( 0 , Color.BLACK );
+        renderer.setSeriesOutlineStroke(0, new BasicStroke(0.1f));
+        renderer.setSeriesStroke( 0 , new BasicStroke( 1.0f ) );
+        renderer.setBaseShapesVisible(false);
+        plot = xylineChartRayon.getXYPlot();
+        plot.setDomainCrosshairVisible(true);
+        plot.setRangeCrosshairVisible(true); 
+        plot.setRenderer( renderer );
+        plot = xylineChartS.getXYPlot();
+        plot.setDomainCrosshairVisible(true);
+        plot.setRangeCrosshairVisible(true);      
+        plot.setRenderer( renderer );
+        plot = xylineChart2theta.getXYPlot();
+        plot.setDomainCrosshairVisible(true);
+        plot.setRangeCrosshairVisible(true);      
+        plot.setRenderer( renderer );
+        plot = xylineChartRayon.getXYPlot();
+	}
+
+	@Override
+	public void chartMouseClicked(ChartMouseEvent e) {
+		ChartEntity ce = e.getEntity();
         if (ce instanceof XYItemEntity) {
             XYItemEntity e1 = (XYItemEntity) ce;
             XYDataset d = e1.getDataset();
-            //int s = e1.getSeriesIndex();
+            int s = e1.getSeriesIndex();
             int i = e1.getItem();
-            //System.out.println("X:" + d.getX(s, i) + ", Y:" + d.getY(s, i));
-            System.out.println(ListeD.get(i));
+            XYTextAnnotation b = new XYTextAnnotation(ListeD.get(i)+" A", (double)d.getX(s, i), (double)d.getY(s, i));
+            Paint paint = Color.BLUE;
+			b.setBackgroundPaint(paint );
+            plot.addAnnotation(b);
         }
-    }
+		
+	}
+
+	@Override
+	public void chartMouseMoved(ChartMouseEvent e) {
+		ChartEntity ce = e.getEntity();
+        if (ce instanceof XYItemEntity) {
+            XYItemEntity e1 = (XYItemEntity) ce;
+            XYDataset d = e1.getDataset();
+            int s = e1.getSeriesIndex();
+            int i = e1.getItem();
+            statusLabel.setText("X: " + d.getX(s, i) + "           Y: " + d.getY(s, i));
+        }		
+	}
+	
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == setS){
 			chartPanel.setChart(xylineChartS);
+			plot = xylineChartS.getXYPlot();
 		}
 		if(e.getSource() == setRayon){
 			chartPanel.setChart(xylineChartRayon);
+			plot = xylineChartRayon.getXYPlot();
 		}
 		if(e.getSource() == set2theta){
 			chartPanel.setChart(xylineChart2theta);
+			plot = xylineChart2theta.getXYPlot();
 		}
 		if(e.getSource() == setBeam){
 			XYSeriesCollection dataset = new XYSeriesCollection();
@@ -212,66 +296,6 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 			graphicOption();
 			chartPanel.setChart(xylineChartRayon);
 		}
-	}
-
-	private void withoutBeam(){
-        //On creer les Charts que l'utilisateur pourra afficher s'il le souhaite
-        xylineChartRayon = ChartFactory.createXYLineChart(
-                chartTitle ,
-                "Rayon" ,
-                "intensitï¿½" ,
-                createDataset(ListeRayon, Intensity),
-                PlotOrientation.VERTICAL ,
-                true , true , false);
-        xylineChartS = ChartFactory.createXYLineChart(
-                chartTitle ,
-                "Vecteur de distance S" ,
-                "intensitï¿½" ,
-                createDataset(ListeS, Intensity),
-                PlotOrientation.VERTICAL ,
-                true , true , false);
-        xylineChart2theta = ChartFactory.createXYLineChart(
-                chartTitle ,
-                "Angle de Diffraction 2theta" ,
-                "intensitï¿½" ,
-                createDataset(Liste2theta, Intensity),
-                PlotOrientation.VERTICAL ,
-                true , true , false);
-        graphicOption();
-	}
-
-	public void graphicOption(){
-		
-		//Viseur, couleur et épaisseur
-        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer( );
-        renderer.setSeriesPaint( 0 , Color.BLACK );
-        renderer.setSeriesOutlineStroke(0, new BasicStroke(0.1f));
-        renderer.setSeriesStroke( 0 , new BasicStroke( 1.0f ) );
-        renderer.setBaseShapesVisible(false);
-        XYPlot plot = xylineChartRayon.getXYPlot();
-        plot.setDomainCrosshairVisible(true);
-        plot.setRangeCrosshairVisible(true); 
-        plot.setRenderer( renderer );
-        plot = xylineChartS.getXYPlot();
-        plot.setDomainCrosshairVisible(true);
-        plot.setRangeCrosshairVisible(true);      
-        plot.setRenderer( renderer );
-        plot = xylineChart2theta.getXYPlot();
-        plot.setDomainCrosshairVisible(true);
-        plot.setRangeCrosshairVisible(true);      
-        plot.setRenderer( renderer );
-	}
-
-	@Override
-	public void chartMouseClicked(ChartMouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void chartMouseMoved(ChartMouseEvent e) {
-		report(e);
-		
 	}
 
 }
