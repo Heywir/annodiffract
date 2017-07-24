@@ -72,28 +72,7 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
         withoutBeam();
         chartPanel = new ChartPanel(xylineChartRayon);
         chartPanel.setPreferredSize( new java.awt.Dimension( 560 , 367 ) );
-        XYPlot plot = xylineChartRayon.getXYPlot();
-        plot.setDomainCrosshairVisible(true);
-        plot.setRangeCrosshairVisible(true);        
         
-        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer( );
-        renderer.setSeriesPaint( 0 , Color.BLACK );
-        renderer.setSeriesOutlineStroke(0, new BasicStroke(0.1f));
-        renderer.setSeriesStroke( 0 , new BasicStroke( 1.0f ) );
-        renderer.setBaseShapesVisible(false);
-        plot.setRenderer( renderer );
-
-        plot = xylineChartS.getXYPlot();
-        plot.setDomainCrosshairVisible(true);
-        plot.setRangeCrosshairVisible(true);      
-        plot.setRenderer( renderer );
-        
-        plot = xylineChart2theta.getXYPlot();
-        plot.setDomainCrosshairVisible(true);
-        plot.setRangeCrosshairVisible(true);      
-        plot.setRenderer( renderer );
-        
-    	
         //Construction fenetre
 		JMenuBar menu = new JMenuBar();
       	menu.setBorder(null);
@@ -171,12 +150,12 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 		}
 		if(e.getSource() == setBeam){
 			XYSeriesCollection dataset = new XYSeriesCollection();
-			XY = new XYSeries( "Moyenne et Intensitï¿½" );
+			XY = new XYSeries( "Avec Correction BeamStop" );
 			for (int i=0; i<ListeRayon.size();i++){
 		        XY.add(ListeRayon.get(i), IntensityBeam.get(i));
 	        }
 			dataset.addSeries(XY);
-			XY = new XYSeries( "Moyenne et Intensitï¿½" );
+			XY = new XYSeries( "Sans Correction BeamStop" );
 			for (int i=0; i<ListeRayon.size();i++){
 		        XY.add(ListeRayon.get(i), Intensity.get(i));
 	        }
@@ -188,8 +167,6 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 	                dataset,
 	                PlotOrientation.VERTICAL ,
 	                true , true , false);
-			chartPanel.setChart(xylineChartRayon);
-			
 			dataset = new XYSeriesCollection();
 			XY = new XYSeries( "Avec Correction BeamStop" );
 			for (int i=0; i<ListeS.size();i++){
@@ -227,10 +204,12 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 	                dataset,
 	                PlotOrientation.VERTICAL ,
 	                true , true , false);
-
+			graphicOption();
+			chartPanel.setChart(xylineChartRayon);
 		}
 		if(e.getSource() == setNoBeam){
 			withoutBeam();
+			graphicOption();
 			chartPanel.setChart(xylineChartRayon);
 		}
 	}
@@ -258,8 +237,30 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
                 createDataset(Liste2theta, Intensity),
                 PlotOrientation.VERTICAL ,
                 true , true , false);
+        graphicOption();
 	}
-	
+
+	public void graphicOption(){
+		
+		//Viseur, couleur et épaisseur
+        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer( );
+        renderer.setSeriesPaint( 0 , Color.BLACK );
+        renderer.setSeriesOutlineStroke(0, new BasicStroke(0.1f));
+        renderer.setSeriesStroke( 0 , new BasicStroke( 1.0f ) );
+        renderer.setBaseShapesVisible(false);
+        XYPlot plot = xylineChartRayon.getXYPlot();
+        plot.setDomainCrosshairVisible(true);
+        plot.setRangeCrosshairVisible(true); 
+        plot.setRenderer( renderer );
+        plot = xylineChartS.getXYPlot();
+        plot.setDomainCrosshairVisible(true);
+        plot.setRangeCrosshairVisible(true);      
+        plot.setRenderer( renderer );
+        plot = xylineChart2theta.getXYPlot();
+        plot.setDomainCrosshairVisible(true);
+        plot.setRangeCrosshairVisible(true);      
+        plot.setRenderer( renderer );
+	}
 
 	@Override
 	public void chartMouseClicked(ChartMouseEvent arg0) {

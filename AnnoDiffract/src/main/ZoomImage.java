@@ -47,39 +47,39 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 		this.setF(f);
 		
 		// Taille Ecran
-				GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-				Rectangle bounds = env.getMaximumWindowBounds();
+		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		Rectangle bounds = env.getMaximumWindowBounds();
 
-				// Window Settings
-				this.setSize((bounds.width/100)*25, (bounds.height/100)*35);
-				this.setTitle("Zoom");
-				this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		// Window Settings
+		this.setSize((bounds.width/100)*25, (bounds.height/100)*35);
+		this.setTitle("Zoom");
+		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 				
-				// Layout
-				BorderLayout layout = new BorderLayout();
-				this.setLayout(layout);
+		// Layout
+		BorderLayout layout = new BorderLayout();
+		this.setLayout(layout);
 
-				JToolBar light = new JToolBar();
-				this.add(light,BorderLayout.NORTH);
-				brightSlide = new JSlider();
-				brightSlide.setToolTipText("Luminosité");
-				light.add(new JLabel("Brightness"));
-				light.add(brightSlide);
+		JToolBar light = new JToolBar();
+		this.add(light,BorderLayout.NORTH);
+		brightSlide = new JSlider();
+		brightSlide.setToolTipText("Luminosité");
+		light.add(new JLabel("Brightness"));
+		light.add(brightSlide);
 
-				// Layout 
-				JPanel p = new JPanel(layout);
-				GridBagLayout layout1 = new GridBagLayout();
-				GridBagConstraints c = new GridBagConstraints();
-				p.setLayout(layout1);
+		// Layout 
+		JPanel p = new JPanel(layout);
+		GridBagLayout layout1 = new GridBagLayout();
+		GridBagConstraints c = new GridBagConstraints();
+		p.setLayout(layout1);
 				
-				// Panel Image
-				p.add(jL,c);
+		// Panel Image
+		p.add(jL,c);
 				
-				this.add(p,BorderLayout.CENTER);
+		this.add(p,BorderLayout.CENTER);
 				
-				jL.addMouseMotionListener(this);
-				jL.addMouseListener(this);
-				brightSlide.addChangeListener(this);
+		jL.addMouseMotionListener(this);
+		jL.addMouseListener(this);
+		brightSlide.addChangeListener(this);
 				
 	}
 	

@@ -20,25 +20,42 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
 class Panel extends JPanel {
+	
+	//Variable fenetre
 	private final Fenetre f;
 	private TypeOutil currentTool = TypeOutil.NORMAL;
 	private JLabel label = null;
-	private Image image = null;
+	
+	//Variable qui nous dit si une image à été chargé
 	private boolean loaded = false;
+	
+	//Variable pour les images gardé en mémoires
+	private Image image = null;
 	private Image imageScaled = null;
 	private BufferedImage bufferedOriginal;
 	private BufferedImage bufferedOriginal2;
 	private BufferedImage bufferedScaled;
 	private BufferedImage bufferedScaled2;
+	
+	//Variable luminosité
 	private float bright=-1;
+
+	//Variable pour les points et cercles
 	public Circle tmpCircle = new Circle();
 	public final ArrayList<Circle> listeCircle = new ArrayList<>();
+	private Point zonezoom=null;
+	
+	//Liste Intensité
 	public final ArrayList<Double> listeMoyen = new ArrayList<>();
 	public final ArrayList<Double> listeMoyenBeam = new ArrayList<>();
+	
+	//Liste Distance
 	public final ArrayList<Double> listeRayon = new ArrayList<>();
 	public final ArrayList<Double> listeD = new ArrayList<>();
 	public final ArrayList<Double> listeS = new ArrayList<>();
 	public final ArrayList<Double> liste2theta = new ArrayList<>();
+	
+	//Variable resolution
 	private double resX=0;
 	private double resY=0;
 	
@@ -66,7 +83,7 @@ class Panel extends JPanel {
 	//Methode pour ouvrir l'image puis l'afficher avec une bonne dimension
 	void openImage(File file) throws Exception {
 		try {
-			
+			zonezoom = null;
 			tmpCircle.ptCircle.clear();
 			listeCircle.clear();
 			listeMoyen.clear();
@@ -101,7 +118,6 @@ class Panel extends JPanel {
             getLabel().setIcon(new ImageIcon(bufferedScaled));
             setLoaded(true);
             in.close();
-		    repaint();
 			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -155,7 +171,17 @@ class Panel extends JPanel {
 	// Methode Pour Mettre Les points ï¿½ la bonne position par rapport ï¿½ la nouvelle taille de fenetre
 	void scale() {
 		if (imageScaled != null) {
-			Dimension d = resizeImage();
+			float Calneww, Calnewh, imWidth = bufferedOriginal.getWidth(), imHeight = bufferedOriginal.getHeight();
+			int neww,newh;
+			Calneww = (float) ((imWidth/imHeight)*(f.getHeight()/1.5));
+			//System.out.println(imWidth/imHeight +"  * " + f.getHeight()/1.4);
+			Calnewh = (float) ((imHeight/imWidth)*(f.getWidth()/1.5));
+			//System.out.println(imHeight/imWidth +"  * " + f.getWidth()/1.6);
+				
+			neww = Math.round(Calneww);
+			newh = Math.round(Calnewh);
+			//System.out.println(neww+" "+ newh);
+			Dimension d = new Dimension(neww,  newh);
 			imageScaled = bufferedOriginal.getScaledInstance(d.width, -1,  Image.SCALE_SMOOTH);
 			bufferedScaled = toBufferedImage(imageScaled);
 			toGray(bufferedScaled);
@@ -164,20 +190,57 @@ class Panel extends JPanel {
 		    	setBrightness(bright);
 		    }
 		    Image img = bufferedScaled;
-		    //Image img = bufferedScaled.getScaledInstance((this.getWidth()/100)*ratioX, ((this.getHeight()/100)*ratioY),  Image.SCALE_SMOOTH);
 			getLabel().setIcon(new ImageIcon(img));
+			if(zonezoom != null){
+				System.out.println("("+getLabel().getWidth()+"/"+resX+")"+"*"+zonezoom.getX());
+				zonezoom.setLocation((getLabel().getWidth()/resX)*zonezoom.getX(), (getLabel().getHeight()/resY)*zonezoom.getY());
+				System.out.println(zonezoom.getX());
+			}
 			if(!listeCircle.isEmpty()){
 				for (Circle aListeCircle : listeCircle) {
 					for (int j = 0; j < aListeCircle.ptCircle.size(); j++) {
-						//System.out.println(getLabel().getWidth()+"/"+resX+"*"+listeCircle.get(i).ptCircle.get(j).getX()+","+ getLabel().getHeight()+"/"+resY+"*"+listeCircle.get(i).ptCircle.get(j).getY());
 						aListeCircle.ptCircle.get(j).setLocation(((getLabel().getWidth() / resX) * aListeCircle.ptCircle.get(j).getX()), ((getLabel().getHeight() / resY) * aListeCircle.ptCircle.get(j).getY()));
-						//System.out.println(listeCircle.get(i).ptCircle.get(j).getX()+" "+listeCircle.get(i).ptCircle.get(j).getY());
 					}
 				}
-			resX = getLabel().getWidth();
-			resY = getLabel().getHeight();
-			repaint();
 			}
+		}
+		resX = getLabel().getWidth();
+		resY = getLabel().getHeight();
+	}
+	
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		if (isLoaded()) {
+			Graphics2D g2d = bufferedScaled.createGraphics();
+			g2d.setColor(Color.BLUE);
+			if(!listeCircle.isEmpty()){
+				for (Circle aListePoint : listeCircle) {
+					for(Point pt : aListePoint.ptCircle){	
+						drawPoint(g2d,pt); 
+					}
+					if(aListePoint.isDr()){
+						Point centerCircle=circleCenter(aListePoint.ptCircle.get(0), aListePoint.ptCircle.get(1), aListePoint.ptCircle.get(2));
+						drawPoint(g2d, centerCircle);
+						double r = lenghtFrom2Points(centerCircle, aListePoint.ptCircle.get(0));
+						drawCenteredCircle(g2d, centerCircle, r);
+					}
+				}
+			}
+			if(tmpCircle.ptCircle.size()!=0){
+				for(int i=0; i<tmpCircle.ptCircle.size();i++){
+					drawPoint(g2d, tmpCircle.ptCircle.get(i));
+				}
+			}
+			if(zonezoom!=null){
+				int tmp= (int)((getResX()/getBufferedOriginal().getWidth())*125);
+				g2d.drawLine((int)zonezoom.getX()-tmp, (int)zonezoom.getY()-tmp, (int)zonezoom.getX()-tmp, (int)zonezoom.getY()+tmp);
+				g2d.drawLine((int)zonezoom.getX()-tmp, (int)zonezoom.getY()-tmp, (int)zonezoom.getX()+tmp, (int)zonezoom.getY()-tmp);
+				g2d.drawLine((int)zonezoom.getX()+tmp, (int)zonezoom.getY()-tmp, (int)zonezoom.getX()+tmp, (int)zonezoom.getY()+tmp);
+				g2d.drawLine((int)zonezoom.getX()-tmp, (int)zonezoom.getY()+tmp, (int)zonezoom.getX()+tmp, (int)zonezoom.getY()+tmp);
+			}
+			Image img = bufferedScaled;
+			getLabel().setIcon(new ImageIcon(img));
+			drawGraph(g);
 		}
 	}
 	
@@ -223,18 +286,13 @@ class Panel extends JPanel {
 	    		pixels.add( new Point( (int)Math.round(x_centre - y), (int)Math.round(y_centre - x) ));
 	    	}
 	        
-	        if (d >= 2*x)
-	        {
+	        if (d >= 2*x){
 	            d -= 2*x + 1;
 	            x ++;
-	        }
-	        else if (d < 2 * (r-y))
-	        {
+	        }else if (d < 2 * (r-y)){
 	            d += 2*y - 1;
 	            y --;
-	        }
-	        else
-	        {
+	        }else{
 	            d += 2*(y - x - 1);
 	            y --;
 	            x ++;
@@ -285,40 +343,6 @@ class Panel extends JPanel {
 	
 	public double lenghtFrom2Points(Point A, Point B) {
 		return (double) (float)Math.sqrt((A.getX()-B.getX())*(A.getX()-B.getX()) + (A.getY()-B.getY())*(A.getY()-B.getY()));
-	}
-
-	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		if (isLoaded()) {
-			Graphics2D g2d = bufferedScaled.createGraphics();
-			g2d.setColor(Color.BLUE);
-			if(!listeCircle.isEmpty()){
-				for (Circle aListePoint : listeCircle) {
-					for(Point pt : aListePoint.ptCircle){	
-						//System.out.println(listePoint.get(i).getX()+" "+listePoint.get(i).getY());
-						drawPoint(g2d,pt); 
-						}
-					if(aListePoint.isDr()){
-						Point centerCircle=circleCenter(aListePoint.ptCircle.get(0), aListePoint.ptCircle.get(1), aListePoint.ptCircle.get(2));
-						drawPoint(g2d, centerCircle);
-						double r = lenghtFrom2Points(centerCircle, aListePoint.ptCircle.get(0));
-						drawCenteredCircle(g2d, centerCircle, r);
-					}
-				}
-			}
-			if(tmpCircle.ptCircle.size()!=0){
-				for(int i=0; i<tmpCircle.ptCircle.size();i++){
-					drawPoint(g2d, tmpCircle.ptCircle.get(i));
-				}
-			}
-
-			g2d.dispose();
-			Image img = bufferedScaled;
-		    //Image img = bufferedScaled.getScaledInstance((this.getWidth()/100)*ratioX, ((this.getHeight()/100)*ratioY),  Image.SCALE_SMOOTH);
-			getLabel().setIcon(new ImageIcon(img));
-			drawGraph(g);
-		}
-		repaint();
 	}
 
 	//Methode pour dÃƒÂ©ssiner le graph
@@ -483,6 +507,10 @@ class Panel extends JPanel {
 	public BufferedImage getBufferedScaled() {
 		return bufferedScaled;
 	}
+	
+	public BufferedImage getBufferedScaled2() {
+		return bufferedScaled2;
+	}
 
 	public BufferedImage getBufferedOriginal2() {
 		return bufferedOriginal2;
@@ -490,6 +518,14 @@ class Panel extends JPanel {
 
 	public void setBufferedOriginal2(BufferedImage bufferedOriginal2) {
 		this.bufferedOriginal2 = bufferedOriginal2;
+	}
+
+	public Point getZonezoom() {
+		return zonezoom;
+	}
+
+	public void setZonezoom(Point zonezoom) {
+		this.zonezoom = zonezoom;
 	}
 	
 }

@@ -1,6 +1,7 @@
 package main;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -17,6 +18,7 @@ import org.jfree.ui.RefineryUtilities;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.RescaleOp;
 
 class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMotionListener, ComponentListener, ChangeListener{
 
@@ -40,6 +42,8 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	private double minBS=-1;
 	private double maxBS=-1;
 	private Point centerCircle;
+
+
 	
 	private Fenetre() {
 		
@@ -67,8 +71,6 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		    }
 		}
 		
-		
-		//Calcul lambda
 		// Taille Ecran
 		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		Rectangle bounds = env.getMaximumWindowBounds();
@@ -212,6 +214,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
         				, "Mauvaise valeur", JOptionPane.ERROR_MESSAGE);
     			V="120000";
     		}
+    		//Calcul lambda
     		lambda = new BigDecimal((6.62 *Math.pow(10,-34))/
 					(Math.sqrt((2.9149 *Math.pow(10,-49))*((double)Float.parseFloat(V)*(double)1000)*
 							((double)1+(9.7714 *Math.pow(10,-7))*((double)Float.parseFloat(V)*(double)1000)))));
@@ -294,6 +297,11 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 									(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(2).getY())));
 					
 					Double pDouble = Double.parseDouble(p), vDouble = Double.parseDouble(v), lDouble = Double.parseDouble(l);
+					//Calcul lambda
+		    		lambda = new BigDecimal((6.62 *Math.pow(10,-34))/
+							(Math.sqrt((2.9149 *Math.pow(10,-49))*(vDouble*(double)1000)*
+									((double)1+(9.7714 *Math.pow(10,-7))*(vDouble*(double)1000)))));
+					
 					System.out.println(pDouble+" "+vDouble+" "+ lDouble);
 					CalculMoyAndRadius(centerCircle, pDouble, vDouble, lDouble);
 				}
@@ -406,10 +414,6 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	
 	@Override
 	public void componentResized(ComponentEvent e) {
-		//A chaque fois que la fenetre change de taille le panel est mis à jour
-		if (e.getSource() == getMainPanel()) {
-			mainPanel.scale();
-		}
 		
 	}
 
@@ -483,8 +487,17 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 				mainPanel.setResX(mainPanel.getLabel().getWidth());
 				mainPanel.setResY(mainPanel.getLabel().getHeight());
 			}
-			z.getSubImage(mainPanel.getBufferedOriginal2(), (int)((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*positionX),
-					(int)((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*positionY));
+			int x = (int)((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*positionX);
+			int y = (int)((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*positionY);
+			int tmp= (int)((mainPanel.getResX()/mainPanel.getBufferedOriginal().getWidth())*125);
+			z.getSubImage(mainPanel.getBufferedOriginal2(), x,y);
+			x = (int)((mainPanel.getResX()/mainPanel.getBufferedOriginal().getWidth())*x);
+			y = (int)((mainPanel.getResY()/mainPanel.getBufferedOriginal().getHeight())*y);
+			mainPanel.setZonezoom(new Point(x, y));
+			RescaleOp op = new RescaleOp(1, 1, null);
+			op.filter(mainPanel.getBufferedScaled2(), mainPanel.getBufferedScaled());
+			mainPanel.toGray(mainPanel.getBufferedScaled());
+			//mainPanel.repaint();
 		}else if(mainPanel.getCurrentTool()==TypeOutil.BEAMSTOP){
 				if(mainPanel.listeCircle.isEmpty()){
 					mainPanel.setResX(mainPanel.getLabel().getWidth());
