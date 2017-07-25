@@ -36,6 +36,7 @@ class Panel extends JPanel {
 	private BufferedImage bufferedOriginal2;
 	private BufferedImage bufferedScaled;
 	private BufferedImage bufferedScaled2;
+	private String fileName;
 	
 	//Variable luminosité
 	private float bright=-1;
@@ -91,6 +92,7 @@ class Panel extends JPanel {
 			listeS.clear();
 			listeD.clear();
 			FileInputStream in = new FileInputStream(file.getPath());
+			fileName = file.getName();
 			FileChannel channel = in.getChannel();
 			ByteBuffer buffer = ByteBuffer.allocate((int)channel.size());
 		    channel.read(buffer);
@@ -526,6 +528,14 @@ class Panel extends JPanel {
 
 	public void setZonezoom(Point zonezoom) {
 		this.zonezoom = zonezoom;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
 	}
 	
 }

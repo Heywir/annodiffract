@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -376,6 +377,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			//Method to find center
 			if(mainPanel.isLoaded()){
 				mainPanel.setCurrentTool(TypeOutil.POINT);
+				outilLabel.setText("Tool: " + TypeOutil.POINT.toString());
 				if(z!=null){
 					z.dispose();
 				}
@@ -412,13 +414,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		}
 		if (e.getSource() == menuGraphOpen) {
 			if (getMainPanel().getLabel().getIcon() != null && !mainPanel.listeMoyen.isEmpty()) {
-				/*if(graph!=null){
-					if(graph.getDataset()!=null){
-						graph.getDataset().removeSeries(0);
-						graph.XY.clear();
-					}
-				}*/
-				Graph graph = new Graph(mainPanel.listeMoyen, mainPanel.listeRayon,
+				Graph graph = new Graph(this, mainPanel.listeMoyen, mainPanel.listeRayon,
 						mainPanel.listeD, mainPanel.listeS, mainPanel.liste2theta, mainPanel.listeMoyenBeam);
 				graph.pack();
 				 RefineryUtilities.centerFrameOnScreen(graph);
@@ -438,9 +434,13 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
 		if (arg0.getSource() == mainPanel.getLabel()) {
+			if(mainPanel.listeCircle.isEmpty()){
+				mainPanel.setResX(mainPanel.getLabel().getWidth());
+				mainPanel.setResY(mainPanel.getLabel().getHeight());
+			}
 			positionX = arg0.getX();
 			positionY = arg0.getY();
-			statusLabel.setText("MouseX: " + arg0.getX() + " " + "MouseY: " + arg0.getY());
+			statusLabel.setText("MouseX: " + Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*arg0.getX()) + " " + "MouseY: " + Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*arg0.getY()));
 		}
 		
 	}
@@ -610,11 +610,12 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 				somme = somme + c;
 			}
 			if(!tmp.isEmpty()){
+				DecimalFormat df = new java.text.DecimalFormat("0.##");
 				j = (i/pDouble);
-				theta2 = BigDecimal.valueOf(Math.atan((j/((double)lDouble*(double)1000))/((double)180)*Math.PI));
+				theta2 = BigDecimal.valueOf(Math.toRadians(Math.atan((j/((double)lDouble*(double)1000))/((double)180)*Math.PI)));
 				mainPanel.liste2theta.add(theta2.doubleValue()); 
-				mainPanel.listeS.add(((double)2*Math.toRadians(Math.sin(((theta2.doubleValue()/(double)180)*Math.PI))))/lambda.doubleValue());
-				mainPanel.listeD.add((((lambda.doubleValue()*(double)lDouble*(double)100)/j)* Math.pow(10,6)));
+				mainPanel.listeS.add(((double)2*(Math.sin(((theta2.doubleValue()/(double)180)*Math.PI))))/lambda.doubleValue());
+				mainPanel.listeD.add(((lambda.doubleValue()*(double)lDouble*(double)100)/j)* Math.pow(10,6));
 				mainPanel.listeRayon.add(j);
 				moy = (somme/tmp.size());
 				moyBeam = (sommeBeam/l);
@@ -720,6 +721,18 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 
 	public void setLambda(BigDecimal lambda){
 		this.lambda=lambda;
+	}
+	
+	public String getP(){
+		return p;
+	}
+	
+	public String getV(){
+		return v;
+	}
+	
+	public String getL(){
+		return l;
 	}
 	
 	//Main

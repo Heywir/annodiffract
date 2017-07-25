@@ -5,16 +5,25 @@ import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.sql.Savepoint;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -35,6 +44,7 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 
 
 class Graph extends JFrame implements ChartMouseListener, ActionListener{
+	private Fenetre f;
 	private XYSeries XY;
 	private final String chartTitle;
 	private final ChartPanel chartPanel;
@@ -44,6 +54,7 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 	private final ArrayList<Double> ListeD;
 	private final ArrayList<Double> ListeS;
 	private final ArrayList<Double> Liste2theta;
+	private JMenuItem save = null;
 	private JMenuItem setRayon = null;
 	private JMenuItem setS = null;
 	private JMenuItem set2theta = null;
@@ -55,19 +66,18 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 	private JLabel statusLabel;
 	private XYPlot plot;
 	
-	public Graph(ArrayList<Double> Intensity,
+	public Graph(Fenetre f,ArrayList<Double> Intensity,
 				 ArrayList<Double> ListeRayon, ArrayList<Double> ListeD,
 				 ArrayList<Double> ListeS, ArrayList<Double> Liste2theta,
 				 ArrayList<Double> IntensityBeam) {
 		//Construction du Graphique
 		super("Graphique");
 		this.chartTitle = "Profile IntensitÃ©";
-        
 		// Layout Fenetre
      	BorderLayout layout = new BorderLayout();
      	this.setLayout(layout);
         
-		
+     	this.f=f;
 		this.Intensity = Intensity;
 		this.IntensityBeam = IntensityBeam;
         this.ListeD = ListeD;
@@ -92,8 +102,10 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
      	this.setLayout(barLayout);
 
      	// Menus
-     	JMenu menuFile = new JMenu("Abscisse");
+     	JMenu menuFile = new JMenu("Fichier");
+     	JMenu menuAbsc = new JMenu("Abscisse");
      	JMenu menuBeam = new JMenu("BeamStop");
+     	save= new JMenuItem("Save In CSV");
      	setRayon = new JMenuItem("Rayon en Metre");
      	setS = new JMenuItem("Vecteur de Distance S");
      	set2theta = new JMenuItem("Angle de Diffraction 2 theta");
@@ -103,13 +115,15 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
      	// Status Bar
      	statusPanel.add(statusLabel, BorderLayout.EAST);
      	
-     	menuFile.add(setRayon);
-     	menuFile.add(setS);
-     	menuFile.add(set2theta);
+     	menuFile.add(save);
+     	menuAbsc.add(setRayon);
+     	menuAbsc.add(setS);
+     	menuAbsc.add(set2theta);
      	menuBeam.add(setBeam);
      	menuBeam.add(setNoBeam);
      	
      	//Listeners
+     	save.addActionListener(this);
         chartPanel.addChartMouseListener(this);
         setRayon.addActionListener(this);
         setS.addActionListener(this);
@@ -118,7 +132,8 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
         setNoBeam.addActionListener(this);
         
      	//Ajout ï¿½ la fenetre
-     	menu.add(menuFile);
+        menu.add(menuFile);
+        menu.add(menuAbsc);
      	menu.add(menuBeam);
      	this.add(menu,BorderLayout.NORTH);
      	this.add(chartPanel, BorderLayout.CENTER);
@@ -197,8 +212,8 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
             XYDataset d = e1.getDataset();
             int s = e1.getSeriesIndex();
             int i = e1.getItem();
-            XYTextAnnotation b = new XYTextAnnotation(ListeD.get(i)+" A", (double)d.getX(s, i), (double)d.getY(s, i));
-            Paint paint = Color.BLUE;
+            XYTextAnnotation b = new XYTextAnnotation((int)(100*ListeD.get(i))/100.+" A", (double)d.getX(s, i), (double)d.getY(s, i));
+            Paint paint = Color.lightGray;
 			b.setBackgroundPaint(paint );
             plot.addAnnotation(b);
         }
@@ -296,6 +311,77 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 			graphicOption();
 			chartPanel.setChart(xylineChartRayon);
 		}
+		if(e.getSource() == save){
+		    String destinationFile ;
+			JFileChooser chooser = new JFileChooser(); 
+		    chooser.setDialogTitle("Enregistrer Sous");
+		    //FileNameExtensionFilter filterCSV = new FileNameExtensionFilter("Fichier Excel","csv");
+			//chooser.addChoosableFileFilter(filterCSV);
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("Fichier Texte","txt");
+			chooser.addChoosableFileFilter(filter);
+			chooser.setSelectedFile(new File(f.getMainPanel2().getFileName()));
+		    chooser.setFileFilter(filter);
+		    if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
+		    	System.out.println("getCurrentDirectory(): " 
+		           +  chooser.getCurrentDirectory());
+		        System.out.println("getSelectedFile() : " 
+		           +  chooser.getSelectedFile());
+		        if(filter.equals(chooser.getFileFilter())){
+			    	System.out.println(chooser.getFileFilter()+"fdf");
+			    	destinationFile = chooser.getSelectedFile().getAbsolutePath()+".txt";
+			    	convertAndPrint(false, true, false,destinationFile);
+			    }
+			    /*if(filterCSV.equals(chooser.getFileFilter())){
+			    	System.out.println(chooser.getFileFilter()+"2");
+			    	destinationFile = chooser.getSelectedFile().getAbsolutePath()+".csv";
+			    	convertAndPrint(true, true, true,destinationFile);
+			    }*/
+		    }
+		}
 	}
+	
+	 private void convertAndPrint(boolean writeToConsole, boolean writeToFile, boolean sortTheList, String destinationCSVFile) {
+	        String commaSeparatedValues = "";
+	 
+	        if (ListeD != null) {
+	            /** Sort the list if sortTheList was passed as true**/
+	            if(sortTheList) {
+	                Collections.sort(ListeD);
+	            }
+	            /**Iterate through the list and append comma after each values**/
+	            Iterator<Double> iterD = ListeD.iterator();
+	            Iterator<Double> iterS = ListeS.iterator();
+	            Iterator<Double> iter2theta = Liste2theta.iterator();
+	            Iterator<Double> iterInt = Intensity.iterator();
+	            commaSeparatedValues += "Option\r\nPPI: "+f.getP()+" Tension du microscope: "+f.getV()+" Longueur de Camera: "+f.getL()+"\r\n\r\n";
+	            commaSeparatedValues += "Distance Interarticulaire d || Vecteur de Diffusion S || Angle de diffraction 2 theta || Intensité \r\n";
+	            while (iterD.hasNext()) {
+	                commaSeparatedValues += iterD.next() + " || "+iterS.next() + " || "+iter2theta.next() +" || "+iterInt.next() +"\r\n";
+	            }
+	            /**Remove the last comma**/
+	            if (commaSeparatedValues.endsWith(",")) {
+	                commaSeparatedValues = commaSeparatedValues.substring(0,
+	                        commaSeparatedValues.lastIndexOf(","));
+	            }
+	        }
+	        /** If writeToConsole flag was passed as true, output to console**/
+	        if(writeToConsole) {
+	            System.out.println(commaSeparatedValues);
+	        }
+	        /** If writeToFile flag was passed as true, output to File**/      
+	        if(writeToFile) {
+	            try {
+	            	File f = new File(destinationCSVFile);
+	                FileWriter fstream = new FileWriter(f, false);
+	                BufferedWriter out = new BufferedWriter(fstream);
+	                out.write(commaSeparatedValues);
+	                out.close();
+	                System.out.println("*** Also wrote this information to file: " + destinationCSVFile);
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	            }
+	        }
+	 
+	    }
 
 }
