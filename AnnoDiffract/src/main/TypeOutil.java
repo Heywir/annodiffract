@@ -6,4 +6,4 @@ public enum TypeOutil {
 		 ZOOM, /* L'utilisateur va placer des points */
 		 POINT,
 		 BEAMSTOP
-}
+} 

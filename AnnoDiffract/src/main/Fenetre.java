@@ -298,7 +298,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		      if (result == JOptionPane.OK_OPTION) {
 		    	  PrintWriter writer;
 				try {
-					float j;
+					float j ;
 					j = Float.parseFloat(pField.getText());
 					j = Float.parseFloat(vField.getText());
 					j = Float.parseFloat(lField.getText());

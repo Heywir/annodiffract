@@ -161,7 +161,7 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
                 chartTitle ,
                 "Rayon" ,
                 "intensit�" ,
-                createDataset(ListeRayon, Intensity),
+                createDataset(ListeRayon, Intensity), 
                 PlotOrientation.VERTICAL ,
                 true , true , false);
         xylineChartS = ChartFactory.createXYLineChart(

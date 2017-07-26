@@ -402,7 +402,7 @@ class Panel extends JPanel {
 
 		// Numerotation X
 
-		for(int i = 0; i < indentationX +1; i=i+15) {
+		for(int i = 0; i < indentationX +1; i=i+15){
 			g2.draw(new Line2D.Double(yZeroX + (i * xLength), yFinY - tailleInden, yZeroX + (i * xLength), yFinY + tailleInden));
 			FontMetrics fm = getFontMetrics(getFont());
 			longueurMot = fm.stringWidth(Integer.toString(i*10));

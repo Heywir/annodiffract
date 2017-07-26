@@ -12,7 +12,7 @@ public class Circle {
 		return dr;
 	}
 	
-	public void setDr() {
+	public void setDr() { 
 		this.dr = true;
 	}
 	
