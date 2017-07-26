@@ -270,16 +270,8 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		      int result = JOptionPane.showConfirmDialog(null, myPanel, 
 		               "Option", JOptionPane.OK_CANCEL_OPTION);
 		      if (result == JOptionPane.OK_OPTION) {
-<<<<<<< HEAD
-=======
-		    	  PrintWriter writer;
->>>>>>> branch 'public' of https://github.com/Heywir/annodiffract.git
 				try {
-<<<<<<< HEAD
 					float j;
-=======
-					float j ;
->>>>>>> branch 'public' of https://github.com/Heywir/annodiffract.git
 					j = Float.parseFloat(pField.getText());
 					j = Float.parseFloat(vField.getText());
 					j = Float.parseFloat(lField.getText());
@@ -408,7 +400,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			}
 			positionX = arg0.getX();
 			positionY = arg0.getY();
-			statusLabel.setText("X: " + Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*arg0.getX()) + " " + "Y: " + Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*arg0.getY()));
+			statusLabel.setText("MouseX: " + Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*arg0.getX()) + " " + "MouseY: " + Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*arg0.getY()));
 		}
 		
 	}
