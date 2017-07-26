@@ -297,8 +297,8 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		               "Option", JOptionPane.OK_CANCEL_OPTION);
 		      if (result == JOptionPane.OK_OPTION) {
 		    	  PrintWriter writer;
-		    	  float j;
 				try {
+					float j;
 					j = Float.parseFloat(pField.getText());
 					j = Float.parseFloat(vField.getText());
 					j = Float.parseFloat(lField.getText());
@@ -440,7 +440,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			}
 			positionX = arg0.getX();
 			positionY = arg0.getY();
-			statusLabel.setText("MouseX: " + Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*arg0.getX()) + " " + "MouseY: " + Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*arg0.getY()));
+			statusLabel.setText("X: " + Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*arg0.getX()) + " " + "Y: " + Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*arg0.getY()));
 		}
 		
 	}
@@ -595,8 +595,8 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		ArrayList<Point> tmp ;
 		while(i<mainPanel.getBufferedOriginal().getWidth()){
 			l=0;
-			//lenght = mainPanel.lenghtFrom2Points(centerCircle, new Point((int)(centerCircle.getX()+i), (int)centerCircle.getY()));
-			tmp = mainPanel.getPointWithCenter((int)centerCircle.getX(),(int)centerCircle.getY(),i);
+			lenght = mainPanel.lenghtFrom2Points(centerCircle, new Point((int)(centerCircle.getX()+i), (int)centerCircle.getY()));
+			tmp = mainPanel.getPointWithCenter((int)centerCircle.getX(),(int)centerCircle.getY(),lenght);
 			Double somme = 0.0,sommeBeam= 0.0 ,moy, moyBeam;
 			for(int h = 0; h<=tmp.size()-1;h++){
 				Color color=new Color(mainPanel.getBufferedOriginal().getRGB((int)(tmp.get(h).getX()), (int)tmp.get(h).getY()));
@@ -610,8 +610,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 				somme = somme + c;
 			}
 			if(!tmp.isEmpty()){
-				DecimalFormat df = new java.text.DecimalFormat("0.##");
-				j = (i/pDouble);
+				j = (lenght/pDouble);
 				theta2 = BigDecimal.valueOf(Math.toRadians(Math.atan((j/((double)lDouble*(double)1000))/((double)180)*Math.PI)));
 				mainPanel.liste2theta.add(theta2.doubleValue()); 
 				mainPanel.listeS.add(((double)2*(Math.sin(((theta2.doubleValue()/(double)180)*Math.PI))))/lambda.doubleValue());

@@ -105,7 +105,7 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
      	JMenu menuFile = new JMenu("Fichier");
      	JMenu menuAbsc = new JMenu("Abscisse");
      	JMenu menuBeam = new JMenu("BeamStop");
-     	save= new JMenuItem("Save In CSV");
+     	save= new JMenuItem("Save");
      	setRayon = new JMenuItem("Rayon en Metre");
      	setS = new JMenuItem("Vecteur de Distance S");
      	set2theta = new JMenuItem("Angle de Diffraction 2 theta");
@@ -322,12 +322,9 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 			chooser.setSelectedFile(new File(f.getMainPanel2().getFileName()));
 		    chooser.setFileFilter(filter);
 		    if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
-		    	System.out.println("getCurrentDirectory(): " 
-		           +  chooser.getCurrentDirectory());
-		        System.out.println("getSelectedFile() : " 
-		           +  chooser.getSelectedFile());
+		    	System.out.println("getCurrentDirectory(): "+  chooser.getCurrentDirectory());
+		        System.out.println("getSelectedFile() : "+  chooser.getSelectedFile());
 		        if(filter.equals(chooser.getFileFilter())){
-			    	System.out.println(chooser.getFileFilter()+"fdf");
 			    	destinationFile = chooser.getSelectedFile().getAbsolutePath()+".txt";
 			    	convertAndPrint(false, true, false,destinationFile);
 			    }

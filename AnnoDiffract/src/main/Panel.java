@@ -92,7 +92,7 @@ class Panel extends JPanel {
 			listeS.clear();
 			listeD.clear();
 			FileInputStream in = new FileInputStream(file.getPath());
-			fileName = file.getName();
+			fileName = file.getName().replaceFirst("[.][^.]+$", "");
 			FileChannel channel = in.getChannel();
 			ByteBuffer buffer = ByteBuffer.allocate((int)channel.size());
 		    channel.read(buffer);
@@ -339,7 +339,6 @@ class Panel extends JPanel {
 		centerX = (int) Math.round((aSlope*bSlope*(A.y - C.y) + bSlope*(A.getX() + B.getX())- aSlope*(B.x+C.x) )/(2*(bSlope-aSlope) ));
 		centerY = Math.round(-1*(centerX - (A.x+B.x)/2)/aSlope +  (A.y+B.y)/2);
 		center.setLocation(new Point(centerX, centerY)); 
-		
 		return center;
 	}
 	
@@ -355,8 +354,8 @@ class Panel extends JPanel {
 		int distance = 20;
 
 		// Pour le dÃ©coupage selon l'image
-		double indentationY = (bufferedOriginal.getHeight() / 100);
-		double indentationX = (bufferedOriginal.getWidth() / 100);
+		double indentationY = (bufferedOriginal.getHeight() / 10);
+		double indentationX = (bufferedOriginal.getWidth() / 10);
 		int tailleInden = 5;
 
 		// Point En haut Ã  gauche
@@ -393,21 +392,21 @@ class Panel extends JPanel {
 	  // Numerotation Y
 
 		int longueurMot;
-		for(int i = 0; i < indentationY +1; i++) {
+		for(int i = 0; i < indentationY +1; i=i+15) {
 			g2.draw(new Line2D.Double(yZeroX - tailleInden, yZeroY + (i * yLength), yZeroX + tailleInden, yZeroY + (i * yLength)));
 			FontMetrics fm = getFontMetrics(getFont());
-			longueurMot = fm.stringWidth(Integer.toString(i*100));
-			g2.drawString(Integer.toString(i*100), (yZeroX - distance) - longueurMot /2, yZeroY + (int) (i * (yLength)));
+			longueurMot = fm.stringWidth(Integer.toString(i*10));
+			g2.drawString(Integer.toString(i*10), (yZeroX - distance) - longueurMot /2, yZeroY + (int) (i * (yLength)));
 
 		}
 
 		// Numerotation X
 
-		for(int i = 0; i < indentationX +1; i++) {
+		for(int i = 0; i < indentationX +1; i=i+15) {
 			g2.draw(new Line2D.Double(yZeroX + (i * xLength), yFinY - tailleInden, yZeroX + (i * xLength), yFinY + tailleInden));
 			FontMetrics fm = getFontMetrics(getFont());
-			longueurMot = fm.stringWidth(Integer.toString(i*100));
-			g2.drawString(Integer.toString(i*100), yZeroX + (int) (i * xLength) - longueurMot /2, yFinY + distance);
+			longueurMot = fm.stringWidth(Integer.toString(i*10));
+			g2.drawString(Integer.toString(i*10), yZeroX + (int) (i * xLength) - longueurMot /2, yFinY + distance);
 		}
 
 	}
