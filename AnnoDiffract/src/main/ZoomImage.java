@@ -155,43 +155,16 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 						new Point((int)Math.round((f.getMainPanel2().getBufferedOriginal().getWidth()/f.getMainPanel2().getResX())*c.ptCircle.get(2).getX()),
 								(int)Math.round((f.getMainPanel2().getBufferedOriginal().getHeight()/f.getMainPanel2().getResY())*c.ptCircle.get(2).getY())));
 				System.out.println(centerCircle.getX() + " " + centerCircle.getY());
-				String p;
-				double pDouble = 0;
-				String v;
-				String l;
-				double vDouble = 0;
-				double lDouble = 0;
-			    File f = new File("1.txt");
-			    try{
-			    	Scanner sc = new Scanner(f);
-			    	p =  sc.nextLine();
-			    	p = p.replace("Pixel par Metre : ","");
-			    	System.out.println(p);
-			    	sc.nextLine();
-			    	v =  sc.nextLine();
-			    	v = v.replaceAll("Tension d'acceleration des electrons U : ", "");
-			    	System.out.println(v);
-			    	sc.nextLine();
-			    	l =  sc.nextLine();
-			    	l = l.replaceAll("Longueur de camera en Metre : ", "");
-			    	System.out.println(l);
-			    	sc.close();
-			    	pDouble = Double.parseDouble(p);
-			    	vDouble = Double.parseDouble(v);
-			    	lDouble = Double.parseDouble(l); 
-			    }catch(FileNotFoundException ignored){
-			    	
-			    }
 			    this.f.setLambda(new BigDecimal((6.62 *Math.pow(10,-34))/
-						(Math.sqrt((2.9149 *Math.pow(10,-49))*(vDouble*(double)1000)*
-								((double)1+(9.7714 *Math.pow(10,-7))*(vDouble*(double)1000))))));
+						(Math.sqrt((2.9149 *Math.pow(10,-49))*(f.getV()*(double)1000)*
+								((double)1+(9.7714 *Math.pow(10,-7))*(f.getV()*(double)1000))))));
 			    this.f.getMainPanel2().listeMoyen.clear();
 			    this.f.getMainPanel2().listeRayon.clear();
 			    this.f.getMainPanel2().listeD.clear();
 			    this.f.getMainPanel2().listeS.clear();
 			    this.f.getMainPanel2().liste2theta.clear();
 			    this.f.getMainPanel2().listeMoyenBeam.clear();
-			    this.f.CalculMoyAndRadius(centerCircle,pDouble, vDouble, lDouble);
+			    this.f.CalculMoyAndRadius(centerCircle,f.getP(), f.getV(), f.getL());
 			}
 			f.getMainPanel2().repaint();
 		}
