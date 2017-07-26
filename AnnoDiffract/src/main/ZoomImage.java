@@ -96,7 +96,7 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 		setBrightness();
 	}
 	
-	private void setBrightness() {
+	private void setBrightness() { 
 		RescaleOp op = new RescaleOp(((float)25 * (float) brightSlide.getValue() / (float)f.brightSlide.getMaximum()), 0, null);
 		this.img = op.filter(img2, this.img);
 		f.getMainPanel2().toGray(this.img);

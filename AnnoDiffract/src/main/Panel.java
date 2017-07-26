@@ -339,7 +339,6 @@ class Panel extends JPanel {
 		centerX = (int) Math.round((aSlope*bSlope*(A.y - C.y) + bSlope*(A.getX() + B.getX())- aSlope*(B.x+C.x) )/(2*(bSlope-aSlope) ));
 		centerY = Math.round(-1*(centerX - (A.x+B.x)/2)/aSlope +  (A.y+B.y)/2);
 		center.setLocation(new Point(centerX, centerY)); 
-		
 		return center;
 	}
 	
@@ -403,7 +402,11 @@ class Panel extends JPanel {
 
 		// Numerotation X
 
+<<<<<<< HEAD
 		for(int i = 0; i < indentationX +1; i=i+15) {
+=======
+		for(int i = 0; i < indentationX +1; i=i+15){
+>>>>>>> branch 'public' of https://github.com/Heywir/annodiffract.git
 			g2.draw(new Line2D.Double(yZeroX + (i * xLength), yFinY - tailleInden, yZeroX + (i * xLength), yFinY + tailleInden));
 			FontMetrics fm = getFontMetrics(getFont());
 			longueurMot = fm.stringWidth(Integer.toString(i*10));

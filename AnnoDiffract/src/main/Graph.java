@@ -91,11 +91,19 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
      	JMenu menuAbsc = new JMenu("X-axis");
      	JMenu menuBeam = new JMenu("BeamStop");
      	save= new JMenuItem("Save");
+<<<<<<< HEAD
      	setRayon = new JMenuItem("Radius in Meters");
      	setS = new JMenuItem("Distance Vector");
      	set2theta = new JMenuItem("Diffraction Angle 2 theta");
      	setBeam = new JMenuItem("Beamstop Correction");
      	setNoBeam = new JMenuItem("Without Beamstop Correction");
+=======
+     	setRayon = new JMenuItem("Rayon en Metre");
+     	setS = new JMenuItem("Vecteur de Distance S");
+     	set2theta = new JMenuItem("Angle de Diffraction 2 theta");
+     	setBeam = new JMenuItem("Correction Beamstop");
+     	setNoBeam = new JMenuItem("Sans correction Beamstop");
+>>>>>>> branch 'public' of https://github.com/Heywir/annodiffract.git
      	
      	// Status Bar
      	statusPanel.add(statusLabel, BorderLayout.EAST);
@@ -144,9 +152,15 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
         //On creer les Charts que l'utilisateur pourra afficher s'il le souhaite
         xylineChartRayon = ChartFactory.createXYLineChart(
                 chartTitle ,
+<<<<<<< HEAD
                 "Radius" ,
                 "Intensity" ,
                 createDataset(f.getMainPanel2().listeRayon, f.getMainPanel2().listeMoyen),
+=======
+                "Rayon" ,
+                "intensit�" ,
+                createDataset(ListeRayon, Intensity), 
+>>>>>>> branch 'public' of https://github.com/Heywir/annodiffract.git
                 PlotOrientation.VERTICAL ,
                 true , true , false);
         xylineChartS = ChartFactory.createXYLineChart(
@@ -307,12 +321,9 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 			chooser.setSelectedFile(new File(f.getMainPanel2().getFileName()));
 		    chooser.setFileFilter(filter);
 		    if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
-		    	System.out.println("getCurrentDirectory(): " 
-		           +  chooser.getCurrentDirectory());
-		        System.out.println("getSelectedFile() : " 
-		           +  chooser.getSelectedFile());
+		    	System.out.println("getCurrentDirectory(): "+  chooser.getCurrentDirectory());
+		        System.out.println("getSelectedFile() : "+  chooser.getSelectedFile());
 		        if(filter.equals(chooser.getFileFilter())){
-			    	System.out.println(chooser.getFileFilter()+"fdf");
 			    	destinationFile = chooser.getSelectedFile().getAbsolutePath()+".txt";
 			    	convertAndPrint(false, true, false,destinationFile);
 			    }
