@@ -147,14 +147,16 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 				f.getMainPanel2().listeCircle.add(f.getMainPanel2().tmpCircle);
 				f.getMainPanel2().tmpCircle = new Circle();
 				f.getMainPanel2().tmpCircle.ptCircle.clear();
-				Point centerCircle=f.getMainPanel2().circleCenter(
+				f.setCenterCircle(f.getMainPanel2().circleCenter(
 						new Point((int)Math.round((f.getMainPanel2().getBufferedOriginal().getWidth()/f.getMainPanel2().getResX())*c.ptCircle.get(0).getX()),
 								(int)Math.round((f.getMainPanel2().getBufferedOriginal().getHeight()/f.getMainPanel2().getResY())*c.ptCircle.get(0).getY())),
 						new Point((int)Math.round((f.getMainPanel2().getBufferedOriginal().getWidth()/f.getMainPanel2().getResX())*c.ptCircle.get(1).getX()),
 								(int)Math.round((f.getMainPanel2().getBufferedOriginal().getHeight()/f.getMainPanel2().getResY())*c.ptCircle.get(1).getY())),
 						new Point((int)Math.round((f.getMainPanel2().getBufferedOriginal().getWidth()/f.getMainPanel2().getResX())*c.ptCircle.get(2).getX()),
-								(int)Math.round((f.getMainPanel2().getBufferedOriginal().getHeight()/f.getMainPanel2().getResY())*c.ptCircle.get(2).getY())));
-				System.out.println(centerCircle.getX() + " " + centerCircle.getY());
+								(int)Math.round((f.getMainPanel2().getBufferedOriginal().getHeight()/f.getMainPanel2().getResY())*c.ptCircle.get(2).getY()))));
+				f.getMainPanel2().listePointCenter.add(f.getCenterCircle());
+				f.setCenterCircle(f.getCenterCicleMoy());
+				System.out.println(f.getCenterCircle().getX() + " " + f.getCenterCircle().getY());
 			    this.f.setLambda(new BigDecimal((6.62 *Math.pow(10,-34))/
 						(Math.sqrt((2.9149 *Math.pow(10,-49))*(f.getV()*(double)1000)*
 								((double)1+(9.7714 *Math.pow(10,-7))*(f.getV()*(double)1000))))));
@@ -164,7 +166,7 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 			    this.f.getMainPanel2().listeS.clear();
 			    this.f.getMainPanel2().liste2theta.clear();
 			    this.f.getMainPanel2().listeMoyenBeam.clear();
-			    this.f.CalculMoyAndRadius(centerCircle,f.getP(), f.getV(), f.getL());
+			    this.f.CalculMoyAndRadius(f.getCenterCircle(),f.getP(), f.getV(), f.getL());
 			}
 			f.getMainPanel2().repaint();
 		}

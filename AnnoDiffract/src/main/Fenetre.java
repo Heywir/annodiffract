@@ -15,15 +15,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.RescaleOp;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 import javax.swing.Box;
 import javax.swing.ImageIcon;
@@ -50,6 +43,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	private Panel mainPanel = null;
 	private JMenuItem menuItemOuvrir = null;
 	private JMenuItem menuGraphOpen = null;
+	private JMenuItem menuGItemQuit = null;
 	private JButton findCenter = null;
 	private JButton setParam = null;
 	private JButton zoom = null;
@@ -121,6 +115,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		// Menus
 		JMenu menuFile = new JMenu("File");
 		menuItemOuvrir = new JMenuItem("Open");
+		menuGItemQuit = new JMenuItem("Quit");
 
 		// Graph
 		JMenu menuGraph = new JMenu("Graph");
@@ -173,6 +168,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		menuBar.add(newMenuBar, BorderLayout.NORTH);
 		menuBar.add(toolBar, BorderLayout.CENTER);
 		menuFile.add(menuItemOuvrir);
+		menuFile.add(menuGItemQuit);
 		menuGraph.add(menuGraphOpen);
 		toolBar.add(findCenter);
 		toolBar.add(zoom);
@@ -185,6 +181,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		// Listeners
 		getMainPanel().addComponentListener(this);
 		menuItemOuvrir.addActionListener(this);
+		menuGItemQuit.addActionListener(this);
 		menuGraphOpen.addActionListener(this);
 		setParam.addActionListener(this);
 		zoom.addActionListener(this);
@@ -196,112 +193,71 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		return menuBar;
 	}
 	
-	/*private void firstUse(){
-		File F = new File("1.txt"); 
-		if(!F.exists()){
-    		int i;
-    		float j;
-    		JOptionPane n = new JOptionPane("Coucou");
-    		JOptionPane.showMessageDialog(n, "Welcome its the first time you use this sofware,"
-    				+ " Please enter the information"
-    				, "First Use", JOptionPane.INFORMATION_MESSAGE);
-    		String Ppern = JOptionPane.showInputDialog(n,"Enter The PPI");
-    		try{
-    			i = Integer.parseInt(Ppern);
-    		}catch(NumberFormatException z){
-    			JOptionPane.showMessageDialog(n, "Error, you diddn't put an Number."
-    					+ " Nous allons mettre la valeur par defaut pour le pixel par metre qui est de 1491"
-        				, "Mauvaise valeur", JOptionPane.ERROR_MESSAGE);
-    			Ppern="87503";
-    		}
-    		String V = JOptionPane.showInputDialog(n,"Veuillez rentrer la tension d'accï¿½lï¿½ration des ï¿½lectrons  U (en V).");
-    		try{
-    			j = Float.parseFloat(V);
-    		}catch(NumberFormatException z){
-    			JOptionPane.showMessageDialog(n, "Error, you diddn't put an Number. "
-    					+ "Nous allons mettre la valeur par defaut pour le voltage"
-        				, "Mauvaise valeur", JOptionPane.ERROR_MESSAGE);
-    			V="120000";
-    		}
-    		//Calcul lambda
-    		lambda = new BigDecimal((6.62 *Math.pow(10,-34))/
-					(Math.sqrt((2.9149 *Math.pow(10,-49))*((double)Float.parseFloat(V)*(double)1000)*
-							((double)1+(9.7714 *Math.pow(10,-7))*((double)Float.parseFloat(V)*(double)1000)))));
-			
-    		String L = JOptionPane.showInputDialog(n,"Veuillez rentrer la longueur de camera en Metre.");
-    		try{
-    			j = Float.parseFloat(L);
-    		}catch(NumberFormatException z){
-    			JOptionPane.showMessageDialog(n, "Error, you diddn't put an Number. "
-    					+ "Nous allons mettre la valeur par dï¿½faut pour la longueur de camera"
-        				, "Mauvaise valeur", JOptionPane.ERROR_MESSAGE);
-    			L="0.05";
-    		}
-    		try{
-    		    PrintWriter writer = new PrintWriter(F, "UTF-8");
-    		    writer.println("Pixel par Metre : "+ Ppern);
-    		    writer.println("====================================");
-    		    writer.println("Tension d'acceleration des electrons U : "+ V);
-    		    writer.println("====================================");
-    		    writer.println("Longueur de camera en Metre : "+ L);
-    		    writer.close();
-    		} catch (IOException e) {
-    		   // do something
-    		}
-    	}
-	}*/
+	private void changeParam(){
+	    
+	    JTextField pField = new JTextField(String.valueOf(p),7);
+	    JTextField vField = new JTextField(String.valueOf(v),7);
+	    JTextField lField = new JTextField(String.valueOf(l),7);
 	
-		private void changeParam(){
-		    
-		    JTextField pField = new JTextField(String.valueOf(p),7);
-		    JTextField vField = new JTextField(String.valueOf(v),7);
-		    JTextField lField = new JTextField(String.valueOf(l),7);
-
-		    JPanel myPanel = new JPanel();
-		    myPanel.add(new JLabel("Pixel par Metre :"));
-		    myPanel.add(pField);
-		    myPanel.add(Box.createHorizontalStrut(15)); // a spacer
-		    myPanel.add(new JLabel("Tension d'acceleration des electrons (en U) :"));
-		    myPanel.add(vField);
-		    myPanel.add(Box.createHorizontalStrut(15)); // a spacer
-		    myPanel.add(new JLabel("Longueur de camera :"));
-		    myPanel.add(lField);
+	    JPanel myPanel = new JPanel();
+	    myPanel.add(new JLabel("PPI :"));
+	    myPanel.add(pField);
+	    myPanel.add(Box.createHorizontalStrut(15)); // a spacer
+	    myPanel.add(new JLabel("Acceleration voltage of electrons(kV) :"));
+	    myPanel.add(vField);
+	    myPanel.add(Box.createHorizontalStrut(15)); // a spacer
+	    myPanel.add(new JLabel("Camera Lenght (cm) :"));
+	    myPanel.add(lField);
 		      
-		      int result = JOptionPane.showConfirmDialog(null, myPanel, 
-		               "Option", JOptionPane.OK_CANCEL_OPTION);
-		      if (result == JOptionPane.OK_OPTION) {
-				try {
-					float j;
-					j = Float.parseFloat(pField.getText());
-					j = Float.parseFloat(vField.getText());
-					j = Float.parseFloat(lField.getText());
-	    		    p=Double.parseDouble(pField.getText());
-	    		    v=Double.parseDouble(vField.getText());
-	    		    l=Double.parseDouble(lField.getText());
-	    		    
-				} catch(NumberFormatException z){
-					JOptionPane.showMessageDialog(null, "Vous n'avez pas rentré un chiffre. "
-	    					+ "Les valeurs sont inchangé"
-	        				, "Mauvaise valeur", JOptionPane.ERROR_MESSAGE);
-				}
-				if(!mainPanel.listeCircle.isEmpty()){
-					centerCircle=mainPanel.circleCenter(
-							new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(0).getX()),
-									(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(0).getY())),
-							new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(1).getX()),
-									(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(1).getY())),
-							new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(2).getX()),
-									(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(2).getY())));
-					
-					//Calcul lambda
-		    		lambda = new BigDecimal((6.62 *Math.pow(10,-34))/
-							(Math.sqrt((2.9149 *Math.pow(10,-49))*(v*(double)1000)*
-									((double)1+(9.7714 *Math.pow(10,-7))*(v*(double)1000)))));
-					
-					CalculMoyAndRadius(centerCircle, p, v, l);
-				}
-		       }
+	      int result = JOptionPane.showConfirmDialog(null, myPanel, 
+	               "Option", JOptionPane.OK_CANCEL_OPTION);
+	      if (result == JOptionPane.OK_OPTION) {
+			try {
+				float j;
+				j = Float.parseFloat(pField.getText());
+				j = Float.parseFloat(vField.getText());
+				j = Float.parseFloat(lField.getText());
+    		    p=Double.parseDouble(pField.getText());
+    		    v=Double.parseDouble(vField.getText());
+    		    l=Double.parseDouble(lField.getText());
+    		    
+			} catch(NumberFormatException z){
+				JOptionPane.showMessageDialog(null, "You didn't enter a number. "
+    					+ "The Settings aren't changed"
+        				, "Not Good", JOptionPane.ERROR_MESSAGE);
+			}
+			if(!mainPanel.listeCircle.isEmpty()){
+				centerCircle=mainPanel.circleCenter(
+						new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(0).getX()),
+								(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(0).getY())),
+						new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(1).getX()),
+								(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(1).getY())),
+						new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(2).getX()),
+								(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(2).getY())));
+				mainPanel.listePointCenter.add(centerCircle);
+				centerCircle = getCenterCicleMoy();
+				//Calcul lambda
+	    		lambda = new BigDecimal((6.62 *Math.pow(10,-34))/
+						(Math.sqrt((2.9149 *Math.pow(10,-49))*(v*(double)1000)*
+								((double)1+(9.7714 *Math.pow(10,-7))*(v*(double)1000)))));
+				
+				CalculMoyAndRadius(centerCircle, p, v, l);
+			}
+	       }
+	}
+	
+	public Point getCenterCicleMoy(){
+		Point centerCircle;
+		double x=0,y=0;
+		for(int i=0;i<mainPanel.listePointCenter.size();i++){
+			x=x+mainPanel.listePointCenter.get(i).getX();
+			y=y+mainPanel.listePointCenter.get(i).getY();
 		}
+		x=x/(double)mainPanel.listePointCenter.size();
+		y=y/(double)mainPanel.listePointCenter.size();
+		centerCircle = new Point((int)Math.round(x), (int)Math.round(y));
+		return centerCircle;
+	}
 	
 	//Action On button
 	@Override
@@ -333,6 +289,11 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 						e1.printStackTrace();
 					}
 			    }
+		}
+		if (e.getSource() == menuGItemQuit) {
+			//Quit the application
+			System.out.println("gfdsgds");
+			this.dispose();
 		}
 		if (e.getSource() == findCenter) {
 			//Method to find center
@@ -711,6 +672,14 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	
 	public Double getL(){
 		return l;
+	}
+	
+	public Point getCenterCircle(){
+		return centerCircle;
+	}
+	
+	public void setCenterCircle(Point centerCircle){
+		this.centerCircle=centerCircle;
 	}
 	
 	//Main

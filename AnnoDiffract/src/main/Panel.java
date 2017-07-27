@@ -56,6 +56,9 @@ class Panel extends JPanel {
 	public final ArrayList<Double> listeS = new ArrayList<>();
 	public final ArrayList<Double> liste2theta = new ArrayList<>();
 	
+	//Autre Liste
+	public final ArrayList<Point> listePointCenter = new ArrayList<>();
+	
 	//Variable resolution
 	private double resX=0;
 	private double resY=0;
