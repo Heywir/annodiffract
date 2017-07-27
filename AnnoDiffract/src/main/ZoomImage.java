@@ -3,6 +3,7 @@ package main;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -129,8 +130,8 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if(e.getSource() == jL){
-			Graphics g2d = img.getGraphics();
-			g2d.setColor(Color.BLUE);
+			Graphics2D g2d = (Graphics2D) img.getGraphics();
+			g2d.setColor(Color.RED);
 			g2d.drawLine((int)positionX-5, (int)positionY, (int)positionX+5, (int)positionY);
 			g2d.drawLine((int)positionX, (int)positionY-5, (int)positionX, (int)positionY+5);
 			jL.setIcon(new ImageIcon(img));

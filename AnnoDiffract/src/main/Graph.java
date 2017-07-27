@@ -22,6 +22,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -50,6 +51,8 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 	private final ChartPanel chartPanel;
 	private JMenuItem save = null;
 	private JMenuItem setRayon = null;
+	private JMenuItem setMoy = null;
+	private JMenuItem setSum = null;
 	private JMenuItem setS = null;
 	private JMenuItem set2theta = null;
 	private JMenuItem setBeam = null;
@@ -59,6 +62,7 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 	private JFreeChart xylineChart2theta = null;
 	private JLabel statusLabel;
 	private XYPlot plot;
+	private Boolean yMoy=true;
 	
 	public Graph(Fenetre f) {
 		//Construction du Graphique
@@ -88,12 +92,15 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 
      	// Menus
      	JMenu menuFile = new JMenu("File");
-     	JMenu menuAbsc = new JMenu("X-axis");
+     	JMenu menuAbsc = new JMenu("X-Axis");
+     	JMenu menuAxiY = new JMenu("Y-Axis");
      	JMenu menuBeam = new JMenu("BeamStop");
      	save= new JMenuItem("Save");
      	setRayon = new JMenuItem("Radius in Meters");
      	setS = new JMenuItem("Distance Vector");
      	set2theta = new JMenuItem("Diffraction Angle 2 theta");
+     	setMoy = new JMenuItem("Set Average Intensity");
+     	setSum = new JMenuItem("Set Sum Intensity");
      	setBeam = new JMenuItem("Beamstop Correction");
      	setNoBeam = new JMenuItem("Without Beamstop Correction");
      	
@@ -104,6 +111,8 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
      	menuAbsc.add(setRayon);
      	menuAbsc.add(setS);
      	menuAbsc.add(set2theta);
+     	menuAxiY.add(setMoy);
+     	menuAxiY.add(setSum);
      	menuBeam.add(setBeam);
      	menuBeam.add(setNoBeam);
      	
@@ -112,6 +121,8 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
         chartPanel.addChartMouseListener(this);
         setRayon.addActionListener(this);
         setS.addActionListener(this);
+        setMoy.addActionListener(this);
+        setSum.addActionListener(this);
         set2theta.addActionListener(this);
         setBeam.addActionListener(this);
         setNoBeam.addActionListener(this);
@@ -119,6 +130,7 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
      	//Ajout � la fenetre
         menu.add(menuFile);
         menu.add(menuAbsc);
+     	menu.add(menuAxiY);
      	menu.add(menuBeam);
      	this.add(menu,BorderLayout.NORTH);
      	this.add(chartPanel, BorderLayout.CENTER);
@@ -142,27 +154,51 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 
 	private void withoutBeam(){
         //On creer les Charts que l'utilisateur pourra afficher s'il le souhaite
-        xylineChartRayon = ChartFactory.createXYLineChart(
-                chartTitle ,
-                "Radius" ,
-                "Intensity" ,
-                createDataset(f.getMainPanel2().listeRayon, f.getMainPanel2().listeMoyen),
-                PlotOrientation.VERTICAL ,
-                true , true , false);
-        xylineChartS = ChartFactory.createXYLineChart(
-                chartTitle ,
-                "Distance Vector S" ,
-                "Intensity" ,
-                createDataset(f.getMainPanel2().listeS, f.getMainPanel2().listeMoyen),
-                PlotOrientation.VERTICAL ,
-                true , true , false);
-        xylineChart2theta = ChartFactory.createXYLineChart(
-                chartTitle ,
-                "Diffraction Angle 2theta" ,
-                "Intensity" ,
-                createDataset(f.getMainPanel2().liste2theta, f.getMainPanel2().listeMoyen),
-                PlotOrientation.VERTICAL ,
-                true , true , false);
+	    if(yMoy==true){
+			xylineChartRayon = ChartFactory.createXYLineChart(
+	                chartTitle ,
+	                "Radius" ,
+	                "Intensity" ,
+	                createDataset(f.getMainPanel2().listeRayon, f.getMainPanel2().listeMoyen),
+	                PlotOrientation.VERTICAL ,
+	                true , true , false);
+	        xylineChartS = ChartFactory.createXYLineChart(
+	                chartTitle ,
+	                "Distance Vector S" ,
+	                "Intensity" ,
+	                createDataset(f.getMainPanel2().listeS, f.getMainPanel2().listeMoyen),
+	                PlotOrientation.VERTICAL ,
+	                true , true , false);
+	        xylineChart2theta = ChartFactory.createXYLineChart(
+	                chartTitle ,
+	                "Diffraction Angle 2theta" ,
+	                "Intensity" ,
+	                createDataset(f.getMainPanel2().liste2theta, f.getMainPanel2().listeMoyen),
+	                PlotOrientation.VERTICAL ,
+	                true , true , false);
+	    }else{
+	    	xylineChartRayon = ChartFactory.createXYLineChart(
+	                chartTitle ,
+	                "Radius" ,
+	                "Intensity" ,
+	                createDataset(f.getMainPanel2().listeRayon, f.getMainPanel2().listeSomme),
+	                PlotOrientation.VERTICAL ,
+	                true , true , false);
+	        xylineChartS = ChartFactory.createXYLineChart(
+	                chartTitle ,
+	                "Distance Vector S" ,
+	                "Intensity" ,
+	                createDataset(f.getMainPanel2().listeS, f.getMainPanel2().listeSomme),
+	                PlotOrientation.VERTICAL ,
+	                true , true , false);
+	        xylineChart2theta = ChartFactory.createXYLineChart(
+	                chartTitle ,
+	                "Diffraction Angle 2theta" ,
+	                "Intensity" ,
+	                createDataset(f.getMainPanel2().liste2theta, f.getMainPanel2().listeSomme),
+	                PlotOrientation.VERTICAL ,
+	                true , true , false);
+	    }
         graphicOption();
 	}
 
@@ -232,64 +268,23 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 			chartPanel.setChart(xylineChart2theta);
 			plot = xylineChart2theta.getXYPlot();
 		}
-		if(e.getSource() == setBeam){
-			XYSeriesCollection dataset = new XYSeriesCollection();
-			XY = new XYSeries( "BeamStop Correction" );
-			for (int i=0; i<f.getMainPanel2().listeRayon.size();i++){
-		        XY.add(f.getMainPanel2().listeRayon.get(i), f.getMainPanel2().listeMoyenBeam.get(i));
-	        }
-			dataset.addSeries(XY);
-			XY = new XYSeries( "Without BeamStop Correction" );
-			for (int i=0; i<f.getMainPanel2().listeRayon.size();i++){
-		        XY.add(f.getMainPanel2().listeRayon.get(i), f.getMainPanel2().listeMoyen.get(i));
-	        }
-			dataset.addSeries(XY);
-			xylineChartRayon = ChartFactory.createXYLineChart(
-	                chartTitle ,
-	                "Radius" ,
-	                "Intensity" ,
-	                dataset,
-	                PlotOrientation.VERTICAL ,
-	                true , true , false);
-			dataset = new XYSeriesCollection();
-			XY = new XYSeries( "BeamStop Correction" );
-			for (int i=0; i<f.getMainPanel2().listeS.size();i++){
-		        XY.add(f.getMainPanel2().listeS.get(i), f.getMainPanel2().listeMoyenBeam.get(i));
-	        }
-			dataset.addSeries(XY);
-			XY = new XYSeries( "Without BeamStop Correction" );
-			for (int i=0; i<f.getMainPanel2().listeS.size();i++){
-		        XY.add(f.getMainPanel2().listeS.get(i), f.getMainPanel2().listeMoyen.get(i));
-	        }			
-			dataset.addSeries(XY);
-			xylineChartS = ChartFactory.createXYLineChart(
-	                chartTitle ,
-	                "Diffusion Vector" ,
-	                "Intensity" ,
-	                dataset,
-	                PlotOrientation.VERTICAL ,
-	                true , true , false);
-			
-			dataset = new XYSeriesCollection();
-			XY = new XYSeries( "BeamStop Correction" );
-			for (int i=0; i<f.getMainPanel2().liste2theta.size();i++){
-		        XY.add(f.getMainPanel2().liste2theta.get(i), f.getMainPanel2().listeMoyenBeam.get(i));
-	        }
-			dataset.addSeries(XY);
-			XY = new XYSeries( "Without BeamStop Correction" );			
-			for (int i=0; i<f.getMainPanel2().liste2theta.size();i++){
-		        XY.add(f.getMainPanel2().liste2theta.get(i), f.getMainPanel2().listeMoyen.get(i));
-	        }
-			dataset.addSeries(XY);
-			xylineChart2theta = ChartFactory.createXYLineChart(
-	                chartTitle ,
-	                "Diffraction Angle 2 theta" ,
-	                "Intensity" ,
-	                dataset,
-	                PlotOrientation.VERTICAL ,
-	                true , true , false);
-			graphicOption();
+		if(e.getSource() == setMoy){
+			yMoy = true;
+			withoutBeam();
 			chartPanel.setChart(xylineChartRayon);
+		}
+		if(e.getSource() == setSum){
+			yMoy = false;
+			withoutBeam();
+			chartPanel.setChart(xylineChartRayon);
+		}
+		
+		if(e.getSource() == setBeam){
+			if(f.getMaxBS()!=-1){
+				withBeam();
+				graphicOption();
+				chartPanel.setChart(xylineChartRayon);
+			}
 		}
 		if(e.getSource() == setNoBeam){
 			withoutBeam();
@@ -342,10 +337,11 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 	            Iterator<Double> iterS = f.getMainPanel2().listeS.iterator();
 	            Iterator<Double> iter2theta = f.getMainPanel2().liste2theta.iterator();
 	            Iterator<Double> iterInt = f.getMainPanel2().listeMoyen.iterator();
+	            Iterator<Double> iterIntSum = f.getMainPanel2().listeSomme.iterator();
 	            commaSeparatedValues += "Settings\r\nPPI; "+f.getP()+"; Microscope Tension:; "+f.getV()+"; Camera Lenght:; "+f.getL()+";\r\n\r\n";
-	            commaSeparatedValues += "Interarticular Distance d; Diffusion Vector S; Diffraction Angle 2 theta; Intensity Without BeamStop Correction; \r\n";
+	            commaSeparatedValues += "Interarticular Distance d; Diffusion Vector S; Diffraction Angle 2 theta; Average Intensity Without BeamStop Correction; Sum Intensity Without BeamStop Correction;\r\n";
 	            while (iterD.hasNext()) {
-	                commaSeparatedValues += iterD.next() + "; "+iterS.next() + "; "+iter2theta.next() +"; "+iterInt.next() +";\r\n";
+	                commaSeparatedValues += iterD.next() + "; "+iterS.next() + "; "+iter2theta.next() +"; "+iterInt.next() +" ;"+iterIntSum.next()+";\r\n";
 	            }
 	            /**Remove the last comma**/
 	            if (commaSeparatedValues.endsWith(",")) {
@@ -362,10 +358,12 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 	            Iterator<Double> iter2theta = f.getMainPanel2().liste2theta.iterator();
 	            Iterator<Double> iterInt = f.getMainPanel2().listeMoyen.iterator();
 	            Iterator<Double> iterIntBeam = f.getMainPanel2().listeMoyenBeam.iterator();
+	            Iterator<Double> iterIntSum = f.getMainPanel2().listeSomme.iterator();
+	            Iterator<Double> iterIntSumBeam = f.getMainPanel2().listeSommeBeam.iterator();
 	            commaSeparatedValues += "Settings\r\nPPI; "+f.getP()+"; Microscope Tension:; "+f.getV()+"; Camera Lenght:; "+f.getL()+";\r\n\r\n";
-	            commaSeparatedValues += "Interarticular Distance d; Diffusion Vector S; Diffraction Angle 2 theta; Intensity Without BeamStop Correction;Intensity With BeamStop correction; \r\n";
+	            commaSeparatedValues += "Interarticular Distance d; Diffusion Vector S; Diffraction Angle 2 theta;Average Intensity Without BeamStop Correction;Average Intensity With BeamStop correction;Sum Intensity Without BeamStop Correction;Sum Intensity With BeamStop correction; \r\n";
 	            while (iterD.hasNext()) {
-	                commaSeparatedValues += iterD.next() + "; "+iterS.next() + "; "+iter2theta.next() +"; "+iterInt.next() +";"+iterIntBeam.next()+";\r\n";
+	                commaSeparatedValues += iterD.next() + "; "+iterS.next() + "; "+iter2theta.next() +"; "+iterInt.next() +";"+iterIntBeam.next()+";"+iterIntSum+";"+iterIntSumBeam+";\r\n";
 	            }
 	            /**Remove the last comma**/
 	            if (commaSeparatedValues.endsWith(",")) {
@@ -386,10 +384,126 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 	                out.write(commaSeparatedValues);
 	                out.close();
 	            } catch (Exception e) {
-	                e.printStackTrace();
+	            	JOptionPane.showMessageDialog(null, "Error Encounter. "
+	    					+ "Afile of the same name is used, If you want to save close the software which use the file or"
+	    					+ " change the name of the file you want to save"
+	        				, "Error", JOptionPane.ERROR_MESSAGE);
 	            }
 	        }
 	 
 	    }
+	 public void withBeam(){
+		XYSeriesCollection dataset = new XYSeriesCollection();
+		XY = new XYSeries( "BeamStop Correction" );
+		if(yMoy){
+			for (int i=0; i<f.getMainPanel2().listeRayon.size();i++){
+		        XY.add(f.getMainPanel2().listeRayon.get(i), f.getMainPanel2().listeMoyenBeam.get(i));
+		    }
+			dataset.addSeries(XY);
+			XY = new XYSeries( "Without BeamStop Correction" );
+			for (int i=0; i<f.getMainPanel2().listeRayon.size();i++){
+		        XY.add(f.getMainPanel2().listeRayon.get(i), f.getMainPanel2().listeMoyen.get(i));
+		    }
+			dataset.addSeries(XY);
+			xylineChartRayon = ChartFactory.createXYLineChart(
+		             chartTitle ,
+		             "Radius" ,
+		             "Intensity" ,
+		             dataset,
+		             PlotOrientation.VERTICAL ,
+		             true , true , false);
+			dataset = new XYSeriesCollection();
+			XY = new XYSeries( "BeamStop Correction" );
+			for (int i=0; i<f.getMainPanel2().listeS.size();i++){
+		        XY.add(f.getMainPanel2().listeS.get(i), f.getMainPanel2().listeMoyenBeam.get(i));
+		    }
+			dataset.addSeries(XY);
+			XY = new XYSeries( "Without BeamStop Correction" );
+			for (int i=0; i<f.getMainPanel2().listeS.size();i++){
+		        XY.add(f.getMainPanel2().listeS.get(i), f.getMainPanel2().listeMoyen.get(i));
+		    }			
+			dataset.addSeries(XY);
+			xylineChartS = ChartFactory.createXYLineChart(
+		           chartTitle ,
+		           "Diffusion Vector" ,
+		           "Intensity" ,
+		           dataset,
+		           PlotOrientation.VERTICAL ,
+		           true , true , false);
+			
+			dataset = new XYSeriesCollection();
+			XY = new XYSeries( "BeamStop Correction" );
+			for (int i=0; i<f.getMainPanel2().liste2theta.size();i++){
+		        XY.add(f.getMainPanel2().liste2theta.get(i), f.getMainPanel2().listeMoyenBeam.get(i));
+		    }
+			dataset.addSeries(XY);
+			XY = new XYSeries( "Without BeamStop Correction" );			
+			for (int i=0; i<f.getMainPanel2().liste2theta.size();i++){
+		        XY.add(f.getMainPanel2().liste2theta.get(i), f.getMainPanel2().listeMoyen.get(i));
+		    }
+			dataset.addSeries(XY);
+			xylineChart2theta = ChartFactory.createXYLineChart(
+		                chartTitle ,
+		                "Diffraction Angle 2 theta" ,
+		                "Intensity" ,
+		                dataset,
+		                PlotOrientation.VERTICAL ,
+		                true , true , false);
+		}else{
+			for (int i=0; i<f.getMainPanel2().listeRayon.size();i++){
+		        XY.add(f.getMainPanel2().listeRayon.get(i), f.getMainPanel2().listeSommeBeam.get(i));
+		    }
+			dataset.addSeries(XY);
+			XY = new XYSeries( "Without BeamStop Correction" );
+			for (int i=0; i<f.getMainPanel2().listeRayon.size();i++){
+		        XY.add(f.getMainPanel2().listeRayon.get(i), f.getMainPanel2().listeSomme.get(i));
+		    }
+			dataset.addSeries(XY);
+			xylineChartRayon = ChartFactory.createXYLineChart(
+		                chartTitle ,
+		                "Radius" ,
+		                "Intensity" ,
+		                dataset,
+		                PlotOrientation.VERTICAL ,
+		                true , true , false);
+			dataset = new XYSeriesCollection();
+			XY = new XYSeries( "BeamStop Correction" );
+			for (int i=0; i<f.getMainPanel2().listeS.size();i++){
+		        XY.add(f.getMainPanel2().listeS.get(i), f.getMainPanel2().listeSommeBeam.get(i));
+		    }
+			dataset.addSeries(XY);
+			XY = new XYSeries( "Without BeamStop Correction" );
+			for (int i=0; i<f.getMainPanel2().listeS.size();i++){
+		        XY.add(f.getMainPanel2().listeS.get(i), f.getMainPanel2().listeSomme.get(i));
+		    }			
+			dataset.addSeries(XY);
+			xylineChartS = ChartFactory.createXYLineChart(
+		                chartTitle ,
+		                "Diffusion Vector" ,
+		                "Intensity" ,
+		                dataset,
+		                PlotOrientation.VERTICAL ,
+		                true , true , false);
+				
+			dataset = new XYSeriesCollection();
+			XY = new XYSeries( "BeamStop Correction" );
+			for (int i=0; i<f.getMainPanel2().liste2theta.size();i++){
+			      XY.add(f.getMainPanel2().liste2theta.get(i), f.getMainPanel2().listeSommeBeam.get(i));
+		    }
+			dataset.addSeries(XY);
+			XY = new XYSeries( "Without BeamStop Correction" );			
+			for (int i=0; i<f.getMainPanel2().liste2theta.size();i++){
+			     XY.add(f.getMainPanel2().liste2theta.get(i), f.getMainPanel2().listeSomme.get(i));
+		    }
+			dataset.addSeries(XY);
+			xylineChart2theta = ChartFactory.createXYLineChart(
+		                chartTitle ,
+		                "Diffraction Angle 2 theta" ,
+		                "Intensity" ,
+		                dataset,
+		                PlotOrientation.VERTICAL ,
+		                true , true , false);
+		}
+	 }
 
 }

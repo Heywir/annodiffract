@@ -49,6 +49,8 @@ class Panel extends JPanel {
 	//Liste Intensité
 	public final ArrayList<Double> listeMoyen = new ArrayList<>();
 	public final ArrayList<Double> listeMoyenBeam = new ArrayList<>();
+	public final ArrayList<Double> listeSomme = new ArrayList<>();
+	public final ArrayList<Double> listeSommeBeam = new ArrayList<>();
 	
 	//Liste Distance
 	public final ArrayList<Double> listeRayon = new ArrayList<>();
@@ -87,6 +89,7 @@ class Panel extends JPanel {
 	//Methode pour ouvrir l'image puis l'afficher avec une bonne dimension
 	void openImage(File file) throws Exception {
 		try {
+			listePointCenter.clear();
 			zonezoom = null;
 			tmpCircle.ptCircle.clear();
 			listeCircle.clear();

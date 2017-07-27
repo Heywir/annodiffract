@@ -527,11 +527,13 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		double lenght;
 		pDouble = (pDouble* 39.370079);
 		mainPanel.listeMoyen.clear();
+		mainPanel.listeSomme.clear();
 		mainPanel.listeRayon.clear();
 		mainPanel.listeD.clear();
 		mainPanel.listeS.clear();
 		mainPanel.liste2theta.clear();
 		mainPanel.listeMoyenBeam.clear();
+		mainPanel.listeSommeBeam.clear();
 		ArrayList<Point> tmp ;
 		while(i<mainPanel.getBufferedOriginal().getWidth()){
 			l=0;
@@ -559,8 +561,10 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 				moy = (somme/tmp.size());
 				moyBeam = (sommeBeam/l);
 				mainPanel.listeMoyen.add(moy);
+				mainPanel.listeSomme.add(somme);
 				if(minBS != -1){
 					mainPanel.listeMoyenBeam.add(moyBeam);
+					mainPanel.listeSommeBeam.add(sommeBeam);
 				}
 			}
 			i++;
