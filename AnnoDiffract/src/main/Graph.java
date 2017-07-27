@@ -327,8 +327,12 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 	
 	 private void convertAndPrint(boolean writeToConsole, boolean writeToFile, boolean sortTheList, String destinationCSVFile) {
 	        String commaSeparatedValues = "";
-	 
-	        if (f.getMainPanel2().listeD != null) {
+	        double som = 0 ;
+	        for (int i =0;i<f.getMainPanel2().listeMoyenBeam.size();i++){
+	        	som = som+f.getMainPanel2().listeMoyenBeam.get(i);
+	        }
+	        
+	        if (f.getMainPanel2().listeMoyenBeam.isEmpty()) {
 	            /** Sort the list if sortTheList was passed as true**/
 	            if(sortTheList) {
 	                Collections.sort(f.getMainPanel2().listeD);
@@ -339,9 +343,29 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 	            Iterator<Double> iter2theta = f.getMainPanel2().liste2theta.iterator();
 	            Iterator<Double> iterInt = f.getMainPanel2().listeMoyen.iterator();
 	            commaSeparatedValues += "Settings\r\nPPI; "+f.getP()+"; Microscope Tension:; "+f.getV()+"; Camera Lenght:; "+f.getL()+";\r\n\r\n";
-	            commaSeparatedValues += "Interarticular Distance d; Diffusion Vector S; Diffraction Angle 2 theta; Intensity; \r\n";
+	            commaSeparatedValues += "Interarticular Distance d; Diffusion Vector S; Diffraction Angle 2 theta; Intensity Without BeamStop Correction; \r\n";
 	            while (iterD.hasNext()) {
 	                commaSeparatedValues += iterD.next() + "; "+iterS.next() + "; "+iter2theta.next() +"; "+iterInt.next() +";\r\n";
+	            }
+	            /**Remove the last comma**/
+	            if (commaSeparatedValues.endsWith(",")) {
+	                commaSeparatedValues = commaSeparatedValues.substring(0,
+	                        commaSeparatedValues.lastIndexOf(","));
+	            }
+	        }else{
+	        	if(sortTheList) {
+	                Collections.sort(f.getMainPanel2().listeD);
+	            }
+	            /**Iterate through the list and append comma after each values**/
+	            Iterator<Double> iterD = f.getMainPanel2().listeD.iterator();
+	            Iterator<Double> iterS = f.getMainPanel2().listeS.iterator();
+	            Iterator<Double> iter2theta = f.getMainPanel2().liste2theta.iterator();
+	            Iterator<Double> iterInt = f.getMainPanel2().listeMoyen.iterator();
+	            Iterator<Double> iterIntBeam = f.getMainPanel2().listeMoyenBeam.iterator();
+	            commaSeparatedValues += "Settings\r\nPPI; "+f.getP()+"; Microscope Tension:; "+f.getV()+"; Camera Lenght:; "+f.getL()+";\r\n\r\n";
+	            commaSeparatedValues += "Interarticular Distance d; Diffusion Vector S; Diffraction Angle 2 theta; Intensity Without BeamStop Correction;Intensity With BeamStop correction; \r\n";
+	            while (iterD.hasNext()) {
+	                commaSeparatedValues += iterD.next() + "; "+iterS.next() + "; "+iter2theta.next() +"; "+iterInt.next() +";"+iterIntBeam.next()+";\r\n";
 	            }
 	            /**Remove the last comma**/
 	            if (commaSeparatedValues.endsWith(",")) {

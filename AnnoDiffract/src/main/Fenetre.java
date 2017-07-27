@@ -559,8 +559,9 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 				moy = (somme/tmp.size());
 				moyBeam = (sommeBeam/l);
 				mainPanel.listeMoyen.add(moy);
-				mainPanel.listeMoyenBeam.add(moyBeam);
-				
+				if(minBS != -1){
+					mainPanel.listeMoyenBeam.add(moyBeam);
+				}
 			}
 			i++;
 		}  
