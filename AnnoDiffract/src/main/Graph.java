@@ -32,6 +32,9 @@ import org.jfree.chart.annotations.XYTextAnnotation;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.XYItemEntity;
+import org.jfree.data.DomainOrder;
+import org.jfree.data.general.DatasetChangeListener;
+import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.chart.plot.XYPlot;
@@ -44,7 +47,7 @@ import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 
 
-class Graph extends JFrame implements ChartMouseListener, ActionListener{
+class Graph extends JFrame implements ChartMouseListener, ActionListener,XYDataset{
 	private Fenetre f;
 	private XYSeries XY;
 	private final String chartTitle;
@@ -233,7 +236,16 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
             XYDataset d = e1.getDataset();
             int s = e1.getSeriesIndex();
             int i = e1.getItem();
-            XYTextAnnotation b = new XYTextAnnotation((int)(100*f.getMainPanel2().listeD.get(i))/100.+" A", (double)d.getX(s, i), (double)d.getY(s, i));
+            float getplace = 0;
+            double r = (double)d.getY(s, i);
+            for(float i1 = -10;i1<11;i1++){
+            	if((double)d.getY(s, (int)(i+i1)) > r){
+            		r =(double)d.getY(s, (int)(i+i1));
+            		getplace = i1;
+            	}
+        		System.out.println((double)d.getY(s, (int)(i-i1))+" "+i1);
+            }
+            XYTextAnnotation b = new XYTextAnnotation((int)(100*f.getMainPanel2().listeD.get(i))/100.+" A", (double)d.getX(s, (int)(i+getplace)), (double)d.getY(s, (int)(i+getplace)));
             Paint paint = Color.lightGray;
 			b.setBackgroundPaint(paint );
             plot.addAnnotation(b);
@@ -505,5 +517,83 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 		                true , true , false);
 		}
 	 }
+
+	@Override
+	public int getSeriesCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public Comparable getSeriesKey(int arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int indexOf(Comparable arg0) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void addChangeListener(DatasetChangeListener arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public DatasetGroup getGroup() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void removeChangeListener(DatasetChangeListener arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setGroup(DatasetGroup arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public DomainOrder getDomainOrder() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getItemCount(int arg0) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public Number getX(int arg0, int arg1) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public double getXValue(int arg0, int arg1) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public Number getY(int arg0, int arg1) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public double getYValue(int arg0, int arg1) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
 }
