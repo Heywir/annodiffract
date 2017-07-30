@@ -50,7 +50,7 @@ import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 
 
-class Graph extends JFrame implements ChartMouseListener, ActionListener,XYDataset{
+class Graph extends JFrame implements ChartMouseListener, ActionListener{
 	private Fenetre f;
 	private XYSeries XY;
 	private final String chartTitle;
@@ -521,84 +521,6 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener,XYDatas
 	                true , true , false);
 	   }
         graphicOption();
-	}
-
-	@Override
-	public int getSeriesCount() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public Comparable getSeriesKey(int arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int indexOf(Comparable arg0) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public void addChangeListener(DatasetChangeListener arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public DatasetGroup getGroup() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void removeChangeListener(DatasetChangeListener arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setGroup(DatasetGroup arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public DomainOrder getDomainOrder() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int getItemCount(int arg0) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public Number getX(int arg0, int arg1) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public double getXValue(int arg0, int arg1) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public Number getY(int arg0, int arg1) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public double getYValue(int arg0, int arg1) {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 }																																						////Morteum and Heywir 2017

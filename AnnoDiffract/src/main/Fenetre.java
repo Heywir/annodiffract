@@ -4,9 +4,12 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -14,6 +17,8 @@ import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.ImageObserver;
+import java.awt.image.ImageProducer;
 import java.awt.image.RescaleOp;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -80,9 +85,8 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		this.setSize((bounds.width/100)*50, (bounds.height/100)*80);
 		this.setTitle("AnnoDiffract");
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		// En attendant
-		//this.setResizable(false);
-
+		ImageIcon img = new ImageIcon("img/i.png");
+		this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("img/i.png")));
 		// Layout
 		BorderLayout layout = new BorderLayout();
 		this.setLayout(layout);

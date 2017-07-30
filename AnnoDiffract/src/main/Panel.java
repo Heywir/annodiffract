@@ -119,7 +119,7 @@ class Panel extends JPanel {
 		    bufferedScaled2 = toBufferedImage(imageScaled);
 		    BufferedImage tGray = toGray(bufferedScaled);
 		    toGray(bufferedOriginal);
-		    //toGray(bufferedOriginal2);
+		    toGray(bufferedOriginal2);
 		    toGray(bufferedScaled2);
 		    setImage(tGray);
             
