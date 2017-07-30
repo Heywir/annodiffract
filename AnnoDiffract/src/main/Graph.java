@@ -195,7 +195,7 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
             XYDataset d = e1.getDataset();
             int s = e1.getSeriesIndex();
             int i = e1.getItem();
-            XYPointerAnnotation h = new XYPointerAnnotation(((int)(100*f.getMainPanel2().listeD.get((int)(i)))/100.)+" A",(double)d.getX(s, (int)(i)), (double)d.getY(s, (int)(i)),200);
+            XYPointerAnnotation h = new XYPointerAnnotation(((int)(100*f.getMainPanel2().listeD.get((int)(i)))/100.)+" A",(double)d.getX(s, (int)(i)), (double)d.getY(s, (int)(i)),4.75);
             Paint paint = Color.lightGray;
 			plot.addAnnotation(h);
         }

@@ -9,6 +9,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -46,7 +47,7 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 	
 	public ZoomImage(Fenetre f){
 		this.setF(f);
-		
+		this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("img/loupe.png")));
 		// Taille Ecran
 		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		Rectangle bounds = env.getMaximumWindowBounds();
