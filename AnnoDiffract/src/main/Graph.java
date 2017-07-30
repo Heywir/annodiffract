@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Ellipse2D;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -28,6 +29,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.annotations.XYPointerAnnotation;
+import org.jfree.chart.annotations.XYShapeAnnotation;
 import org.jfree.chart.annotations.XYTextAnnotation;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.entity.ChartEntity;
@@ -130,7 +133,7 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener,XYDatas
         setBeam.addActionListener(this);
         setNoBeam.addActionListener(this);
         
-     	//Ajout � la fenetre
+     	//Ajout dans la fenetre
         menu.add(menuFile);
         menu.add(menuAbsc);
      	menu.add(menuAxiY);
@@ -245,10 +248,9 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener,XYDatas
             	}
         		System.out.println((double)d.getY(s, (int)(i-i1))+" "+i1);
             }
-            XYTextAnnotation b = new XYTextAnnotation((int)(100*f.getMainPanel2().listeD.get(i))/100.+" A", (double)d.getX(s, (int)(i+getplace)), (double)d.getY(s, (int)(i+getplace)));
+            XYPointerAnnotation h = new XYPointerAnnotation(((int)(100*f.getMainPanel2().listeD.get((int)(i-getplace)))/100.)+" A",(double)d.getX(s, (int)(i+getplace)), (double)d.getY(s, (int)(i+getplace)),200);
             Paint paint = Color.lightGray;
-			b.setBackgroundPaint(paint );
-            plot.addAnnotation(b);
+			plot.addAnnotation(h);
         }
 		
 	}

@@ -108,6 +108,7 @@ class Panel extends JPanel {
 			//Redesiner l'image sur une autre variable pour ne pas modifier l'image originale 
 			bufferedOriginal2  = new BufferedImage(bufferedOriginal.getWidth(),
 			bufferedOriginal.getHeight(), BufferedImage.TYPE_INT_RGB);
+			
 			Graphics g = bufferedOriginal2.createGraphics();
 			g.drawImage(bufferedOriginal, 0, 0, null);
 			Dimension d = resizeImage();
@@ -176,7 +177,7 @@ class Panel extends JPanel {
 		
 	}
 	
-	// Methode Pour Mettre Les points ï¿½ la bonne position par rapport ï¿½ la nouvelle taille de fenetre
+	// Methode Pour Mettre Les points a la bonne position par rapport a la nouvelle taille de fenetre
 	void scale() {
 		if (imageScaled != null) {
 			float Calneww, Calnewh, imWidth = bufferedOriginal.getWidth(), imHeight = bufferedOriginal.getHeight();
@@ -268,15 +269,12 @@ class Panel extends JPanel {
 	    {
 	    	if((x_centre + x > 0 && width > x_centre + x ) && ( y_centre + y > 0 && height > y_centre + y ) ){
 	    		pixels.add( new Point( (int)Math.round(x_centre + x), (int)Math.round(y_centre + y )));
-	    		//System.out.println(Math.addExact(x_centre, x) + " "+Math.addExact(y_centre, y));
 	    	}
 	    	if((x_centre + y > 0 && width > x_centre + y ) && ( y_centre + x > 0 && height > y_centre + x ) ){
 	    		pixels.add( new Point( (int)Math.round(x_centre + y), (int)Math.round(y_centre + x)));
-	    		//drawPoint(g2d, new Point( x_centre + y, y_centre + x));
 	    	}
 	    	if((x_centre - x > 0 && width > x_centre - x ) && ( y_centre + y > 0 && height > y_centre + y ) ){
 	    		pixels.add( new Point( (int)Math.round(x_centre - x), (int)Math.round(y_centre + y )));
-	    		//System.out.println(x_centre - x + " "+ y_centre + y );
 	    	}
 	    	if((x_centre - y > 0 && width > x_centre - y ) && ( y_centre + x > 0 && height > y_centre + x ) ){
 	    		pixels.add( new Point( (int)Math.round(x_centre - y), (int)Math.round(y_centre + x )));
@@ -294,6 +292,7 @@ class Panel extends JPanel {
 	    		pixels.add( new Point( (int)Math.round(x_centre - y), (int)Math.round(y_centre - x) ));
 	    	}
 	        
+	    	// Tant qu'on a pas parcouru tout le cercle on continu
 	        if (d >= 2*x){
 	            d -= 2*x + 1;
 	            x ++;
@@ -308,30 +307,8 @@ class Panel extends JPanel {
 	    }
 		return pixels;
 	}
-
-	public BufferedImage toGray(BufferedImage image) {
-		int width = image.getWidth();
-		int height = image.getHeight();
-		for(int i=0; i<height; i++){
-			for(int j=0; j<width; j++){
-				Color c = new Color(image.getRGB(j, i));
-				int red = (int)(c.getRed() * 0.21);
-				int green = (int)(c.getGreen() * 0.72);
-				int blue = (int)(c.getBlue() *0.07);
-				int sum = red + green + blue;
-				Color newColor = new Color(sum,sum,sum);
-				image.setRGB(j,i,newColor.getRGB());
-			}
-		}
-		return image;
-	}
 	
-	private void drawCenteredCircle(Graphics2D g, Point centerCircle, double r) {
-		  int x = (int) Math.round(centerCircle.getX()-(r));
-		  int y = (int) Math.round(centerCircle.getY()-(r));
-		  g.drawOval(x,y,2*(int)r,2*(int)r);
-		}
-	
+	//Méthode calculant le centre en fonction de trois points données
 	public Point circleCenter(Point A, Point B, Point C) { 
 		float yDelta_a = B.y - A.y; 
 		float xDelta_a = B.x - A.x; 
@@ -349,30 +326,56 @@ class Panel extends JPanel {
 		return center;
 	}
 	
+	//Calcule la distance entre deux points données 
 	public double lenghtFrom2Points(Point A, Point B) {
 		return (double) (float)Math.sqrt((A.getX()-B.getX())*(A.getX()-B.getX()) + (A.getY()-B.getY())*(A.getY()-B.getY()));
 	}
+	
+	//Cette méthode  permet de transformer l'image en nuance de gris
+		public BufferedImage toGray(BufferedImage image) {
+			int width = image.getWidth();
+			int height = image.getHeight();
+			for(int i=0; i<height; i++){
+				for(int j=0; j<width; j++){
+					Color c = new Color(image.getRGB(j, i));
+					int red = (int)(c.getRed() * 0.21);
+					int green = (int)(c.getGreen() * 0.72);
+					int blue = (int)(c.getBlue() *0.07);
+					int sum = red + green + blue;
+					Color newColor = new Color(sum,sum,sum);
+					image.setRGB(j,i,newColor.getRGB());
+				}
+			}
+			return image;
+		}
+	
+	// Méthode dessinant le cercle
+		private void drawCenteredCircle(Graphics2D g, Point centerCircle, double r) {
+			  int x = (int) Math.round(centerCircle.getX()-(r));
+			  int y = (int) Math.round(centerCircle.getY()-(r));
+			  g.drawOval(x,y,2*(int)r,2*(int)r);
+			}
 
-	//Methode pour dÃƒÂ©ssiner le graph
+	//Methode pour dessiner le graph
 	private void drawGraph(Graphics g) {
-		// ParamÃƒÂ¨tres graphe
+		// Parametres graphe
 
 		// Distance entre axe et text
 		int distance = 20;
 
-		// Pour le dÃƒÂ©coupage selon l'image
+		// Pour le decoupage selon l'image
 		double indentationY = (bufferedOriginal.getHeight() / 10);
 		double indentationX = (bufferedOriginal.getWidth() / 10);
 		int tailleInden = 5;
 
-		// Point En haut ÃƒÂ  gauche
+		// Point En haut a  gauche
 		int yZeroX = getLabel().getLocation().x;
 		int yZeroY = getLabel().getLocation().y;
 
-		// En Bas ÃƒÂ  gauche
+		// En Bas a  gauche
 		int yFinY = yZeroY + getLabel().getIcon().getIconHeight();
 
-		// En Bas ÃƒÂ  droite
+		// En Bas a  droite
 		int xFinX = yZeroX + getLabel().getIcon().getIconWidth();
 
 		// Longueur
@@ -383,6 +386,7 @@ class Panel extends JPanel {
 
 		// ParamÃƒÂ¨tres
 
+		
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setStroke(new BasicStroke(1));
 		g2.setColor(Color.BLACK);
@@ -418,6 +422,7 @@ class Panel extends JPanel {
 
 	}
 	
+	//Dessine un point sur l'image
 	private void drawPoint(Graphics2D g2d, Point e) {
 		int x1,y1,x2,y2;
 		x1 = (int) Math.round(e.getX() - 3); 
@@ -442,7 +447,7 @@ class Panel extends JPanel {
 		g2d.drawLine(x1, y1, x2, y2);
 	}
 	
-	//Change Brightness
+	//Change la luminosite
 	public void setBrightness(float scaleFactor){
         RescaleOp op = new RescaleOp(2*scaleFactor, 0, null);
         bufferedScaled = op.filter(bufferedScaled2, bufferedScaled);

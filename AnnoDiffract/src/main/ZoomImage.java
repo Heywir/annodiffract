@@ -83,7 +83,7 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 		brightSlide.addChangeListener(this);
 				
 	}
-	
+	//Cette méthode permettra d'avoir une parti de l'image d'origine sur la parti sélectionner par l'utilisateur
 	public void getSubImage(BufferedImage img, int pX, int pY){
 		this.pX = pX-125;
 		this.pY = pY-125;
@@ -97,6 +97,7 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 		setBrightness();
 	}
 	
+	//Cette méthode permet de définir la luminosité de l'image zommer en fonction du slider
 	private void setBrightness() {
 		RescaleOp op = new RescaleOp(((float)25 * (float) brightSlide.getValue() / (float)f.brightSlide.getMaximum()), 0, null);
 		this.img = op.filter(img2, this.img);
@@ -106,8 +107,9 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 	}
 
 	@Override
+	
 	public void stateChanged(ChangeEvent arg0) {
-
+		//La méthode va être appelé des qu'il y a changement d'état sur le slider
 		if(arg0.getSource()==brightSlide){
 			if(f.getMainPanel2().isLoaded()){
 				setBrightness();
@@ -118,12 +120,10 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 	
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		//System.out.println(positionX+"  "+positionY);
+		//des qu'on bouge la souris sur l'image la position de celle-ci sera mis à jour
 		if (arg0.getSource() == jL) {
 			setPositionX(arg0.getX());
 			setPositionY(arg0.getY());
-			//System.out.println(positionX+"  "+positionY);
 		}
 	}
 

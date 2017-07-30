@@ -3,7 +3,7 @@ package main;
 public enum TypeOutil {	
 		 /* Outil principaux */
 		 NORMAL,/* L'utilisateur vient de lancer le software */
-		 ZOOM, /* L'utilisateur va placer des points */
-		 POINT,
-		 BEAMSTOP
+		 ZOOM, /* L'utilisateur va placer des points avec le zoom*/
+		 POINT,/* L'utilisateur va placer des points*/
+		 BEAMSTOP/* L'utilisateur va définir le beamstop*/
 } 

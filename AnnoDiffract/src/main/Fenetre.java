@@ -193,6 +193,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		return menuBar;
 	}
 	
+	//Methode pour changer le parametre
 	private void changeParam(){
 	    
 	    JTextField pField = new JTextField(String.valueOf(p),7);
@@ -245,7 +246,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			}
 	       }
 	}
-	
+	//Cette methode permet d'obtenir la moyenne de tout les centre défini par l'utilisateur
 	public Point getCenterCicleMoy(){
 		Point centerCircle;
 		double x=0,y=0;
@@ -277,6 +278,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			//Case of file the user choose
 			if(returnVal == JFileChooser.APPROVE_OPTION) {
 					try {
+						//Remets par defaut le slider quand on ouvre une image
 						brightSlide.setValue(50);
 						if (getMainPanel().isLoaded()) {
 
@@ -303,10 +305,13 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 				if(z!=null){
 					z.dispose();
 				}
+			}else{
+				JOptionPane.showMessageDialog(null, "You didn't open an Image. "
+        				, "Not Good", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		if (e.getSource() == setParam) {
-			//Method to find center
+			//Call Method to set settings
 			this.changeParam();
 		}
 		if (e.getSource() == zoom) {
@@ -321,10 +326,14 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 					z.setVisible(true);
 				}
 				else {
+					//In case of the user close the window for zoom and want to open it
 					if (!z.isVisible()) {
 						z.setVisible(true);
 					}
 				}
+			}else{
+				JOptionPane.showMessageDialog(null, "You didn't open an Image. "
+        				, "Not Good", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		if (e.getSource() == beam) {
@@ -332,6 +341,9 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			if(mainPanel.isLoaded()){
 				mainPanel.setCurrentTool(TypeOutil.BEAMSTOP);
 				outilLabel.setText("Tool: " + TypeOutil.BEAMSTOP.toString());
+			}else{
+				JOptionPane.showMessageDialog(null, "You didn't open an Image. "
+        				, "Not Good", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		if (e.getSource() == menuGraphOpen) {
@@ -340,8 +352,12 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 				graph.pack();
 				 RefineryUtilities.centerFrameOnScreen(graph);
 				graph.setVisible( true );
+			}else if(!mainPanel.isLoaded()){
+				JOptionPane.showMessageDialog(null, "You didn't open an Image. "
+        				, "Not Good", JOptionPane.ERROR_MESSAGE);
 			}else{
-				System.out.println("Empty");
+				JOptionPane.showMessageDialog(null, "No point center was set. "
+        				, "Not Good", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
@@ -449,6 +465,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		}
 	}
 	
+	//Cette methode permet de definir le beamstop en fonction de 25 point grace à leur intensite
 	public void getBeamStop(int x,int y){
 		ArrayList<Integer> h = new ArrayList<>();
 		Color c ;
@@ -478,6 +495,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
 		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x,y));
 		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
+		//C'est long
 		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x+1,y));
 		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
 		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x+2,y));
@@ -503,14 +521,19 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x+2,y+2));
 		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
 		double moy=0,som=0,ecart;
+		//Nous calculons la somme
 		for(int i=0;i<h.size();i++){
 			som = som+(double)h.get(i);
 		}
+		//Nous calculons la moyenne
 		moy = som/(double)h.size();
 		som = 0;
+		//Nous calculons l'écart-type
 		for(int i=0;i<h.size();i++){
 			som = som+(((double)h.get(i)-moy)*((double)h.get(i)-moy));
 		}
+
+		//Nous calculons l'intervalle grace a la moyenne et a l'ecart-type
 		ecart = Math.sqrt(som/(double)h.size());
 		minBS = Math.round(moy-ecart);
 		maxBS = Math.round(moy+ecart);
@@ -524,8 +547,9 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
     	double i=0;
 		double j;
 		BigDecimal theta2;
-		double lenght;
-		pDouble = (pDouble* 39.370079);
+	    double lenght;
+		pDouble = (pDouble* (double)39.370079);
+		//On remet à jour les listes (on les vides) quand on appelle cette methode
 		mainPanel.listeMoyen.clear();
 		mainPanel.listeSomme.clear();
 		mainPanel.listeRayon.clear();
@@ -534,7 +558,10 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		mainPanel.liste2theta.clear();
 		mainPanel.listeMoyenBeam.clear();
 		mainPanel.listeSommeBeam.clear();
+		// cette liste contiendra les point de chaque cercle
 		ArrayList<Point> tmp ;
+		//Il n'est pas intéresant de parcourir tout les cercles car à un certain points il n'y a plus de cercle
+		//Donc nous nous arrètons a la taille maximum X de l'image
 		while(i<mainPanel.getBufferedOriginal().getWidth()){
 			l=0;
 			lenght = mainPanel.lenghtFrom2Points(centerCircle, new Point((int)(centerCircle.getX()+i), (int)centerCircle.getY()));
@@ -551,17 +578,23 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 				}
 				somme = somme + c;
 			}
+			//Ici nous calculons les valeurs nécessaire pour le graphe ensuite nous 
+			// les ajoutons a des listes specifique
 			if(!tmp.isEmpty()){
 				j = (lenght/pDouble);
-				theta2 = BigDecimal.valueOf(Math.toRadians(Math.atan((j/((double)lDouble*(double)1000))/((double)180)*Math.PI)));
+				theta2 = BigDecimal.valueOf(Math.toRadians(Math.atan((j/((double)lDouble/(double)100))/((double)180)*Math.PI)));
 				mainPanel.liste2theta.add(theta2.doubleValue()); 
-				mainPanel.listeS.add(((double)2*(Math.sin(((theta2.doubleValue()/(double)180)*Math.PI))))/lambda.doubleValue());
-				mainPanel.listeD.add(((lambda.doubleValue()*(double)lDouble*(double)100)/j)* Math.pow(10,6));
+				double d =((lambda.doubleValue()*(double)lDouble*(double)100)/j)* Math.pow(10,6);
+				mainPanel.listeD.add(d);
 				mainPanel.listeRayon.add(j);
+				//mainPanel.listeS.add(((double)2*(Math.sin(((theta2.doubleValue()/(double)180)*Math.PI))))/lambda.doubleValue());
+				mainPanel.listeS.add(((lambda.doubleValue()/d)/lambda.doubleValue()));
 				moy = (somme/tmp.size());
 				moyBeam = (sommeBeam/l);
 				mainPanel.listeMoyen.add(moy);
 				mainPanel.listeSomme.add(somme);
+				//Si le beamstop n'a pas ete defini nous n'entrons rien dans ces listes elles
+				//sont vides par defaut
 				if(minBS != -1){
 					mainPanel.listeMoyenBeam.add(moyBeam);
 					mainPanel.listeSommeBeam.add(sommeBeam);
@@ -572,6 +605,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	}
 
 	@Override
+	//Appeler lorsque le slider change d'etat
 	public void stateChanged(ChangeEvent arg0) {
 		// TODO Auto-generated method stub
 		if(arg0.getSource()==brightSlide){
