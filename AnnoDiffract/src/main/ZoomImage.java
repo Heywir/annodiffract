@@ -158,7 +158,6 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 								(int)Math.round((f.getMainPanel2().getBufferedOriginal().getHeight()/f.getMainPanel2().getResY())*c.ptCircle.get(2).getY()))));
 				f.getMainPanel2().listePointCenter.add(f.getCenterCircle());
 				f.setCenterCircle(f.getCenterCicleMoy());
-				System.out.println(f.getCenterCircle().getX() + " " + f.getCenterCircle().getY());
 			    this.f.setLambda(new BigDecimal((6.62 *Math.pow(10,-34))/
 						(Math.sqrt((2.9149 *Math.pow(10,-49))*(f.getV()*(double)1000)*
 								((double)1+(9.7714 *Math.pow(10,-7))*(f.getV()*(double)1000))))));

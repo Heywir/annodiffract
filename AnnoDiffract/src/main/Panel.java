@@ -166,13 +166,10 @@ class Panel extends JPanel {
 		float Calneww, Calnewh, imWidth = bufferedOriginal.getWidth(), imHeight = bufferedOriginal.getHeight();
 		int neww,newh;
 		Calneww = (float) ((imWidth/imHeight)*(f.getHeight()/1.5));
-		//System.out.println(imWidth/imHeight +"  * " + f.getHeight()/1.4);
 		Calnewh = (float) ((imHeight/imWidth)*(f.getWidth()/1.5));
-		//System.out.println(imHeight/imWidth +"  * " + f.getWidth()/1.6);
 			
 		neww = Math.round(Calneww);
 		newh = Math.round(Calnewh);
-		//System.out.println(neww+" "+ newh);
 		return new Dimension(neww, newh);
 		
 	}
@@ -183,13 +180,10 @@ class Panel extends JPanel {
 			float Calneww, Calnewh, imWidth = bufferedOriginal.getWidth(), imHeight = bufferedOriginal.getHeight();
 			int neww,newh;
 			Calneww = (float) ((imWidth/imHeight)*(f.getHeight()/1.5));
-			//System.out.println(imWidth/imHeight +"  * " + f.getHeight()/1.4);
 			Calnewh = (float) ((imHeight/imWidth)*(f.getWidth()/1.5));
-			//System.out.println(imHeight/imWidth +"  * " + f.getWidth()/1.6);
 				
 			neww = Math.round(Calneww);
 			newh = Math.round(Calnewh);
-			//System.out.println(neww+" "+ newh);
 			Dimension d = new Dimension(neww,  newh);
 			imageScaled = bufferedOriginal.getScaledInstance(d.width, -1,  Image.SCALE_SMOOTH);
 			bufferedScaled = toBufferedImage(imageScaled);
@@ -201,9 +195,7 @@ class Panel extends JPanel {
 		    Image img = bufferedScaled;
 			getLabel().setIcon(new ImageIcon(img));
 			if(zonezoom != null){
-				System.out.println("("+getLabel().getWidth()+"/"+resX+")"+"*"+zonezoom.getX());
 				zonezoom.setLocation((getLabel().getWidth()/resX)*zonezoom.getX(), (getLabel().getHeight()/resY)*zonezoom.getY());
-				System.out.println(zonezoom.getX());
 			}
 			if(!listeCircle.isEmpty()){
 				for (Circle aListeCircle : listeCircle) {

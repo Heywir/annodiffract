@@ -268,17 +268,11 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 		    chooser.setFileFilter(filter);
 		    chooser.setApproveButtonText("Save");
 		    if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
-		    	System.out.println("getCurrentDirectory(): " 
-		           +  chooser.getCurrentDirectory());
-		        System.out.println("getSelectedFile() : " 
-		           +  chooser.getSelectedFile());
 		        if(filter.equals(chooser.getFileFilter())){
-			    	System.out.println(chooser.getFileFilter()+"fdf");
 			    	destinationFile = chooser.getSelectedFile().getAbsolutePath()+".txt";
 			    	convertAndPrint(false, true, false,destinationFile);
 			    }
 			    if(filterCSV.equals(chooser.getFileFilter())){
-			    	System.out.println(chooser.getFileFilter()+"2");
 			    	destinationFile = chooser.getSelectedFile().getAbsolutePath()+".csv";
 			    	convertAndPrint(false, true, false,destinationFile);
 			    }
@@ -306,12 +300,12 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 	            Iterator<Double> iterIntSum = f.getMainPanel2().listeSomme.iterator();
 	            commaSeparatedValues += "Settings\r\nPPI; "+f.getP()+"; Microscope Tension:; "+f.getV()+"; Camera Lenght:; "+f.getL()+";\r\n\r\n";
 	            int i = 0;
-	            commaSeparatedValues += "Interarticular Distance d; Diffusion Vector S; Diffraction Angle 2 theta; Average Intensity Without BeamStop Correction; Sum Intensity Without BeamStop Correction;\r\n";
+	            commaSeparatedValues += "Interarticular Distance d; Scattering Vector S; Diffraction Angle 2 theta; Average Intensity Without BeamStop Correction; Sum Intensity Without BeamStop Correction;\r\n";
 	            while (iterD.hasNext()) {
 	                commaSeparatedValues += iterD.next() + "; "+iterS.next() + "; "+iter2theta.next() +"; "+iterInt.next() +" ;"+iterIntSum.next()+";\r\n";
 	                i++;
 	                if(i>5){
-	                	commaSeparatedValues += "Interarticular Distance d; Diffusion Vector S; Diffraction Angle 2 theta; Average Intensity Without BeamStop Correction; Sum Intensity Without BeamStop Correction;\r\n";
+	                	commaSeparatedValues += "Interarticular Distance d; Scattering Vector S; Diffraction Angle 2 theta; Average Intensity Without BeamStop Correction; Sum Intensity Without BeamStop Correction;\r\n";
 	                	i=0;
 	                }
 	            }
@@ -333,9 +327,15 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 	            Iterator<Double> iterIntSum = f.getMainPanel2().listeSomme.iterator();
 	            Iterator<Double> iterIntSumBeam = f.getMainPanel2().listeSommeBeam.iterator();
 	            commaSeparatedValues += "Settings\r\nPPI; "+f.getP()+"; Microscope Tension:; "+f.getV()+"; Camera Lenght:; "+f.getL()+";\r\n\r\n";
-	            commaSeparatedValues += "Interarticular Distance d; Diffusion Vector S; Diffraction Angle 2 theta;Average Intensity  (u. a.) Without BeamStop Correction;Average Intensity  (u. a.) With BeamStop correction;Sum Intensity  (u. a.) Without BeamStop Correction;Sum Intensity  (u. a.) With BeamStop correction; \r\n";
+	            commaSeparatedValues += "Interarticular Distance d; Scattering Vector S; Diffraction Angle 2 theta;Average Intensity  (u. a.) Without BeamStop Correction;Average Intensity  (u. a.) With BeamStop correction;Sum Intensity  (u. a.) Without BeamStop Correction;Sum Intensity  (u. a.) With BeamStop correction; \r\n";
+	            int i =0;
 	            while (iterD.hasNext()) {
-	                commaSeparatedValues += iterD.next() + "; "+iterS.next() + "; "+iter2theta.next() +"; "+iterInt.next() +";"+iterIntBeam.next()+";"+iterIntSum+";"+iterIntSumBeam+";\r\n";
+	                commaSeparatedValues += iterD.next() + "; "+iterS.next() + "; "+iter2theta.next() +"; "+iterInt.next() +";"+iterIntBeam.next()+";"+iterIntSum.next()+";"+iterIntSumBeam.next()+";\r\n";
+	                i++;
+	                if(i>5){
+	                	i=0;
+	                	commaSeparatedValues += "Interarticular Distance d; Scattering Vector S; Diffraction Angle 2 theta;Average Intensity  (u. a.) Without BeamStop Correction;Average Intensity  (u. a.) With BeamStop correction;Sum Intensity  (u. a.) Without BeamStop Correction;Sum Intensity  (u. a.) With BeamStop correction; \r\n";
+	                }
 	            }
 	            /**Remove the last comma**/
 	            if (commaSeparatedValues.endsWith(",")) {

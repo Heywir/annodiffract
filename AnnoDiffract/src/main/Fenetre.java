@@ -297,7 +297,6 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		}
 		if (e.getSource() == menuGItemQuit) {
 			//Quit the application
-			System.out.println("gfdsgds");
 			this.dispose();
 		}
 		if (e.getSource() == findCenter) {
@@ -395,7 +394,6 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		//** Si on est sur l'outil pour placer des points sans le zoom, on placera les points
 		//** en fonction de la position de la souris
 		if(mainPanel.getCurrentTool() == TypeOutil.POINT){
-			//System.out.println(positionX + " "+positionY);
 			if(mainPanel.tmpCircle.ptCircle.size()<2){
 				mainPanel.tmpCircle.ptCircle.add(new Point(positionX,positionY));
 			}else{
@@ -540,7 +538,6 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		ecart = Math.sqrt(som/(double)h.size());
 		minBS = Math.round(moy-ecart);
 		maxBS = Math.round(moy+ecart);
-		System.out.println(moy+" "+minBS+" "+maxBS);
 	}
 	
 	//** Ici on calcule la moyenne d'intensité de tout les cercles ainsi que leur rayon
