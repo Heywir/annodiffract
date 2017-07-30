@@ -549,4 +549,4 @@ class Panel extends JPanel {
 		this.fileName = fileName;
 	}
 	
-}
+}																																							//Morteum and Heywir 2017

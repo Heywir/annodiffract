@@ -7,3 +7,4 @@ public enum TypeOutil {
 		 POINT,/* L'utilisateur va placer des points*/
 		 BEAMSTOP/* L'utilisateur va définir le beamstop*/
 } 
+																																		//Morteum and Heywir 2017

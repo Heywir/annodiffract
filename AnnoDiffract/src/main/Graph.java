@@ -63,6 +63,7 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener,XYDatas
 	private JMenuItem set2theta = null;
 	private JMenuItem setBeam = null;
 	private JMenuItem setNoBeam = null;
+	private JMenuItem clearAnnotation = null;
 	private JFreeChart xylineChartS = null;
 	private JFreeChart xylineChartRayon = null;
 	private JFreeChart xylineChart2theta = null;
@@ -101,6 +102,7 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener,XYDatas
      	JMenu menuAbsc = new JMenu("X-Axis");
      	JMenu menuAxiY = new JMenu("Y-Axis");
      	JMenu menuBeam = new JMenu("BeamStop");
+     	JMenu menuAnnotation = new JMenu("Annotaion");
      	save= new JMenuItem("Save");
      	setRayon = new JMenuItem("Radius in Meters");
      	setS = new JMenuItem("Distance Vector");
@@ -109,6 +111,7 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener,XYDatas
      	setSum = new JMenuItem("Set Sum Intensity");
      	setBeam = new JMenuItem("Beamstop Correction");
      	setNoBeam = new JMenuItem("Without Beamstop Correction");
+     	clearAnnotation = new JMenuItem("Clear Annotation");
      	
      	// Status Bar
      	statusPanel.add(statusLabel, BorderLayout.EAST);
@@ -121,6 +124,7 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener,XYDatas
      	menuAxiY.add(setSum);
      	menuBeam.add(setBeam);
      	menuBeam.add(setNoBeam);
+     	menuAnnotation.add(clearAnnotation);
      	
      	//Listeners
      	save.addActionListener(this);
@@ -132,12 +136,14 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener,XYDatas
         set2theta.addActionListener(this);
         setBeam.addActionListener(this);
         setNoBeam.addActionListener(this);
+        clearAnnotation.addActionListener(this);
         
      	//Ajout dans la fenetre
         menu.add(menuFile);
         menu.add(menuAbsc);
      	menu.add(menuAxiY);
      	menu.add(menuBeam);
+     	menu.add(menuAnnotation);
      	this.add(menu,BorderLayout.NORTH);
      	this.add(chartPanel, BorderLayout.CENTER);
      	this.add(statusPanel, BorderLayout.SOUTH);
@@ -146,6 +152,7 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener,XYDatas
 
     private XYDataset createDataset(ArrayList<Double> x, ArrayList<Double> y ) {
 
+    	//Creer une serie pour le graphe
         XY = new XYSeries( "Intensity Profile" );
         for (int i=0; i<x.size();i++){
 	        XY.add(x.get(i), y.get(i));
@@ -155,58 +162,6 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener,XYDatas
         
         return dataset;
     }
-
-
-
-	private void withoutBeam(){
-        //On creer les Charts que l'utilisateur pourra afficher s'il le souhaite
-	    if(yMoy==true){
-			xylineChartRayon = ChartFactory.createXYLineChart(
-	                chartTitle ,
-	                "Radius" ,
-	                "Intensity" ,
-	                createDataset(f.getMainPanel2().listeRayon, f.getMainPanel2().listeMoyen),
-	                PlotOrientation.VERTICAL ,
-	                true , true , false);
-	        xylineChartS = ChartFactory.createXYLineChart(
-	                chartTitle ,
-	                "Distance Vector S" ,
-	                "Intensity" ,
-	                createDataset(f.getMainPanel2().listeS, f.getMainPanel2().listeMoyen),
-	                PlotOrientation.VERTICAL ,
-	                true , true , false);
-	        xylineChart2theta = ChartFactory.createXYLineChart(
-	                chartTitle ,
-	                "Diffraction Angle 2theta" ,
-	                "Intensity" ,
-	                createDataset(f.getMainPanel2().liste2theta, f.getMainPanel2().listeMoyen),
-	                PlotOrientation.VERTICAL ,
-	                true , true , false);
-	    }else{
-	    	xylineChartRayon = ChartFactory.createXYLineChart(
-	                chartTitle ,
-	                "Radius" ,
-	                "Intensity" ,
-	                createDataset(f.getMainPanel2().listeRayon, f.getMainPanel2().listeSomme),
-	                PlotOrientation.VERTICAL ,
-	                true , true , false);
-	        xylineChartS = ChartFactory.createXYLineChart(
-	                chartTitle ,
-	                "Distance Vector S" ,
-	                "Intensity" ,
-	                createDataset(f.getMainPanel2().listeS, f.getMainPanel2().listeSomme),
-	                PlotOrientation.VERTICAL ,
-	                true , true , false);
-	        xylineChart2theta = ChartFactory.createXYLineChart(
-	                chartTitle ,
-	                "Diffraction Angle 2theta" ,
-	                "Intensity" ,
-	                createDataset(f.getMainPanel2().liste2theta, f.getMainPanel2().listeSomme),
-	                PlotOrientation.VERTICAL ,
-	                true , true , false);
-	    }
-        graphicOption();
-	}
 
 	public void graphicOption(){
 		
@@ -233,22 +188,14 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener,XYDatas
 
 	@Override
 	public void chartMouseClicked(ChartMouseEvent e) {
+		//Ajoute une annotation sur le graphe
 		ChartEntity ce = e.getEntity();
         if (ce instanceof XYItemEntity) {
             XYItemEntity e1 = (XYItemEntity) ce;
             XYDataset d = e1.getDataset();
             int s = e1.getSeriesIndex();
             int i = e1.getItem();
-            float getplace = 0;
-            double r = (double)d.getY(s, i);
-            for(float i1 = -10;i1<11;i1++){
-            	if((double)d.getY(s, (int)(i+i1)) > r){
-            		r =(double)d.getY(s, (int)(i+i1));
-            		getplace = i1;
-            	}
-        		System.out.println((double)d.getY(s, (int)(i-i1))+" "+i1);
-            }
-            XYPointerAnnotation h = new XYPointerAnnotation(((int)(100*f.getMainPanel2().listeD.get((int)(i-getplace)))/100.)+" A",(double)d.getX(s, (int)(i+getplace)), (double)d.getY(s, (int)(i+getplace)),200);
+            XYPointerAnnotation h = new XYPointerAnnotation(((int)(100*f.getMainPanel2().listeD.get((int)(i)))/100.)+" A",(double)d.getX(s, (int)(i)), (double)d.getY(s, (int)(i)),200);
             Paint paint = Color.lightGray;
 			plot.addAnnotation(h);
         }
@@ -259,6 +206,7 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener,XYDatas
 	public void chartMouseMoved(ChartMouseEvent e) {
 		ChartEntity ce = e.getEntity();
         if (ce instanceof XYItemEntity) {
+        	//Affiche les X et Y du graphe lorsque la souris bouge
             XYItemEntity e1 = (XYItemEntity) ce;
             XYDataset d = e1.getDataset();
             int s = e1.getSeriesIndex();
@@ -304,6 +252,10 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener,XYDatas
 			withoutBeam();
 			graphicOption();
 			chartPanel.setChart(xylineChartRayon);
+		}
+		
+		if(e.getSource() == clearAnnotation){
+			plot.clearAnnotations();
 		}
 		if(e.getSource() == save){
 		    String destinationFile ;
@@ -406,6 +358,7 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener,XYDatas
 	        }
 	 
 	    }
+	 //Methode qui va mettre a jour les series avec la correction Beamstop
 	 public void withBeam(){
 		XYSeriesCollection dataset = new XYSeriesCollection();
 		XY = new XYSeries( "BeamStop Correction" );
@@ -439,7 +392,7 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener,XYDatas
 			dataset.addSeries(XY);
 			xylineChartS = ChartFactory.createXYLineChart(
 		           chartTitle ,
-		           "Diffusion Vector" ,
+		           "Scattering Vector (1/A)" ,
 		           "Intensity" ,
 		           dataset,
 		           PlotOrientation.VERTICAL ,
@@ -519,6 +472,56 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener,XYDatas
 		                true , true , false);
 		}
 	 }
+	 	//Methode qui met a jour les chartes sans la correction Beamstop
+	private void withoutBeam(){
+        //On creer les Charts que l'utilisateur pourra afficher s'il le souhaite
+	    if(yMoy==true){
+			xylineChartRayon = ChartFactory.createXYLineChart(
+	                chartTitle ,
+	                "Radius" ,
+	                "Intensity" ,
+	                createDataset(f.getMainPanel2().listeRayon, f.getMainPanel2().listeMoyen),
+	                PlotOrientation.VERTICAL ,
+	                true , true , false);
+	        xylineChartS = ChartFactory.createXYLineChart(
+	                chartTitle ,
+	                "Scattering Vector S" ,
+	                "Intensity" ,
+	                createDataset(f.getMainPanel2().listeS, f.getMainPanel2().listeMoyen),
+	                PlotOrientation.VERTICAL ,
+	                true , true , false);
+	        xylineChart2theta = ChartFactory.createXYLineChart(
+	                chartTitle ,
+	                "Diffraction Angle 2theta" ,
+	                "Intensity" ,
+	                createDataset(f.getMainPanel2().liste2theta, f.getMainPanel2().listeMoyen),
+	                PlotOrientation.VERTICAL ,
+	                true , true , false);
+	    }else{
+	    	xylineChartRayon = ChartFactory.createXYLineChart(
+	                chartTitle ,
+	                "Radius" ,
+	                "Intensity" ,
+	                createDataset(f.getMainPanel2().listeRayon, f.getMainPanel2().listeSomme),
+	                PlotOrientation.VERTICAL ,
+	                true , true , false);
+	        xylineChartS = ChartFactory.createXYLineChart(
+	                chartTitle ,
+	                "Scattering Vector S (1/A)" ,
+	                "Intensity" ,
+	                createDataset(f.getMainPanel2().listeS, f.getMainPanel2().listeSomme),
+	                PlotOrientation.VERTICAL ,
+	                true , true , false);
+	        xylineChart2theta = ChartFactory.createXYLineChart(
+	                chartTitle ,
+	                "Diffraction Angle 2theta" ,
+	                "Intensity" ,
+	                createDataset(f.getMainPanel2().liste2theta, f.getMainPanel2().listeSomme),
+	                PlotOrientation.VERTICAL ,
+	                true , true , false);
+	   }
+        graphicOption();
+	}
 
 	@Override
 	public int getSeriesCount() {
@@ -598,4 +601,4 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener,XYDatas
 		return 0;
 	}
 
-}
+}																																						////Morteum and Heywir 2017
