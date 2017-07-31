@@ -466,7 +466,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		}
 	}
 	
-	//Cette methode permet de definir le beamstop en fonction de 25 point grace à leur intensite
+	//Cette methode permet de definir le beamstop en fonction d'un point grace a l'utilisateur
 	public void getBeamStop(int x,int y){
 		ArrayList<Integer> h = new ArrayList<>();
 		Color c ;
@@ -496,7 +496,6 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
 		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x,y));
 		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
-		//C'est long
 		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x+1,y));
 		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
 		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x+2,y));
