@@ -249,7 +249,6 @@ class Panel extends JPanel {
 	public ArrayList<Point> getPointWithCenter(int x_centre, int y_centre, double r){
 		
 		ArrayList<Point> pixels = new ArrayList<>();
-	    
 		int width = bufferedOriginal.getWidth();
 		int height = bufferedOriginal.getHeight();
 		
@@ -257,8 +256,8 @@ class Panel extends JPanel {
 	    double y = r;
 	    double d = r - 1;
 	    
-	    while(y >= x)
-	    {
+	    while(y >= x){
+	    	
 	    	if((x_centre + x > 0 && width > x_centre + x ) && ( y_centre + y > 0 && height > y_centre + y ) ){
 	    		pixels.add( new Point( (int)Math.round(x_centre + x), (int)Math.round(y_centre + y )));
 	    	}
@@ -284,7 +283,7 @@ class Panel extends JPanel {
 	    		pixels.add( new Point( (int)Math.round(x_centre - y), (int)Math.round(y_centre - x) ));
 	    	}
 	        
-	    	// Tant qu'on a pas parcouru tout le cercle on continu
+	    	// Tant que la valeur x n'est pas plus grande que y on continu le parcours
 	        if (d >= 2*x){
 	            d -= 2*x + 1;
 	            x ++;

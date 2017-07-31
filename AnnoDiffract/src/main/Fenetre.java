@@ -564,12 +564,17 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		//Donc nous nous arrètons a la taille maximum X de l'image
 		while(i<mainPanel.getBufferedOriginal().getWidth()){
 			l=0;
+			//Calcul du rayon
 			lenght = mainPanel.lenghtFrom2Points(centerCircle, new Point((int)(centerCircle.getX()+i), (int)centerCircle.getY()));
+			//Obtention de tout les points du cercle
 			tmp = mainPanel.getPointWithCenter((int)centerCircle.getX(),(int)centerCircle.getY(),lenght);
 			Double somme = 0.0,sommeBeam= 0.0 ,moy, moyBeam;
 			for(int h = 0; h<=tmp.size()-1;h++){
+				//Pour chaque point du cercle nous prenons  la valeur RGB et nous en faisons la moyenne pour avoir une 
+				// valeur en Nuance de gris
 				Color color=new Color(mainPanel.getBufferedOriginal().getRGB((int)(tmp.get(h).getX()), (int)tmp.get(h).getY()));
 				int c = (color.getRed() + color.getBlue()+ color.getGreen())/3;
+				//Si le beamtop n'a pas été défini la somme restera égale à 0 pour la correction Beamstop
 				if(minBS !=-1){
 					if(c<minBS || c>maxBS){
 						sommeBeam = sommeBeam + c;
@@ -581,18 +586,24 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			//Ici nous calculons les valeurs nécessaire pour le graphe ensuite nous 
 			// les ajoutons a des listes specifique
 			if(!tmp.isEmpty()){
+				// Le lambda calcule autre part lors du lancement de la methode ou d'un changement de parametre dans les options
+				// Conversion du rayon en Metre pDouble = (p* (double)39.370079) p etant le PPI défini par l'utilisateur
 				j = (lenght/pDouble);
+				//Calculs de 2 Theta
 				theta2 = BigDecimal.valueOf(Math.toRadians(Math.atan((j/((double)lDouble/(double)100))/((double)180)*Math.PI)));
 				mainPanel.liste2theta.add(theta2.doubleValue()); 
+				//Calcul de d
 				double d =((lambda.doubleValue()*(double)lDouble*(double)100)/j)* Math.pow(10,6);
 				mainPanel.listeD.add(d);
 				mainPanel.listeRayon.add(j);
-				//mainPanel.listeS.add(((double)2*(Math.sin(((theta2.doubleValue()/(double)180)*Math.PI))))/lambda.doubleValue());
+				//Calcul Vecteur de diffusion
 				mainPanel.listeS.add(((lambda.doubleValue()/d)/lambda.doubleValue()));
+				//Calcul Moyenne d'intensité avec et sans correction BeamStop
 				moy = (somme/tmp.size());
 				moyBeam = (sommeBeam/l);
 				mainPanel.listeMoyen.add(moy);
 				mainPanel.listeSomme.add(somme);
+				
 				//Si le beamstop n'a pas ete defini nous n'entrons rien dans ces listes elles
 				//sont vides par defaut
 				if(minBS != -1){
