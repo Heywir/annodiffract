@@ -384,6 +384,9 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 				RescaleOp op = new RescaleOp(1, 1, null);
 				op.filter(mainPanel.getBufferedScaled2(), mainPanel.getBufferedScaled());
 				mainPanel.toGray(mainPanel.getBufferedScaled());
+				op.filter(mainPanel.getBufferedScaled2(), mainPanel.getBufferedScaled());
+				mainPanel.toGray(mainPanel.getBufferedScaled());
+				mainPanel.repaint();
 			}else{
 				JOptionPane.showMessageDialog(null, "You didn't open an Image. "
         				, "Not Good", JOptionPane.ERROR_MESSAGE);
