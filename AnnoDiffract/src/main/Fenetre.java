@@ -166,7 +166,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		zoom.setContentAreaFilled(false);
 		
 		beam = new JButton(new ImageIcon(Fenetre.class.getResource("img/beam.png")));
-		beam.setPressedIcon(new ImageIcon(Fenetre.class.getResource("img/beam.png")));
+		beam.setPressedIcon(new ImageIcon(Fenetre.class.getResource("img/beampressed.png")));
 		beam.setToolTipText("Correction On BeamStop");
 		beam.setBorder(null);
 		beam.setContentAreaFilled(false);
