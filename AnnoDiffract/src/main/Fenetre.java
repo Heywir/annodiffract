@@ -53,6 +53,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	private JButton setParam = null;
 	private JButton zoom = null;
 	private JButton beam = null;
+	private JButton clean = null;
 	private JLabel statusLabel = null;
 	private JLabel statusDialogLabel = null;
 	private JLabel outilLabel;
@@ -96,7 +97,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		// Status Bar
 		statusPanel.add(statusLabel, BorderLayout.EAST);
 		statusPanel.add(statusDialogLabel, BorderLayout.WEST);
-		statusDialogLabel.setText("Hello Open an image of diffraction");
+		//statusDialogLabel.setText("Hello Open an image of diffraction");
 		
 		// Listeners
 		getMainPanel().getLabel().addMouseMotionListener(this);
@@ -169,6 +170,12 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		beam.setBorder(null);
 		beam.setContentAreaFilled(false);
 		
+		clean = new JButton(new ImageIcon(Fenetre.class.getResource("img/gomme.png")));
+		clean.setPressedIcon(new ImageIcon(Fenetre.class.getResource("img/gomme.png")));
+		clean.setToolTipText("Reset all");
+		clean.setBorder(null);
+		clean.setContentAreaFilled(false);
+		
 		
 		// Ajouts
 		newMenuBar.add(menuFile);
@@ -181,6 +188,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		toolBar.add(findCenter);
 		toolBar.add(zoom);
 		toolBar.add(beam);
+		toolBar.add(clean);
 		toolBar.add(setParam);
 		toolBar.add(new JLabel("Brightness:"));
 		toolBar.add(brightSlide);
@@ -195,6 +203,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		zoom.addActionListener(this);
 		findCenter.addActionListener(this);
 		beam.addActionListener(this);
+		clean.addActionListener(this);
 		mainPanel.getLabel().addMouseListener(this);
 		brightSlide.addChangeListener(this);
 
@@ -298,7 +307,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 							getMainPanel().setLoaded(false);
 						}
 						getMainPanel().openImage(chooser.getSelectedFile());
-						statusDialogLabel.setText("Set 3 points on the image to get the center(you can make one more circle to get a more precised center)");
+						statusDialogLabel.setText("Set 3 point on the image to get the center (you can also draw another circle to get a more accurate center)");
 					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
@@ -352,6 +361,29 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			if(mainPanel.isLoaded()){
 				mainPanel.setCurrentTool(TypeOutil.BEAMSTOP);
 				outilLabel.setText("Tool: " + TypeOutil.BEAMSTOP.toString());
+			}else{
+				JOptionPane.showMessageDialog(null, "You didn't open an Image. "
+        				, "Not Good", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		
+		if (e.getSource() == clean) {
+			//Method to find center with zoom
+			if(mainPanel.isLoaded()){
+				mainPanel.liste2theta.clear();
+				mainPanel.listeCircle.clear();
+				mainPanel.listeD.clear();
+				mainPanel.listeMoyen.clear();
+				mainPanel.listeMoyenBeam.clear();
+				mainPanel.listePointCenter.clear();
+				mainPanel.listeRayon.clear();
+				mainPanel.listeS.clear();
+				mainPanel.listeSomme.clear();
+				mainPanel.listeSommeBeam.clear();
+				mainPanel.tmpCircle.ptCircle.clear();
+				RescaleOp op = new RescaleOp(1, 1, null);
+				op.filter(mainPanel.getBufferedScaled2(), mainPanel.getBufferedScaled());
+				mainPanel.toGray(mainPanel.getBufferedScaled());
 			}else{
 				JOptionPane.showMessageDialog(null, "You didn't open an Image. "
         				, "Not Good", JOptionPane.ERROR_MESSAGE);
