@@ -6,13 +6,7 @@ AnnoDiffract is a school project made by third year students in computer science
 Current Stage
 =============
 
-![alt text](https://image.ibb.co/gsPs9k/finaldiffract.jpg)
-
-TODO
-=============
-
-- Tweaks here and there
-- Documentation.
+![alt text](http://zupimages.net/up/17/31/wdry.png)
 
 Requirements
 ============
@@ -24,7 +18,7 @@ For Contribution
 
 - JAI Library : http://maven.ibiblio.org/maven/geoserver/jai/jars/
 - JDK 8u73 : http://filehippo.com/fr/download_java_development_kit/tech/66101/
-- Jfree Chart
+- Jfree Chart : http://www.jfree.org/jfreechart/
 
 Installation
 ============
@@ -34,10 +28,10 @@ Download one of the version, or compile the code yourself :)
 Credits
 =======
 
-* Morteum
-* Myself
-* Physics Teachers
-* Dev Teachers
+* SCHAEFFER Laurent (Morteum)
+* LENOURY Maxime (Heywir)
+* Physics Teachers (MEYER Michael)
+* Dev Teachers (FLOUVAT Frederic, METAYER Cyrille)
 * The University of New Caledonia
 
 Copyright © UNC-NC 2017
