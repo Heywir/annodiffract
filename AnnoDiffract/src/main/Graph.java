@@ -73,7 +73,7 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 	
 	public Graph(Fenetre f) {
 		//Construction du Graphique
-		super("Graphique");
+		super("Graphic");
 		this.chartTitle = "Intensity Profile";
 		// Layout Fenetre
      	BorderLayout layout = new BorderLayout();
@@ -196,7 +196,6 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
             int s = e1.getSeriesIndex();
             int i = e1.getItem();
             XYPointerAnnotation h = new XYPointerAnnotation(((int)(100*f.getMainPanel2().listeD.get((int)(i)))/100.)+" A",(double)d.getX(s, (int)(i)), (double)d.getY(s, (int)(i)),4.75);
-            Paint paint = Color.lightGray;
 			plot.addAnnotation(h);
         }
 		
@@ -260,25 +259,20 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 		if(e.getSource() == save){
 		    String destinationFile ;
 			JFileChooser chooser = new JFileChooser(); 
-		    chooser.setDialogTitle("Enregistrer Sous");
+		    chooser.setDialogTitle("Save");
 		    FileNameExtensionFilter filterCSV = new FileNameExtensionFilter("Excel File(.csv)","csv");
 			chooser.addChoosableFileFilter(filterCSV);
 			FileNameExtensionFilter filter = new FileNameExtensionFilter("Text File(.txt)","txt");
 			chooser.addChoosableFileFilter(filter);
 			chooser.setSelectedFile(new File(f.getMainPanel2().getFileName()));
 		    chooser.setFileFilter(filter);
+		    chooser.setApproveButtonText("Save");
 		    if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
-		    	System.out.println("getCurrentDirectory(): " 
-		           +  chooser.getCurrentDirectory());
-		        System.out.println("getSelectedFile() : " 
-		           +  chooser.getSelectedFile());
 		        if(filter.equals(chooser.getFileFilter())){
-			    	System.out.println(chooser.getFileFilter()+"fdf");
 			    	destinationFile = chooser.getSelectedFile().getAbsolutePath()+".txt";
 			    	convertAndPrint(false, true, false,destinationFile);
 			    }
 			    if(filterCSV.equals(chooser.getFileFilter())){
-			    	System.out.println(chooser.getFileFilter()+"2");
 			    	destinationFile = chooser.getSelectedFile().getAbsolutePath()+".csv";
 			    	convertAndPrint(false, true, false,destinationFile);
 			    }
@@ -305,9 +299,15 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 	            Iterator<Double> iterInt = f.getMainPanel2().listeMoyen.iterator();
 	            Iterator<Double> iterIntSum = f.getMainPanel2().listeSomme.iterator();
 	            commaSeparatedValues += "Settings\r\nPPI; "+f.getP()+"; Microscope Tension:; "+f.getV()+"; Camera Lenght:; "+f.getL()+";\r\n\r\n";
-	            commaSeparatedValues += "Interarticular Distance d; Diffusion Vector S; Diffraction Angle 2 theta; Average Intensity Without BeamStop Correction; Sum Intensity Without BeamStop Correction;\r\n";
+	            int i = 0;
+	            commaSeparatedValues += "Interarticular Distance d; Scattering Vector S; Diffraction Angle 2 theta; Average Intensity Without BeamStop Correction; Sum Intensity Without BeamStop Correction;\r\n";
 	            while (iterD.hasNext()) {
 	                commaSeparatedValues += iterD.next() + "; "+iterS.next() + "; "+iter2theta.next() +"; "+iterInt.next() +" ;"+iterIntSum.next()+";\r\n";
+	                i++;
+	                if(i>5){
+	                	commaSeparatedValues += "Interarticular Distance d; Scattering Vector S; Diffraction Angle 2 theta; Average Intensity Without BeamStop Correction; Sum Intensity Without BeamStop Correction;\r\n";
+	                	i=0;
+	                }
 	            }
 	            /**Remove the last comma**/
 	            if (commaSeparatedValues.endsWith(",")) {
@@ -327,9 +327,15 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 	            Iterator<Double> iterIntSum = f.getMainPanel2().listeSomme.iterator();
 	            Iterator<Double> iterIntSumBeam = f.getMainPanel2().listeSommeBeam.iterator();
 	            commaSeparatedValues += "Settings\r\nPPI; "+f.getP()+"; Microscope Tension:; "+f.getV()+"; Camera Lenght:; "+f.getL()+";\r\n\r\n";
-	            commaSeparatedValues += "Interarticular Distance d; Diffusion Vector S; Diffraction Angle 2 theta;Average Intensity Without BeamStop Correction;Average Intensity With BeamStop correction;Sum Intensity Without BeamStop Correction;Sum Intensity With BeamStop correction; \r\n";
+	            commaSeparatedValues += "Interarticular Distance d; Scattering Vector S; Diffraction Angle 2 theta;Average Intensity  (u. a.) Without BeamStop Correction;Average Intensity  (u. a.) With BeamStop correction;Sum Intensity  (u. a.) Without BeamStop Correction;Sum Intensity  (u. a.) With BeamStop correction; \r\n";
+	            int i =0;
 	            while (iterD.hasNext()) {
-	                commaSeparatedValues += iterD.next() + "; "+iterS.next() + "; "+iter2theta.next() +"; "+iterInt.next() +";"+iterIntBeam.next()+";"+iterIntSum+";"+iterIntSumBeam+";\r\n";
+	                commaSeparatedValues += iterD.next() + "; "+iterS.next() + "; "+iter2theta.next() +"; "+iterInt.next() +";"+iterIntBeam.next()+";"+iterIntSum.next()+";"+iterIntSumBeam.next()+";\r\n";
+	                i++;
+	                if(i>5){
+	                	i=0;
+	                	commaSeparatedValues += "Interarticular Distance d; Scattering Vector S; Diffraction Angle 2 theta;Average Intensity  (u. a.) Without BeamStop Correction;Average Intensity  (u. a.) With BeamStop correction;Sum Intensity  (u. a.) Without BeamStop Correction;Sum Intensity  (u. a.) With BeamStop correction; \r\n";
+	                }
 	            }
 	            /**Remove the last comma**/
 	            if (commaSeparatedValues.endsWith(",")) {
@@ -375,7 +381,7 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 			xylineChartRayon = ChartFactory.createXYLineChart(
 		             chartTitle ,
 		             "Radius" ,
-		             "Intensity" ,
+		             "Intensity  (u. a.)" ,
 		             dataset,
 		             PlotOrientation.VERTICAL ,
 		             true , true , false);
@@ -393,7 +399,7 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 			xylineChartS = ChartFactory.createXYLineChart(
 		           chartTitle ,
 		           "Scattering Vector (1/A)" ,
-		           "Intensity" ,
+		           "Intensity  (u. a.)" ,
 		           dataset,
 		           PlotOrientation.VERTICAL ,
 		           true , true , false);
@@ -412,7 +418,7 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 			xylineChart2theta = ChartFactory.createXYLineChart(
 		                chartTitle ,
 		                "Diffraction Angle 2 theta" ,
-		                "Intensity" ,
+		                "Intensity  (u. a.)" ,
 		                dataset,
 		                PlotOrientation.VERTICAL ,
 		                true , true , false);
@@ -429,7 +435,7 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 			xylineChartRayon = ChartFactory.createXYLineChart(
 		                chartTitle ,
 		                "Radius" ,
-		                "Intensity" ,
+		                "Intensity  (u. a.)" ,
 		                dataset,
 		                PlotOrientation.VERTICAL ,
 		                true , true , false);
@@ -447,7 +453,7 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 			xylineChartS = ChartFactory.createXYLineChart(
 		                chartTitle ,
 		                "Diffusion Vector" ,
-		                "Intensity" ,
+		                "Intensity  (u. a.)" ,
 		                dataset,
 		                PlotOrientation.VERTICAL ,
 		                true , true , false);
@@ -466,7 +472,7 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 			xylineChart2theta = ChartFactory.createXYLineChart(
 		                chartTitle ,
 		                "Diffraction Angle 2 theta" ,
-		                "Intensity" ,
+		                "Intensity  (u. a.)" ,
 		                dataset,
 		                PlotOrientation.VERTICAL ,
 		                true , true , false);
@@ -479,21 +485,21 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 			xylineChartRayon = ChartFactory.createXYLineChart(
 	                chartTitle ,
 	                "Radius" ,
-	                "Intensity" ,
+	                "Intensity  (u. a.)" ,
 	                createDataset(f.getMainPanel2().listeRayon, f.getMainPanel2().listeMoyen),
 	                PlotOrientation.VERTICAL ,
 	                true , true , false);
 	        xylineChartS = ChartFactory.createXYLineChart(
 	                chartTitle ,
-	                "Scattering Vector S" ,
-	                "Intensity" ,
+	                "Scattering Vector S (1/A)" ,
+	                "Intensity  (u. a.)" ,
 	                createDataset(f.getMainPanel2().listeS, f.getMainPanel2().listeMoyen),
 	                PlotOrientation.VERTICAL ,
 	                true , true , false);
 	        xylineChart2theta = ChartFactory.createXYLineChart(
 	                chartTitle ,
 	                "Diffraction Angle 2theta" ,
-	                "Intensity" ,
+	                "Intensity  (u. a.)" ,
 	                createDataset(f.getMainPanel2().liste2theta, f.getMainPanel2().listeMoyen),
 	                PlotOrientation.VERTICAL ,
 	                true , true , false);
@@ -501,21 +507,21 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 	    	xylineChartRayon = ChartFactory.createXYLineChart(
 	                chartTitle ,
 	                "Radius" ,
-	                "Intensity" ,
+	                "Intensity  (u. a.)" ,
 	                createDataset(f.getMainPanel2().listeRayon, f.getMainPanel2().listeSomme),
 	                PlotOrientation.VERTICAL ,
 	                true , true , false);
 	        xylineChartS = ChartFactory.createXYLineChart(
 	                chartTitle ,
 	                "Scattering Vector S (1/A)" ,
-	                "Intensity" ,
+	                "Intensity  (u. a.)" ,
 	                createDataset(f.getMainPanel2().listeS, f.getMainPanel2().listeSomme),
 	                PlotOrientation.VERTICAL ,
 	                true , true , false);
 	        xylineChart2theta = ChartFactory.createXYLineChart(
 	                chartTitle ,
 	                "Diffraction Angle 2theta" ,
-	                "Intensity" ,
+	                "Intensity  (u. a.)" ,
 	                createDataset(f.getMainPanel2().liste2theta, f.getMainPanel2().listeSomme),
 	                PlotOrientation.VERTICAL ,
 	                true , true , false);

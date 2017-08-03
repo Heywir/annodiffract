@@ -166,13 +166,10 @@ class Panel extends JPanel {
 		float Calneww, Calnewh, imWidth = bufferedOriginal.getWidth(), imHeight = bufferedOriginal.getHeight();
 		int neww,newh;
 		Calneww = (float) ((imWidth/imHeight)*(f.getHeight()/1.5));
-		//System.out.println(imWidth/imHeight +"  * " + f.getHeight()/1.4);
 		Calnewh = (float) ((imHeight/imWidth)*(f.getWidth()/1.5));
-		//System.out.println(imHeight/imWidth +"  * " + f.getWidth()/1.6);
 			
 		neww = Math.round(Calneww);
 		newh = Math.round(Calnewh);
-		//System.out.println(neww+" "+ newh);
 		return new Dimension(neww, newh);
 		
 	}
@@ -183,13 +180,10 @@ class Panel extends JPanel {
 			float Calneww, Calnewh, imWidth = bufferedOriginal.getWidth(), imHeight = bufferedOriginal.getHeight();
 			int neww,newh;
 			Calneww = (float) ((imWidth/imHeight)*(f.getHeight()/1.5));
-			//System.out.println(imWidth/imHeight +"  * " + f.getHeight()/1.4);
 			Calnewh = (float) ((imHeight/imWidth)*(f.getWidth()/1.5));
-			//System.out.println(imHeight/imWidth +"  * " + f.getWidth()/1.6);
 				
 			neww = Math.round(Calneww);
 			newh = Math.round(Calnewh);
-			//System.out.println(neww+" "+ newh);
 			Dimension d = new Dimension(neww,  newh);
 			imageScaled = bufferedOriginal.getScaledInstance(d.width, -1,  Image.SCALE_SMOOTH);
 			bufferedScaled = toBufferedImage(imageScaled);
@@ -201,9 +195,7 @@ class Panel extends JPanel {
 		    Image img = bufferedScaled;
 			getLabel().setIcon(new ImageIcon(img));
 			if(zonezoom != null){
-				System.out.println("("+getLabel().getWidth()+"/"+resX+")"+"*"+zonezoom.getX());
 				zonezoom.setLocation((getLabel().getWidth()/resX)*zonezoom.getX(), (getLabel().getHeight()/resY)*zonezoom.getY());
-				System.out.println(zonezoom.getX());
 			}
 			if(!listeCircle.isEmpty()){
 				for (Circle aListeCircle : listeCircle) {
@@ -257,7 +249,6 @@ class Panel extends JPanel {
 	public ArrayList<Point> getPointWithCenter(int x_centre, int y_centre, double r){
 		
 		ArrayList<Point> pixels = new ArrayList<>();
-	    
 		int width = bufferedOriginal.getWidth();
 		int height = bufferedOriginal.getHeight();
 		
@@ -265,8 +256,8 @@ class Panel extends JPanel {
 	    double y = r;
 	    double d = r - 1;
 	    
-	    while(y >= x)
-	    {
+	    while(y >= x){
+	    	
 	    	if((x_centre + x > 0 && width > x_centre + x ) && ( y_centre + y > 0 && height > y_centre + y ) ){
 	    		pixels.add( new Point( (int)Math.round(x_centre + x), (int)Math.round(y_centre + y )));
 	    	}
@@ -292,7 +283,7 @@ class Panel extends JPanel {
 	    		pixels.add( new Point( (int)Math.round(x_centre - y), (int)Math.round(y_centre - x) ));
 	    	}
 	        
-	    	// Tant qu'on a pas parcouru tout le cercle on continu
+	    	// Tant que la valeur x n'est pas plus grande que y on continu le parcours
 	        if (d >= 2*x){
 	            d -= 2*x + 1;
 	            x ++;

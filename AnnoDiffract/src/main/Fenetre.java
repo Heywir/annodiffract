@@ -53,7 +53,10 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	private JButton setParam = null;
 	private JButton zoom = null;
 	private JButton beam = null;
+	private JButton clean = null;
+	private JButton cleanAll = null;
 	private JLabel statusLabel = null;
+	private JLabel statusDialogLabel = null;
 	private JLabel outilLabel;
 	private int positionX=0;
 	private int positionY=0;
@@ -80,6 +83,8 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		JMenuBar mainMenuBar = buildMenuBar();
 		JPanel statusPanel = new JPanel(new BorderLayout());
 		statusLabel = new JLabel();
+		statusDialogLabel = new JLabel();
+		
 
 		// Window Settings
 		this.setSize((bounds.width/100)*50, (bounds.height/100)*80);
@@ -92,6 +97,8 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 
 		// Status Bar
 		statusPanel.add(statusLabel, BorderLayout.EAST);
+		statusPanel.add(statusDialogLabel, BorderLayout.WEST);
+		//statusDialogLabel.setText("Hello Open an image of diffraction");
 		
 		// Listeners
 		getMainPanel().getLabel().addMouseMotionListener(this);
@@ -159,11 +166,22 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		zoom.setContentAreaFilled(false);
 		
 		beam = new JButton(new ImageIcon(Fenetre.class.getResource("img/beam.png")));
-		beam.setPressedIcon(new ImageIcon(Fenetre.class.getResource("img/beam.png")));
+		beam.setPressedIcon(new ImageIcon(Fenetre.class.getResource("img/beampressed.png")));
 		beam.setToolTipText("Correction On BeamStop");
 		beam.setBorder(null);
 		beam.setContentAreaFilled(false);
 		
+		cleanAll = new JButton(new ImageIcon(Fenetre.class.getResource("img/gomme.png")));
+		cleanAll.setPressedIcon(new ImageIcon(Fenetre.class.getResource("img/gommepressed.png")));
+		cleanAll.setToolTipText("Reset all");
+		cleanAll.setBorder(null);
+		cleanAll.setContentAreaFilled(false);
+		
+		clean = new JButton(new ImageIcon(Fenetre.class.getResource("img/retour1.png")));
+		clean.setPressedIcon(new ImageIcon(Fenetre.class.getResource("img/retour.png")));
+		clean.setToolTipText("Reset all");
+		clean.setBorder(null);
+		clean.setContentAreaFilled(false);
 		
 		// Ajouts
 		newMenuBar.add(menuFile);
@@ -176,6 +194,8 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		toolBar.add(findCenter);
 		toolBar.add(zoom);
 		toolBar.add(beam);
+		toolBar.add(clean);
+		toolBar.add(cleanAll);
 		toolBar.add(setParam);
 		toolBar.add(new JLabel("Brightness:"));
 		toolBar.add(brightSlide);
@@ -190,6 +210,8 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		zoom.addActionListener(this);
 		findCenter.addActionListener(this);
 		beam.addActionListener(this);
+		clean.addActionListener(this);
+		cleanAll.addActionListener(this);
 		mainPanel.getLabel().addMouseListener(this);
 		brightSlide.addChangeListener(this);
 
@@ -224,12 +246,14 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
     		    p=Double.parseDouble(pField.getText());
     		    v=Double.parseDouble(vField.getText());
     		    l=Double.parseDouble(lField.getText());
-    		    
+    		    JOptionPane.showMessageDialog(null, "The Settings changed", "Good", JOptionPane.INFORMATION_MESSAGE);
+
 			} catch(NumberFormatException z){
 				JOptionPane.showMessageDialog(null, "You didn't enter a number. "
     					+ "The Settings aren't changed"
         				, "Not Good", JOptionPane.ERROR_MESSAGE);
 			}
+			
 			if(!mainPanel.listeCircle.isEmpty()){
 				centerCircle=mainPanel.circleCenter(
 						new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(0).getX()),
@@ -246,6 +270,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 								((double)1+(9.7714 *Math.pow(10,-7))*(v*(double)1000)))));
 				
 				CalculMoyAndRadius(centerCircle, p, v, l);
+				
 			}
 	       }
 	}
@@ -290,6 +315,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 							getMainPanel().setLoaded(false);
 						}
 						getMainPanel().openImage(chooser.getSelectedFile());
+						statusDialogLabel.setText("Set 3 point on the image to get the center (you can also draw another circle to get a more accurate center)");
 					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
@@ -297,7 +323,6 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		}
 		if (e.getSource() == menuGItemQuit) {
 			//Quit the application
-			System.out.println("gfdsgds");
 			this.dispose();
 		}
 		if (e.getSource() == findCenter) {
@@ -349,6 +374,55 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
         				, "Not Good", JOptionPane.ERROR_MESSAGE);
 			}
 		}
+		
+		if (e.getSource() == cleanAll) {
+			//Method to find center with zoom
+			if(mainPanel.isLoaded()){
+				mainPanel.liste2theta.clear();
+				mainPanel.listeCircle.clear();
+				mainPanel.listeD.clear();
+				mainPanel.listeMoyen.clear();
+				mainPanel.listeMoyenBeam.clear();
+				mainPanel.listePointCenter.clear();
+				mainPanel.listeRayon.clear();
+				mainPanel.listeS.clear();
+				mainPanel.listeSomme.clear();
+				mainPanel.listeSommeBeam.clear();
+				mainPanel.tmpCircle.ptCircle.clear();
+				RescaleOp op = new RescaleOp(1, 1, null);
+				op.filter(mainPanel.getBufferedScaled2(), mainPanel.getBufferedScaled());
+				mainPanel.toGray(mainPanel.getBufferedScaled());
+				op.filter(mainPanel.getBufferedScaled2(), mainPanel.getBufferedScaled());
+				mainPanel.toGray(mainPanel.getBufferedScaled());
+				statusDialogLabel.setText("Set 3 point on the image to get the center (you can also draw another circle to get a more accurate center)");
+				
+			}else{
+				JOptionPane.showMessageDialog(null, "You didn't open an Image. "
+        				, "Not Good", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		
+		if (e.getSource() == clean) {
+			//Method to find center with zoom
+			if(mainPanel.isLoaded()){
+				if(!mainPanel.listeCircle.isEmpty()){
+					mainPanel.listeCircle.remove(mainPanel.listeCircle.size()-1);
+					RescaleOp op = new RescaleOp(1, 1, null);
+					op.filter(mainPanel.getBufferedScaled2(), mainPanel.getBufferedScaled());
+					mainPanel.toGray(mainPanel.getBufferedScaled());
+					op.filter(mainPanel.getBufferedScaled2(), mainPanel.getBufferedScaled());
+					mainPanel.toGray(mainPanel.getBufferedScaled());
+					mainPanel.repaint();
+					if(mainPanel.listeCircle.isEmpty()){
+						statusDialogLabel.setText("Set 3 point on the image to get the center (you can also draw another circle to get a more accurate center)");
+					}
+				}
+			}else{
+				JOptionPane.showMessageDialog(null, "You didn't open an Image. "
+	        			, "Not Good", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		
 		if (e.getSource() == menuGraphOpen) {
 			if (getMainPanel().getLabel().getIcon() != null && !mainPanel.listeMoyen.isEmpty()) {
 				Graph graph = new Graph(this);
@@ -395,7 +469,6 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		//** Si on est sur l'outil pour placer des points sans le zoom, on placera les points
 		//** en fonction de la position de la souris
 		if(mainPanel.getCurrentTool() == TypeOutil.POINT){
-			//System.out.println(positionX + " "+positionY);
 			if(mainPanel.tmpCircle.ptCircle.size()<2){
 				mainPanel.tmpCircle.ptCircle.add(new Point(positionX,positionY));
 			}else{
@@ -463,12 +536,13 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 								(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(2).getY())));
 				
 				CalculMoyAndRadius(centerCircle, pDouble, vDouble, lDouble);
+				statusDialogLabel.setText("Beamstop Define. You can now Open, the graph");
 			}
 			JOptionPane.showMessageDialog(null, "Vous avez défini le BeamStop", "BeamStop Ok. ", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 	
-	//Cette methode permet de definir le beamstop en fonction de 25 point grace à leur intensite
+	//Cette methode permet de definir le beamstop en fonction d'un point grace a l'utilisateur
 	public void getBeamStop(int x,int y){
 		ArrayList<Integer> h = new ArrayList<>();
 		Color c ;
@@ -498,7 +572,6 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
 		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x,y));
 		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
-		//C'est long
 		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x+1,y));
 		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
 		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x+2,y));
@@ -540,13 +613,13 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		ecart = Math.sqrt(som/(double)h.size());
 		minBS = Math.round(moy-ecart);
 		maxBS = Math.round(moy+ecart);
-		System.out.println(moy+" "+minBS+" "+maxBS);
 	}
 	
 	//** Ici on calcule la moyenne d'intensité de tout les cercles ainsi que leur rayon
     //** et trois autres paramètres étant la Distance interarticulaire l'Angle de diffraction 2theta et le Vecteur de diffusion S  
     public void CalculMoyAndRadius(Point centerCircle, double pDouble, double vDouble, double lDouble){
-		int l;
+		statusDialogLabel.setText("Calculate the intensity. Wait a moment !!");
+    	int l;
     	double i=0;
 		double j;
 		BigDecimal theta2;
@@ -567,12 +640,17 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		//Donc nous nous arrètons a la taille maximum X de l'image
 		while(i<mainPanel.getBufferedOriginal().getWidth()){
 			l=0;
+			//Calcul du rayon
 			lenght = mainPanel.lenghtFrom2Points(centerCircle, new Point((int)(centerCircle.getX()+i), (int)centerCircle.getY()));
+			//Obtention de tout les points du cercle
 			tmp = mainPanel.getPointWithCenter((int)centerCircle.getX(),(int)centerCircle.getY(),lenght);
 			Double somme = 0.0,sommeBeam= 0.0 ,moy, moyBeam;
 			for(int h = 0; h<=tmp.size()-1;h++){
+				//Pour chaque point du cercle nous prenons  la valeur RGB et nous en faisons la moyenne pour avoir une 
+				// valeur en Nuance de gris
 				Color color=new Color(mainPanel.getBufferedOriginal().getRGB((int)(tmp.get(h).getX()), (int)tmp.get(h).getY()));
 				int c = (color.getRed() + color.getBlue()+ color.getGreen())/3;
+				//Si le beamtop n'a pas été défini la somme restera égale à 0 pour la correction Beamstop
 				if(minBS !=-1){
 					if(c<minBS || c>maxBS){
 						sommeBeam = sommeBeam + c;
@@ -584,18 +662,24 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			//Ici nous calculons les valeurs nécessaire pour le graphe ensuite nous 
 			// les ajoutons a des listes specifique
 			if(!tmp.isEmpty()){
+				// Le lambda calcule autre part lors du lancement de la methode ou d'un changement de parametre dans les options
+				// Conversion du rayon en Metre pDouble = (p* (double)39.370079) p etant le PPI défini par l'utilisateur
 				j = (lenght/pDouble);
+				//Calculs de 2 Theta
 				theta2 = BigDecimal.valueOf(Math.toRadians(Math.atan((j/((double)lDouble/(double)100))/((double)180)*Math.PI)));
 				mainPanel.liste2theta.add(theta2.doubleValue()); 
+				//Calcul de d
 				double d =((lambda.doubleValue()*(double)lDouble*(double)100)/j)* Math.pow(10,6);
 				mainPanel.listeD.add(d);
 				mainPanel.listeRayon.add(j);
-				//mainPanel.listeS.add(((double)2*(Math.sin(((theta2.doubleValue()/(double)180)*Math.PI))))/lambda.doubleValue());
+				//Calcul Vecteur de diffusion
 				mainPanel.listeS.add(((lambda.doubleValue()/d)/lambda.doubleValue()));
+				//Calcul Moyenne d'intensité avec et sans correction BeamStop
 				moy = (somme/tmp.size());
 				moyBeam = (sommeBeam/l);
 				mainPanel.listeMoyen.add(moy);
 				mainPanel.listeSomme.add(somme);
+				
 				//Si le beamstop n'a pas ete defini nous n'entrons rien dans ces listes elles
 				//sont vides par defaut
 				if(minBS != -1){
@@ -605,6 +689,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			}
 			i++;
 		}  
+		statusDialogLabel.setText("You can now open the Graph or define the Beamstop (which is important) !!");
 	}
 
 	@Override
