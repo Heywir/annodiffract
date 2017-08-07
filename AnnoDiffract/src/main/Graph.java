@@ -38,7 +38,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 
 
-class Graph extends JFrame implements ChartMouseListener, ActionListener{
+public class Graph extends JFrame implements ChartMouseListener, ActionListener{
 	/**
 	 * 
 	 */

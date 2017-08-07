@@ -72,7 +72,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 
 
 	
-	private Fenetre() {
+	public Fenetre() {
 		
 		// Taille Ecran
 		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();

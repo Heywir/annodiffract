@@ -19,7 +19,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
-class Panel extends JPanel {
+public class Panel extends JPanel {
 	
 	/**
 	 * 
