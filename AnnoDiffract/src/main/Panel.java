@@ -545,3 +545,4 @@ class Panel extends JPanel {
 	}
 	
 }																																							//Morteum and Heywir 2017
+ 

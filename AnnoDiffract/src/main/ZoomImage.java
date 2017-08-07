@@ -284,7 +284,7 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 	@Override
 	public void mouseDragged(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
+		 
 	}
 
 
