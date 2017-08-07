@@ -2,12 +2,13 @@ package main;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -17,10 +18,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.math.BigDecimal;
-import java.util.Scanner;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -33,6 +31,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class ZoomImage extends JFrame implements ActionListener, MouseListener, MouseMotionListener, ComponentListener, ChangeListener{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Fenetre f=null;
 	private int pX;
 	private int pY;
@@ -45,44 +47,44 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 	
 	public ZoomImage(Fenetre f){
 		this.setF(f);
-		
+		this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("img/loupe.png")));
 		// Taille Ecran
-				GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-				Rectangle bounds = env.getMaximumWindowBounds();
+		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		Rectangle bounds = env.getMaximumWindowBounds();
 
-				// Window Settings
-				this.setSize((bounds.width/100)*25, (bounds.height/100)*35);
-				this.setTitle("Zoom");
-				this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		// Window Settings
+		this.setSize((bounds.width/100)*25, (bounds.height/100)*35);
+		this.setTitle("Zoom");
+		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 				
-				// Layout
-				BorderLayout layout = new BorderLayout();
-				this.setLayout(layout);
+		// Layout
+		BorderLayout layout = new BorderLayout();
+		this.setLayout(layout);
 
-				JToolBar light = new JToolBar();
-				this.add(light,BorderLayout.NORTH);
-				brightSlide = new JSlider();
-				brightSlide.setToolTipText("LuminositÃ©");
-				light.add(new JLabel("Brightness"));
-				light.add(brightSlide);
+		JToolBar light = new JToolBar();
+		this.add(light,BorderLayout.NORTH);
+		brightSlide = new JSlider();
+		brightSlide.setToolTipText("LuminositÃ©");
+		light.add(new JLabel("Brightness"));
+		light.add(brightSlide);
 
-				// Layout 
-				JPanel p = new JPanel(layout);
-				GridBagLayout layout1 = new GridBagLayout();
-				GridBagConstraints c = new GridBagConstraints();
-				p.setLayout(layout1);
+		// Layout 
+		JPanel p = new JPanel(layout);
+		GridBagLayout layout1 = new GridBagLayout();
+		GridBagConstraints c = new GridBagConstraints();
+		p.setLayout(layout1);
 				
-				// Panel Image
-				p.add(jL,c);
+		// Panel Image
+		p.add(jL,c);
 				
-				this.add(p,BorderLayout.CENTER);
+		this.add(p,BorderLayout.CENTER);
 				
-				jL.addMouseMotionListener(this);
-				jL.addMouseListener(this);
-				brightSlide.addChangeListener(this);
+		jL.addMouseMotionListener(this);
+		jL.addMouseListener(this);
+		brightSlide.addChangeListener(this);
 				
 	}
-	
+	//Cette méthode permettra d'avoir une parti de l'image d'origine sur la parti sélectionner par l'utilisateur
 	public void getSubImage(BufferedImage img, int pX, int pY){
 		this.pX = pX-125;
 		this.pY = pY-125;
@@ -96,6 +98,7 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 		setBrightness();
 	}
 	
+	//Cette méthode permet de définir la luminosité de l'image zommer en fonction du slider
 	private void setBrightness() {
 		RescaleOp op = new RescaleOp(((float)25 * (float) brightSlide.getValue() / (float)f.brightSlide.getMaximum()), 0, null);
 		this.img = op.filter(img2, this.img);
@@ -105,8 +108,9 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 	}
 
 	@Override
+	
 	public void stateChanged(ChangeEvent arg0) {
-
+		//La méthode va être appelé des qu'il y a changement d'état sur le slider
 		if(arg0.getSource()==brightSlide){
 			if(f.getMainPanel2().isLoaded()){
 				setBrightness();
@@ -117,20 +121,18 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 	
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		//System.out.println(positionX+"  "+positionY);
+		//des qu'on bouge la souris sur l'image la position de celle-ci sera mis à jour
 		if (arg0.getSource() == jL) {
 			setPositionX(arg0.getX());
 			setPositionY(arg0.getY());
-			//System.out.println(positionX+"  "+positionY);
 		}
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if(e.getSource() == jL){
-			Graphics g2d = img.getGraphics();
-			g2d.setColor(Color.BLUE);
+			Graphics2D g2d = (Graphics2D) img.getGraphics();
+			g2d.setColor(Color.RED);
 			g2d.drawLine((int)positionX-5, (int)positionY, (int)positionX+5, (int)positionY);
 			g2d.drawLine((int)positionX, (int)positionY-5, (int)positionX, (int)positionY+5);
 			jL.setIcon(new ImageIcon(img));
@@ -147,51 +149,25 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 				f.getMainPanel2().listeCircle.add(f.getMainPanel2().tmpCircle);
 				f.getMainPanel2().tmpCircle = new Circle();
 				f.getMainPanel2().tmpCircle.ptCircle.clear();
-				Point centerCircle=f.getMainPanel2().circleCenter(
+				f.setCenterCircle(f.getMainPanel2().circleCenter(
 						new Point((int)Math.round((f.getMainPanel2().getBufferedOriginal().getWidth()/f.getMainPanel2().getResX())*c.ptCircle.get(0).getX()),
 								(int)Math.round((f.getMainPanel2().getBufferedOriginal().getHeight()/f.getMainPanel2().getResY())*c.ptCircle.get(0).getY())),
 						new Point((int)Math.round((f.getMainPanel2().getBufferedOriginal().getWidth()/f.getMainPanel2().getResX())*c.ptCircle.get(1).getX()),
 								(int)Math.round((f.getMainPanel2().getBufferedOriginal().getHeight()/f.getMainPanel2().getResY())*c.ptCircle.get(1).getY())),
 						new Point((int)Math.round((f.getMainPanel2().getBufferedOriginal().getWidth()/f.getMainPanel2().getResX())*c.ptCircle.get(2).getX()),
-								(int)Math.round((f.getMainPanel2().getBufferedOriginal().getHeight()/f.getMainPanel2().getResY())*c.ptCircle.get(2).getY())));
-				System.out.println(centerCircle.getX() + " " + centerCircle.getY());
-				String p;
-				double pDouble = 0;
-				String v;
-				String l;
-				double vDouble = 0;
-				double lDouble = 0;
-			    File f = new File("1.txt");
-			    try{
-			    	Scanner sc = new Scanner(f);
-			    	p =  sc.nextLine();
-			    	p = p.replace("Pixel par Metre : ","");
-			    	System.out.println(p);
-			    	sc.nextLine();
-			    	v =  sc.nextLine();
-			    	v = v.replaceAll("Tension d'acceleration des electrons U : ", "");
-			    	System.out.println(v);
-			    	sc.nextLine();
-			    	l =  sc.nextLine();
-			    	l = l.replaceAll("Longueur de camera en Metre : ", "");
-			    	System.out.println(l);
-			    	sc.close();
-			    	pDouble = Double.parseDouble(p);
-			    	vDouble = Double.parseDouble(v);
-			    	lDouble = Double.parseDouble(l); 
-			    }catch(FileNotFoundException ignored){
-			    	
-			    }
+								(int)Math.round((f.getMainPanel2().getBufferedOriginal().getHeight()/f.getMainPanel2().getResY())*c.ptCircle.get(2).getY()))));
+				f.getMainPanel2().listePointCenter.add(f.getCenterCircle());
+				f.setCenterCircle(f.getCenterCicleMoy());
 			    this.f.setLambda(new BigDecimal((6.62 *Math.pow(10,-34))/
-						(Math.sqrt((2.9149 *Math.pow(10,-49))*(vDouble*(double)1000)*
-								((double)1+(9.7714 *Math.pow(10,-7))*(vDouble*(double)1000))))));
+						(Math.sqrt((2.9149 *Math.pow(10,-49))*(f.getV()*(double)1000)*
+								((double)1+(9.7714 *Math.pow(10,-7))*(f.getV()*(double)1000))))));
 			    this.f.getMainPanel2().listeMoyen.clear();
 			    this.f.getMainPanel2().listeRayon.clear();
 			    this.f.getMainPanel2().listeD.clear();
 			    this.f.getMainPanel2().listeS.clear();
 			    this.f.getMainPanel2().liste2theta.clear();
 			    this.f.getMainPanel2().listeMoyenBeam.clear();
-			    this.f.CalculMoyAndRadius(centerCircle,pDouble, vDouble, lDouble);
+			    this.f.CalculMoyAndRadius(f.getCenterCircle(),f.getP(), f.getV(), f.getL());
 			}
 			f.getMainPanel2().repaint();
 		}
@@ -313,3 +289,4 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 
 
 }
+																																				//Morteum and Heywir 2017

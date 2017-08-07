@@ -20,25 +20,52 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
 class Panel extends JPanel {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	//Variable fenetre
 	private final Fenetre f;
 	private TypeOutil currentTool = TypeOutil.NORMAL;
 	private JLabel label = null;
-	private Image image = null;
+	
+	//Variable qui nous dit si une image à été chargé
 	private boolean loaded = false;
+	
+	//Variable pour les images gardé en mémoires
+	private Image image = null;
 	private Image imageScaled = null;
 	private BufferedImage bufferedOriginal;
 	private BufferedImage bufferedOriginal2;
 	private BufferedImage bufferedScaled;
 	private BufferedImage bufferedScaled2;
+	private String fileName;
+	
+	//Variable luminosité
 	private float bright=-1;
+
+	//Variable pour les points et cercles
 	public Circle tmpCircle = new Circle();
 	public final ArrayList<Circle> listeCircle = new ArrayList<>();
+	private Point zonezoom=null;
+	
+	//Liste Intensité
 	public final ArrayList<Double> listeMoyen = new ArrayList<>();
 	public final ArrayList<Double> listeMoyenBeam = new ArrayList<>();
+	public final ArrayList<Double> listeSomme = new ArrayList<>();
+	public final ArrayList<Double> listeSommeBeam = new ArrayList<>();
+	
+	//Liste Distance
 	public final ArrayList<Double> listeRayon = new ArrayList<>();
 	public final ArrayList<Double> listeD = new ArrayList<>();
 	public final ArrayList<Double> listeS = new ArrayList<>();
 	public final ArrayList<Double> liste2theta = new ArrayList<>();
+	
+	//Autre Liste
+	public final ArrayList<Point> listePointCenter = new ArrayList<>();
+	
+	//Variable resolution
 	private double resX=0;
 	private double resY=0;
 	
@@ -66,7 +93,8 @@ class Panel extends JPanel {
 	//Methode pour ouvrir l'image puis l'afficher avec une bonne dimension
 	void openImage(File file) throws Exception {
 		try {
-			
+			listePointCenter.clear();
+			zonezoom = null;
 			tmpCircle.ptCircle.clear();
 			listeCircle.clear();
 			listeMoyen.clear();
@@ -74,6 +102,7 @@ class Panel extends JPanel {
 			listeS.clear();
 			listeD.clear();
 			FileInputStream in = new FileInputStream(file.getPath());
+			fileName = file.getName().replaceFirst("[.][^.]+$", "");
 			FileChannel channel = in.getChannel();
 			ByteBuffer buffer = ByteBuffer.allocate((int)channel.size());
 		    channel.read(buffer);
@@ -83,6 +112,7 @@ class Panel extends JPanel {
 			//Redesiner l'image sur une autre variable pour ne pas modifier l'image originale 
 			bufferedOriginal2  = new BufferedImage(bufferedOriginal.getWidth(),
 			bufferedOriginal.getHeight(), BufferedImage.TYPE_INT_RGB);
+			
 			Graphics g = bufferedOriginal2.createGraphics();
 			g.drawImage(bufferedOriginal, 0, 0, null);
 			Dimension d = resizeImage();
@@ -93,7 +123,7 @@ class Panel extends JPanel {
 		    bufferedScaled2 = toBufferedImage(imageScaled);
 		    BufferedImage tGray = toGray(bufferedScaled);
 		    toGray(bufferedOriginal);
-		    //toGray(bufferedOriginal2);
+		    toGray(bufferedOriginal2);
 		    toGray(bufferedScaled2);
 		    setImage(tGray);
             
@@ -101,7 +131,6 @@ class Panel extends JPanel {
             getLabel().setIcon(new ImageIcon(bufferedScaled));
             setLoaded(true);
             in.close();
-		    repaint();
 			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -141,21 +170,25 @@ class Panel extends JPanel {
 		float Calneww, Calnewh, imWidth = bufferedOriginal.getWidth(), imHeight = bufferedOriginal.getHeight();
 		int neww,newh;
 		Calneww = (float) ((imWidth/imHeight)*(f.getHeight()/1.5));
-		//System.out.println(imWidth/imHeight +"  * " + f.getHeight()/1.4);
 		Calnewh = (float) ((imHeight/imWidth)*(f.getWidth()/1.5));
-		//System.out.println(imHeight/imWidth +"  * " + f.getWidth()/1.6);
 			
 		neww = Math.round(Calneww);
 		newh = Math.round(Calnewh);
-		//System.out.println(neww+" "+ newh);
 		return new Dimension(neww, newh);
 		
 	}
 	
-	// Methode Pour Mettre Les points ï¿½ la bonne position par rapport ï¿½ la nouvelle taille de fenetre
+	// Methode Pour Mettre Les points a la bonne position par rapport a la nouvelle taille de fenetre
 	void scale() {
 		if (imageScaled != null) {
-			Dimension d = resizeImage();
+			float Calneww, Calnewh, imWidth = bufferedOriginal.getWidth(), imHeight = bufferedOriginal.getHeight();
+			int neww,newh;
+			Calneww = (float) ((imWidth/imHeight)*(f.getHeight()/1.5));
+			Calnewh = (float) ((imHeight/imWidth)*(f.getWidth()/1.5));
+				
+			neww = Math.round(Calneww);
+			newh = Math.round(Calnewh);
+			Dimension d = new Dimension(neww,  newh);
 			imageScaled = bufferedOriginal.getScaledInstance(d.width, -1,  Image.SCALE_SMOOTH);
 			bufferedScaled = toBufferedImage(imageScaled);
 			toGray(bufferedScaled);
@@ -164,20 +197,55 @@ class Panel extends JPanel {
 		    	setBrightness(bright);
 		    }
 		    Image img = bufferedScaled;
-		    //Image img = bufferedScaled.getScaledInstance((this.getWidth()/100)*ratioX, ((this.getHeight()/100)*ratioY),  Image.SCALE_SMOOTH);
 			getLabel().setIcon(new ImageIcon(img));
+			if(zonezoom != null){
+				zonezoom.setLocation((getLabel().getWidth()/resX)*zonezoom.getX(), (getLabel().getHeight()/resY)*zonezoom.getY());
+			}
 			if(!listeCircle.isEmpty()){
 				for (Circle aListeCircle : listeCircle) {
 					for (int j = 0; j < aListeCircle.ptCircle.size(); j++) {
-						//System.out.println(getLabel().getWidth()+"/"+resX+"*"+listeCircle.get(i).ptCircle.get(j).getX()+","+ getLabel().getHeight()+"/"+resY+"*"+listeCircle.get(i).ptCircle.get(j).getY());
 						aListeCircle.ptCircle.get(j).setLocation(((getLabel().getWidth() / resX) * aListeCircle.ptCircle.get(j).getX()), ((getLabel().getHeight() / resY) * aListeCircle.ptCircle.get(j).getY()));
-						//System.out.println(listeCircle.get(i).ptCircle.get(j).getX()+" "+listeCircle.get(i).ptCircle.get(j).getY());
 					}
 				}
-			resX = getLabel().getWidth();
-			resY = getLabel().getHeight();
-			repaint();
 			}
+		}
+		resX = getLabel().getWidth();
+		resY = getLabel().getHeight();
+	}
+	
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		if (isLoaded()) {
+			Graphics2D g2d = bufferedScaled.createGraphics();
+			g2d.setColor(Color.BLUE);
+			if(!listeCircle.isEmpty()){
+				for (Circle aListePoint : listeCircle) {
+					for(Point pt : aListePoint.ptCircle){	
+						drawPoint(g2d,pt); 
+					}
+					if(aListePoint.isDr()){
+						Point centerCircle=circleCenter(aListePoint.ptCircle.get(0), aListePoint.ptCircle.get(1), aListePoint.ptCircle.get(2));
+						drawPoint(g2d, centerCircle);
+						double r = lenghtFrom2Points(centerCircle, aListePoint.ptCircle.get(0));
+						drawCenteredCircle(g2d, centerCircle, r);
+					}
+				}
+			}
+			if(tmpCircle.ptCircle.size()!=0){
+				for(int i=0; i<tmpCircle.ptCircle.size();i++){
+					drawPoint(g2d, tmpCircle.ptCircle.get(i));
+				}
+			}
+			if(zonezoom!=null){
+				int tmp= (int)((getResX()/getBufferedOriginal().getWidth())*125);
+				g2d.drawLine((int)zonezoom.getX()-tmp, (int)zonezoom.getY()-tmp, (int)zonezoom.getX()-tmp, (int)zonezoom.getY()+tmp);
+				g2d.drawLine((int)zonezoom.getX()-tmp, (int)zonezoom.getY()-tmp, (int)zonezoom.getX()+tmp, (int)zonezoom.getY()-tmp);
+				g2d.drawLine((int)zonezoom.getX()+tmp, (int)zonezoom.getY()-tmp, (int)zonezoom.getX()+tmp, (int)zonezoom.getY()+tmp);
+				g2d.drawLine((int)zonezoom.getX()-tmp, (int)zonezoom.getY()+tmp, (int)zonezoom.getX()+tmp, (int)zonezoom.getY()+tmp);
+			}
+			Image img = bufferedScaled;
+			getLabel().setIcon(new ImageIcon(img));
+			drawGraph(g);
 		}
 	}
 	
@@ -185,7 +253,6 @@ class Panel extends JPanel {
 	public ArrayList<Point> getPointWithCenter(int x_centre, int y_centre, double r){
 		
 		ArrayList<Point> pixels = new ArrayList<>();
-	    
 		int width = bufferedOriginal.getWidth();
 		int height = bufferedOriginal.getHeight();
 		
@@ -193,19 +260,16 @@ class Panel extends JPanel {
 	    double y = r;
 	    double d = r - 1;
 	    
-	    while(y >= x)
-	    {
+	    while(y >= x){
+	    	
 	    	if((x_centre + x > 0 && width > x_centre + x ) && ( y_centre + y > 0 && height > y_centre + y ) ){
 	    		pixels.add( new Point( (int)Math.round(x_centre + x), (int)Math.round(y_centre + y )));
-	    		//System.out.println(Math.addExact(x_centre, x) + " "+Math.addExact(y_centre, y));
 	    	}
 	    	if((x_centre + y > 0 && width > x_centre + y ) && ( y_centre + x > 0 && height > y_centre + x ) ){
 	    		pixels.add( new Point( (int)Math.round(x_centre + y), (int)Math.round(y_centre + x)));
-	    		//drawPoint(g2d, new Point( x_centre + y, y_centre + x));
 	    	}
 	    	if((x_centre - x > 0 && width > x_centre - x ) && ( y_centre + y > 0 && height > y_centre + y ) ){
 	    		pixels.add( new Point( (int)Math.round(x_centre - x), (int)Math.round(y_centre + y )));
-	    		//System.out.println(x_centre - x + " "+ y_centre + y );
 	    	}
 	    	if((x_centre - y > 0 && width > x_centre - y ) && ( y_centre + x > 0 && height > y_centre + x ) ){
 	    		pixels.add( new Point( (int)Math.round(x_centre - y), (int)Math.round(y_centre + x )));
@@ -223,18 +287,14 @@ class Panel extends JPanel {
 	    		pixels.add( new Point( (int)Math.round(x_centre - y), (int)Math.round(y_centre - x) ));
 	    	}
 	        
-	        if (d >= 2*x)
-	        {
+	    	// Tant que la valeur x n'est pas plus grande que y on continu le parcours
+	        if (d >= 2*x){
 	            d -= 2*x + 1;
 	            x ++;
-	        }
-	        else if (d < 2 * (r-y))
-	        {
+	        }else if (d < 2 * (r-y)){
 	            d += 2*y - 1;
 	            y --;
-	        }
-	        else
-	        {
+	        }else{
 	            d += 2*(y - x - 1);
 	            y --;
 	            x ++;
@@ -242,30 +302,8 @@ class Panel extends JPanel {
 	    }
 		return pixels;
 	}
-
-	public BufferedImage toGray(BufferedImage image) {
-		int width = image.getWidth();
-		int height = image.getHeight();
-		for(int i=0; i<height; i++){
-			for(int j=0; j<width; j++){
-				Color c = new Color(image.getRGB(j, i));
-				int red = (int)(c.getRed() * 0.21);
-				int green = (int)(c.getGreen() * 0.72);
-				int blue = (int)(c.getBlue() *0.07);
-				int sum = red + green + blue;
-				Color newColor = new Color(sum,sum,sum);
-				image.setRGB(j,i,newColor.getRGB());
-			}
-		}
-		return image;
-	}
 	
-	private void drawCenteredCircle(Graphics2D g, Point centerCircle, double r) {
-		  int x = (int) Math.round(centerCircle.getX()-(r));
-		  int y = (int) Math.round(centerCircle.getY()-(r));
-		  g.drawOval(x,y,2*(int)r,2*(int)r);
-		}
-	
+	//Méthode calculant le centre en fonction de trois points données
 	public Point circleCenter(Point A, Point B, Point C) { 
 		float yDelta_a = B.y - A.y; 
 		float xDelta_a = B.x - A.x; 
@@ -283,64 +321,56 @@ class Panel extends JPanel {
 		return center;
 	}
 	
+	//Calcule la distance entre deux points données 
 	public double lenghtFrom2Points(Point A, Point B) {
 		return (double) (float)Math.sqrt((A.getX()-B.getX())*(A.getX()-B.getX()) + (A.getY()-B.getY())*(A.getY()-B.getY()));
 	}
-
-	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		if (isLoaded()) {
-			Graphics2D g2d = bufferedScaled.createGraphics();
-			g2d.setColor(Color.BLUE);
-			if(!listeCircle.isEmpty()){
-				for (Circle aListePoint : listeCircle) {
-					for(Point pt : aListePoint.ptCircle){	
-						//System.out.println(listePoint.get(i).getX()+" "+listePoint.get(i).getY());
-						drawPoint(g2d,pt); 
-						}
-					if(aListePoint.isDr()){
-						Point centerCircle=circleCenter(aListePoint.ptCircle.get(0), aListePoint.ptCircle.get(1), aListePoint.ptCircle.get(2));
-						drawPoint(g2d, centerCircle);
-						double r = lenghtFrom2Points(centerCircle, aListePoint.ptCircle.get(0));
-						drawCenteredCircle(g2d, centerCircle, r);
-					}
+	
+	//Cette méthode  permet de transformer l'image en nuance de gris
+		public BufferedImage toGray(BufferedImage image) {
+			int width = image.getWidth();
+			int height = image.getHeight();
+			for(int i=0; i<height; i++){
+				for(int j=0; j<width; j++){
+					Color c = new Color(image.getRGB(j, i));
+					int red = (int)(c.getRed() * 0.21);
+					int green = (int)(c.getGreen() * 0.72);
+					int blue = (int)(c.getBlue() *0.07);
+					int sum = red + green + blue;
+					Color newColor = new Color(sum,sum,sum);
+					image.setRGB(j,i,newColor.getRGB());
 				}
 			}
-			if(tmpCircle.ptCircle.size()!=0){
-				for(int i=0; i<tmpCircle.ptCircle.size();i++){
-					drawPoint(g2d, tmpCircle.ptCircle.get(i));
-				}
-			}
-
-			g2d.dispose();
-			Image img = bufferedScaled;
-		    //Image img = bufferedScaled.getScaledInstance((this.getWidth()/100)*ratioX, ((this.getHeight()/100)*ratioY),  Image.SCALE_SMOOTH);
-			getLabel().setIcon(new ImageIcon(img));
-			drawGraph(g);
+			return image;
 		}
-		repaint();
-	}
+	
+	// Méthode dessinant le cercle
+		private void drawCenteredCircle(Graphics2D g, Point centerCircle, double r) {
+			  int x = (int) Math.round(centerCircle.getX()-(r));
+			  int y = (int) Math.round(centerCircle.getY()-(r));
+			  g.drawOval(x,y,2*(int)r,2*(int)r);
+			}
 
-	//Methode pour dÃƒÂ©ssiner le graph
+	//Methode pour dessiner le graph
 	private void drawGraph(Graphics g) {
-		// ParamÃƒÂ¨tres graphe
+		// Parametres graphe
 
 		// Distance entre axe et text
 		int distance = 20;
 
-		// Pour le dÃƒÂ©coupage selon l'image
-		double indentationY = (bufferedOriginal.getHeight() / 100);
-		double indentationX = (bufferedOriginal.getWidth() / 100);
+		// Pour le decoupage selon l'image
+		double indentationY = (bufferedOriginal.getHeight() / 10);
+		double indentationX = (bufferedOriginal.getWidth() / 10);
 		int tailleInden = 5;
 
-		// Point En haut ÃƒÂ  gauche
+		// Point En haut a  gauche
 		int yZeroX = getLabel().getLocation().x;
 		int yZeroY = getLabel().getLocation().y;
 
-		// En Bas ÃƒÂ  gauche
+		// En Bas a  gauche
 		int yFinY = yZeroY + getLabel().getIcon().getIconHeight();
 
-		// En Bas ÃƒÂ  droite
+		// En Bas a  droite
 		int xFinX = yZeroX + getLabel().getIcon().getIconWidth();
 
 		// Longueur
@@ -351,6 +381,7 @@ class Panel extends JPanel {
 
 		// ParamÃƒÂ¨tres
 
+		
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setStroke(new BasicStroke(1));
 		g2.setColor(Color.BLACK);
@@ -367,25 +398,26 @@ class Panel extends JPanel {
 	  // Numerotation Y
 
 		int longueurMot;
-		for(int i = 0; i < indentationY +1; i++) {
+		for(int i = 0; i < indentationY +1; i=i+15) {
 			g2.draw(new Line2D.Double(yZeroX - tailleInden, yZeroY + (i * yLength), yZeroX + tailleInden, yZeroY + (i * yLength)));
 			FontMetrics fm = getFontMetrics(getFont());
-			longueurMot = fm.stringWidth(Integer.toString(i*100));
-			g2.drawString(Integer.toString(i*100), (yZeroX - distance) - longueurMot /2, yZeroY + (int) (i * (yLength)));
+			longueurMot = fm.stringWidth(Integer.toString(i*10));
+			g2.drawString(Integer.toString(i*10), (yZeroX - distance) - longueurMot /2, yZeroY + (int) (i * (yLength)));
 
 		}
 
 		// Numerotation X
 
-		for(int i = 0; i < indentationX +1; i++) {
+		for(int i = 0; i < indentationX +1; i=i+15) {
 			g2.draw(new Line2D.Double(yZeroX + (i * xLength), yFinY - tailleInden, yZeroX + (i * xLength), yFinY + tailleInden));
 			FontMetrics fm = getFontMetrics(getFont());
-			longueurMot = fm.stringWidth(Integer.toString(i*100));
-			g2.drawString(Integer.toString(i*100), yZeroX + (int) (i * xLength) - longueurMot /2, yFinY + distance);
+			longueurMot = fm.stringWidth(Integer.toString(i*10));
+			g2.drawString(Integer.toString(i*10), yZeroX + (int) (i * xLength) - longueurMot /2, yFinY + distance);
 		}
 
 	}
 	
+	//Dessine un point sur l'image
 	private void drawPoint(Graphics2D g2d, Point e) {
 		int x1,y1,x2,y2;
 		x1 = (int) Math.round(e.getX() - 3); 
@@ -410,7 +442,7 @@ class Panel extends JPanel {
 		g2d.drawLine(x1, y1, x2, y2);
 	}
 	
-	//Change Brightness
+	//Change la luminosite
 	public void setBrightness(float scaleFactor){
         RescaleOp op = new RescaleOp(2*scaleFactor, 0, null);
         bufferedScaled = op.filter(bufferedScaled2, bufferedScaled);
@@ -483,6 +515,10 @@ class Panel extends JPanel {
 	public BufferedImage getBufferedScaled() {
 		return bufferedScaled;
 	}
+	
+	public BufferedImage getBufferedScaled2() {
+		return bufferedScaled2;
+	}
 
 	public BufferedImage getBufferedOriginal2() {
 		return bufferedOriginal2;
@@ -491,5 +527,21 @@ class Panel extends JPanel {
 	public void setBufferedOriginal2(BufferedImage bufferedOriginal2) {
 		this.bufferedOriginal2 = bufferedOriginal2;
 	}
+
+	public Point getZonezoom() {
+		return zonezoom;
+	}
+
+	public void setZonezoom(Point zonezoom) {
+		this.zonezoom = zonezoom;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
 	
-}
+}																																							//Morteum and Heywir 2017
