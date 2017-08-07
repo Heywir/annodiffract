@@ -1,21 +1,16 @@
 package main;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Paint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.Ellipse2D;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.sql.Savepoint;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -30,14 +25,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.XYPointerAnnotation;
-import org.jfree.chart.annotations.XYShapeAnnotation;
-import org.jfree.chart.annotations.XYTextAnnotation;
-import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.XYItemEntity;
-import org.jfree.data.DomainOrder;
-import org.jfree.data.general.DatasetChangeListener;
-import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.chart.plot.XYPlot;
@@ -46,11 +35,14 @@ import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 
 
 class Graph extends JFrame implements ChartMouseListener, ActionListener{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Fenetre f;
 	private XYSeries XY;
 	private final String chartTitle;

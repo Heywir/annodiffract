@@ -2,7 +2,6 @@ package main;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
@@ -19,10 +18,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.math.BigDecimal;
-import java.util.Scanner;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -35,6 +31,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class ZoomImage extends JFrame implements ActionListener, MouseListener, MouseMotionListener, ComponentListener, ChangeListener{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Fenetre f=null;
 	private int pX;
 	private int pY;

@@ -4,9 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -17,8 +15,6 @@ import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.image.ImageObserver;
-import java.awt.image.ImageProducer;
 import java.awt.image.RescaleOp;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -45,6 +41,10 @@ import org.jfree.ui.RefineryUtilities;
 
 class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMotionListener, ComponentListener, ChangeListener{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Panel mainPanel = null;
 	private JMenuItem menuItemOuvrir = null;
 	private JMenuItem menuGraphOpen = null;
@@ -239,10 +239,9 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	               "Option", JOptionPane.OK_CANCEL_OPTION);
 	      if (result == JOptionPane.OK_OPTION) {
 			try {
-				float j;
-				j = Float.parseFloat(pField.getText());
-				j = Float.parseFloat(vField.getText());
-				j = Float.parseFloat(lField.getText());
+				Float.parseFloat(pField.getText());
+				Float.parseFloat(vField.getText());
+				Float.parseFloat(lField.getText());
     		    p=Double.parseDouble(pField.getText());
     		    v=Double.parseDouble(vField.getText());
     		    l=Double.parseDouble(lField.getText());
@@ -507,7 +506,6 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			}
 			int x = (int)((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*positionX);
 			int y = (int)((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*positionY);
-			int tmp= (int)((mainPanel.getResX()/mainPanel.getBufferedOriginal().getWidth())*125);
 			z.getSubImage(mainPanel.getBufferedOriginal2(), x,y);
 			x = (int)((mainPanel.getResX()/mainPanel.getBufferedOriginal().getWidth())*x);
 			y = (int)((mainPanel.getResY()/mainPanel.getBufferedOriginal().getHeight())*y);
@@ -538,7 +536,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 				CalculMoyAndRadius(centerCircle, pDouble, vDouble, lDouble);
 				statusDialogLabel.setText("Beamstop Define. You can now Open, the graph");
 			}
-			JOptionPane.showMessageDialog(null, "Vous avez défini le BeamStop", "BeamStop Ok. ", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(null, "You define the beamstop", "BeamStop Ok. ", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 	
@@ -688,8 +686,12 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 				}
 			}
 			i++;
-		}  
-		statusDialogLabel.setText("You can now open the Graph or define the Beamstop (which is important) !!");
+		}
+		if(minBS == -1){
+			statusDialogLabel.setText("You can now open the Graph or define the Beamstop (which is important) !!");
+		}else{
+			statusDialogLabel.setText("You can now open the Graph (Beamstop Define)");
+		}
 	}
 
 	@Override

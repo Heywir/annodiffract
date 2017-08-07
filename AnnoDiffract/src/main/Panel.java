@@ -21,6 +21,10 @@ import java.util.ArrayList;
 
 class Panel extends JPanel {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	//Variable fenetre
 	private final Fenetre f;
 	private TypeOutil currentTool = TypeOutil.NORMAL;
