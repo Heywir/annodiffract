@@ -638,7 +638,7 @@ public class Fenetre extends JFrame implements ActionListener, MouseListener, Mo
 			//Ici nous calculons les valeurs nécessaire pour le graphe ensuite nous 
 			// les ajoutons a des listes specifique
 			if(!tmp.isEmpty()){
-				addresulst(r,pDouble,lDouble,somme,sommeBeam,tmp.size() );
+				addresulst(r,pDouble,lDouble,somme,sommeBeam,tmp.size(),l );
 			}
 			i++;
 		}
@@ -656,10 +656,11 @@ public class Fenetre extends JFrame implements ActionListener, MouseListener, Mo
      * @param lDouble Longueur de Camera
      * @param somme Somme
      * @param sommeBeam Somme BeamStop
-     * @param nbPoint Somme de point du cercle parcouru
+     * @param nbPointWB Somme de point du cercle parcouru sans correction beamstop
+     * @param nbPointSommeWTB Somme de point du cercle parcouru avec correction beamstop
      *      
      */
-    public void addresulst(double r, double pDouble, double lDouble, double somme, double sommeBeam, int nbPoint ){
+    public void addresulst(double r, double pDouble, double lDouble, double somme, double sommeBeam, int nbPointWB, int nbPointWTB ){
     	double j,moy,moyBeam;
     	j = (r/pDouble);
     	BigDecimal theta2;
@@ -673,8 +674,8 @@ public class Fenetre extends JFrame implements ActionListener, MouseListener, Mo
 		//Calcul Vecteur de diffusion
 		mainPanel.listeS.add(((lambda.doubleValue()/d)/lambda.doubleValue()));
 		//Calcul Moyenne d'intensité avec et sans correction BeamStop
-		moy = (somme/(double)nbPoint);
-		moyBeam = (sommeBeam/l);
+		moy = (somme/(double)nbPointWB);
+		moyBeam = (sommeBeam/nbPointWTB);
 		mainPanel.listeMoyen.add(moy);
 		mainPanel.listeSomme.add(somme);
 		
