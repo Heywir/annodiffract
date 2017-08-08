@@ -137,6 +137,12 @@ public class Panel extends JPanel {
 		}
 	}
 	
+	public void setNewImage(){
+		Image img = bufferedScaled;
+		getLabel().setIcon(new ImageIcon(img));
+		repaint();
+	}
+	
 	private static BufferedImage toBufferedImage(Image img) {
         if (img instanceof BufferedImage)
         {
@@ -243,8 +249,6 @@ public class Panel extends JPanel {
 				g2d.drawLine((int)zonezoom.getX()+tmp, (int)zonezoom.getY()-tmp, (int)zonezoom.getX()+tmp, (int)zonezoom.getY()+tmp);
 				g2d.drawLine((int)zonezoom.getX()-tmp, (int)zonezoom.getY()+tmp, (int)zonezoom.getX()+tmp, (int)zonezoom.getY()+tmp);
 			}
-			Image img = bufferedScaled;
-			getLabel().setIcon(new ImageIcon(img));
 			drawGraph(g);
 		}
 	}

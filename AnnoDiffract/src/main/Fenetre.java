@@ -263,6 +263,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 								(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(2).getY())));
 				mainPanel.listePointCenter.add(centerCircle);
 				centerCircle = getCenterCicleMoy();
+				
 				//Calcul lambda
 	    		lambda = new BigDecimal((6.62 *Math.pow(10,-34))/
 						(Math.sqrt((2.9149 *Math.pow(10,-49))*(v*(double)1000)*
@@ -373,7 +374,6 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
         				, "Not Good", JOptionPane.ERROR_MESSAGE);
 			}
 		}
-		
 		if (e.getSource() == cleanAll) {
 			//Method to find center with zoom
 			if(mainPanel.isLoaded()){
@@ -394,15 +394,14 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 				op.filter(mainPanel.getBufferedScaled2(), mainPanel.getBufferedScaled());
 				mainPanel.toGray(mainPanel.getBufferedScaled());
 				statusDialogLabel.setText("Set 3 point on the image to get the center (you can also draw another circle to get a more accurate center)");
-				
+				mainPanel.repaint();
 			}else{
 				JOptionPane.showMessageDialog(null, "You didn't open an Image. "
         				, "Not Good", JOptionPane.ERROR_MESSAGE);
 			}
 		}
-		
 		if (e.getSource() == clean) {
-			//Method to find center with zoom
+			//Method to delete last circle
 			if(mainPanel.isLoaded()){
 				if(!mainPanel.listeCircle.isEmpty()){
 					mainPanel.listeCircle.remove(mainPanel.listeCircle.size()-1);
@@ -412,10 +411,16 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 					op.filter(mainPanel.getBufferedScaled2(), mainPanel.getBufferedScaled());
 					mainPanel.toGray(mainPanel.getBufferedScaled());
 					mainPanel.repaint();
+					mainPanel.listePointCenter.remove(mainPanel.listePointCenter.size()-1);
+
 					if(mainPanel.listeCircle.isEmpty()){
 						statusDialogLabel.setText("Set 3 point on the image to get the center (you can also draw another circle to get a more accurate center)");
+					}else{
+						centerCircle = getCenterCicleMoy();
+						CalculMoyAndRadius(centerCircle, p, v, l);
 					}
 				}
+				mainPanel.repaint();
 			}else{
 				JOptionPane.showMessageDialog(null, "You didn't open an Image. "
 	        			, "Not Good", JOptionPane.ERROR_MESSAGE);
@@ -494,6 +499,8 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			    lambda = new BigDecimal((6.62 *Math.pow(10,-34))/
 						(Math.sqrt((2.9149 *Math.pow(10,-49))*(v*(double)1000)*
 								((double)1+(9.7714 *Math.pow(10,-7))*(v*(double)1000)))));
+			    mainPanel.listePointCenter.add(centerCircle);
+			    centerCircle = getCenterCicleMoy();
 			    //** Ici on calcule la moyenne d'intensité de tout les cercles ainsi que leur rayon
 			    //** et trois autres paramètres étant la Distance interarticulaire l'Angle de diffraction 2theta
 			    //** et le Vecteur de diffusion S
@@ -511,6 +518,8 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			y = (int)((mainPanel.getResY()/mainPanel.getBufferedOriginal().getHeight())*y);
 			mainPanel.setZonezoom(new Point(x, y));
 			RescaleOp op = new RescaleOp(1, 1, null);
+			op.filter(mainPanel.getBufferedScaled2(), mainPanel.getBufferedScaled());
+			mainPanel.toGray(mainPanel.getBufferedScaled());
 			op.filter(mainPanel.getBufferedScaled2(), mainPanel.getBufferedScaled());
 			mainPanel.toGray(mainPanel.getBufferedScaled());
 		}else if(mainPanel.getCurrentTool()==TypeOutil.BEAMSTOP){
@@ -538,6 +547,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			}
 			JOptionPane.showMessageDialog(null, "You define the beamstop", "BeamStop Ok. ", JOptionPane.INFORMATION_MESSAGE);
 		}
+		mainPanel.setNewImage();
 	}
 	
 	//Cette methode permet de definir le beamstop en fonction d'un point grace a l'utilisateur
