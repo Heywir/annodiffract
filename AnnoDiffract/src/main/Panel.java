@@ -347,21 +347,16 @@ public class Panel extends JPanel {
 	 * @param C Point C
 	 * @return Retourne le centre
 	 */
+	//Source equation https://www.quora.com/Given-3-points-in-the-Cartesian-plane-how-can-you-find-the-coordinates-of-the-center-of-the-circle-that-intersects-all-three-points-if-there-exists-such-a-circle
 	public Point circleCenter(Point A, Point B, Point C) { 
-		float yDelta_a = B.y - A.y; 
-		float xDelta_a = B.x - A.x; 
-		float yDelta_b = C.y - B.y; 
-		float xDelta_b = C.x - B.x; 
 		int centerX;
 		int centerY;
-		Point center = new Point(0,0); 
-		float aSlope = yDelta_a/xDelta_a; 
-		float bSlope = yDelta_b/xDelta_b;
-		centerX = (int) Math.round((aSlope*bSlope*(A.y - C.y) + bSlope*(A.getX() + B.getX())- aSlope*(B.x+C.x) )/(2*(bSlope-aSlope) ));
-		centerY = Math.round(-1*(centerX - (A.x+B.x)/2)/aSlope +  (A.y+B.y)/2);
-		center.setLocation(new Point(centerX, centerY)); 
-		
-		return center;
+		double d=(A.x - B.x)*(B.y - C.y) - (B.x-C.x)*(A.y-B.y);
+		double u = (A.x*A.x - B.x*B.x +A.y*A.y- B.y*B.y)/(double)2; 
+		double v = (B.x*B.x - C.x*C.x +B.y*B.y- C.y*C.y)/(double)2;
+		centerX = (int)Math.round((u*(B.y-C.y)-v*(A.y-B.y))/d);
+		centerY = (int)Math.round((v*(A.x-B.x)-u*(B.x-C.x))/d);
+		return new Point(centerX,centerY);
 	}
 	
 	/**

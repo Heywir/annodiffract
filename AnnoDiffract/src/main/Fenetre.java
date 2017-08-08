@@ -500,12 +500,12 @@ public class Fenetre extends JFrame implements ActionListener, MouseListener, Mo
 				}
 				//** Ici on calcule le centre avec les coordonnées de la vrai image pour nos calcul
 				centerCircle=mainPanel.circleCenter(
-						new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*c.ptCircle.get(0).getX()),
-								(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*c.ptCircle.get(0).getY())),
-						new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*c.ptCircle.get(1).getX()),
-								(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*c.ptCircle.get(1).getY())),
-						new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*c.ptCircle.get(2).getX()),
-								(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*c.ptCircle.get(2).getY())));
+						new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getLabel().getWidth())*c.ptCircle.get(0).getX()),
+								(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getLabel().getHeight())*c.ptCircle.get(0).getY())),
+						new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getLabel().getWidth())*c.ptCircle.get(1).getX()),
+								(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getLabel().getHeight())*c.ptCircle.get(1).getY())),
+						new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getLabel().getWidth())*c.ptCircle.get(2).getX()),
+								(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getLabel().getHeight())*c.ptCircle.get(2).getY())));
 			    lambda = new BigDecimal((6.62 *Math.pow(10,-34))/
 						(Math.sqrt((2.9149 *Math.pow(10,-49))*(v*(double)1000)*
 								((double)1+(9.7714 *Math.pow(10,-7))*(v*(double)1000)))));
@@ -638,7 +638,7 @@ public class Fenetre extends JFrame implements ActionListener, MouseListener, Mo
 			//Ici nous calculons les valeurs nécessaire pour le graphe ensuite nous 
 			// les ajoutons a des listes specifique
 			if(!tmp.isEmpty()){
-				addresulst(r,pDouble,lDouble,somme,sommeBeam,tmp.size(),l );
+				addresult(r,pDouble,lDouble,somme,sommeBeam,tmp.size(),l );
 			}
 			i++;
 		}
@@ -660,7 +660,7 @@ public class Fenetre extends JFrame implements ActionListener, MouseListener, Mo
      * @param nbPointSommeWTB Somme de point du cercle parcouru avec correction beamstop
      *      
      */
-    public void addresulst(double r, double pDouble, double lDouble, double somme, double sommeBeam, int nbPointWB, int nbPointWTB ){
+    public void addresult(double r, double pDouble, double lDouble, double somme, double sommeBeam, int nbPointWB, int nbPointWTB ){
     	double j,moy,moyBeam;
     	j = (r/pDouble);
     	BigDecimal theta2;

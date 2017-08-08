@@ -65,7 +65,7 @@ public class Graph extends JFrame implements ChartMouseListener, ActionListener{
 	private Boolean yMoy=true;
 	/**
 	 * Creer l'object Graph
-	 * @param f Necessite l'objet fenetre pour fonctionner
+	 * @param f Necessite un objet fenetre pour fonctionner
 	 */
 	public Graph(Fenetre f) {
 		//Construction du Graphique
@@ -163,7 +163,10 @@ public class Graph extends JFrame implements ChartMouseListener, ActionListener{
         
         return dataset;
     }
-
+    
+    /**
+     *  Regle les options graphique du graphique
+     */
 	public void graphicOption(){
 		
 		//Viseur, couleur et épaisseur
@@ -189,7 +192,7 @@ public class Graph extends JFrame implements ChartMouseListener, ActionListener{
 
 	@Override
 	/**
-	 * Reagit au clique de l'utilisateur
+	 * Reagit au clique de la souris
 	 */
 	public void chartMouseClicked(ChartMouseEvent e) {
 		//Ajoute une annotation sur le graphe
