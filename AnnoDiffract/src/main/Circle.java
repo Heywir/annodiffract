@@ -2,7 +2,11 @@ package main;
 
 import java.awt.Point;
 import java.util.ArrayList;
-
+/**
+ * 
+ * @author Morteum and Heywir 2017@
+ *
+ */
 public class Circle {
 	/*Permet de savoir si il faut dessiner le cercle*/
 	private boolean dr=false;

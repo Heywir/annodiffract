@@ -38,13 +38,13 @@ import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.jfree.ui.RefineryUtilities;
+/**
+ * 
+ * @author Morteum and Heywir 2017@
+ *
+ */
+public class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMotionListener, ComponentListener, ChangeListener{
 
-class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMotionListener, ComponentListener, ChangeListener{
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	private Panel mainPanel = null;
 	private JMenuItem menuItemOuvrir = null;
 	private JMenuItem menuGraphOpen = null;
@@ -71,7 +71,9 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	private Point centerCircle;
 
 
-	
+	/**
+	 * Méthode Pour fabriquer la fentre
+	 */
 	public Fenetre() {
 		
 		// Taille Ecran
@@ -110,7 +112,10 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		mainPanel.setSize(new Dimension(this.getWidth(), this.getHeight()));
 	
 	}
-
+	/**
+	 *  Retourne le MenuBar
+	 * @return
+	 */
 	private JMenuBar buildMenuBar() {
 
 		// Menu Bar
@@ -218,7 +223,9 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		return menuBar;
 	}
 	
-	//Methode pour changer le parametre
+	/**
+	 * Methode pour changer le parametre
+	 */
 	private void changeParam(){
 	    
 	    JTextField pField = new JTextField(String.valueOf(p),7);
@@ -274,7 +281,10 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			}
 	       }
 	}
-	//Cette methode permet d'obtenir la moyenne de tout les centre défini par l'utilisateur
+	/**
+	 * Cette methode permet d'obtenir la moyenne de tout les centre défini par l'utilisateur
+	 * @return Retourne le centre
+	 */
 	public Point getCenterCicleMoy(){
 		Point centerCircle;
 		double x=0,y=0;
@@ -550,60 +560,21 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		mainPanel.setNewImage();
 	}
 	
-	//Cette methode permet de definir le beamstop en fonction d'un point grace a l'utilisateur
+	/**
+	 * Cette methode permet de definir le beamstop en fonction d'un point grace a l'utilisateur
+	 * @param x Le pixel x
+	 * @param y Le pixel y
+	 */
 	public void getBeamStop(int x,int y){
 		ArrayList<Integer> h = new ArrayList<>();
 		Color c ;
-		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x-2,y-2));
-		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
-		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x-1,y-2));
-		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
-		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x,y-2));
-		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
-		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x+1,y-2));
-		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
-		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x+2,y-2));
-		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
-		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x-2,y-1));
-		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
-		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x-1,y-1));
-		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
-		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x,y-1));
-		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
-		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x+1,y-1));
-		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
-		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x+2,y-1));
-		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
-		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x-2,y));
-		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
-		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x-1,y));
-		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
-		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x,y));
-		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
-		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x+1,y));
-		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
-		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x+2,y));
-		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
-		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x-2,y+1));
-		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
-		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x-1,y+1));
-		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
-		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x,y+1));
-		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
-		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x+1,y+1));
-		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
-		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x+2,y+1));
-		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
-		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x-2,y+2));
-		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
-		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x-1,y+2));
-		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
-		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x,y+2));
-		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
-		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x+1,y+2));
-		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
-		c = new Color(getMainPanel().getBufferedOriginal().getRGB(x+2,y+2));
-		h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
+		for(float i=-2;i<3 ;i++){
+			for(float j=-2;j<3 ;j++){
+				c = new Color(getMainPanel().getBufferedOriginal().getRGB(Math.round(x+j),Math.round(y+i)));
+				h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
+			}
+		}
+		
 		double moy=0,som=0,ecart;
 		//Nous calculons la somme
 		for(int i=0;i<h.size();i++){
@@ -623,25 +594,22 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		maxBS = Math.round(moy+ecart);
 	}
 	
-	//** Ici on calcule la moyenne d'intensité de tout les cercles ainsi que leur rayon
-    //** et trois autres paramètres étant la Distance interarticulaire l'Angle de diffraction 2theta et le Vecteur de diffusion S  
-    public void CalculMoyAndRadius(Point centerCircle, double pDouble, double vDouble, double lDouble){
+	/**
+	 *Ici on calcule la moyenne d'intensité de tout les cercles ainsi que leur rayon
+   	  et trois autres paramètres étant la Distance interarticulaire l'Angle de diffraction 2theta et le Vecteur de diffusion S  
+	 * @param centerCircle
+	 * @param pDouble
+	 * @param vDouble
+	 * @param lDouble
+	 */
+	public void CalculMoyAndRadius(Point centerCircle, double pDouble, double vDouble, double lDouble){
 		statusDialogLabel.setText("Calculate the intensity. Wait a moment !!");
     	int l;
     	double i=0;
-		double j;
-		BigDecimal theta2;
-	    double lenght;
+		double r;
 		pDouble = (pDouble* (double)39.370079);
 		//On remet à jour les listes (on les vides) quand on appelle cette methode
-		mainPanel.listeMoyen.clear();
-		mainPanel.listeSomme.clear();
-		mainPanel.listeRayon.clear();
-		mainPanel.listeD.clear();
-		mainPanel.listeS.clear();
-		mainPanel.liste2theta.clear();
-		mainPanel.listeMoyenBeam.clear();
-		mainPanel.listeSommeBeam.clear();
+		mainPanel.setzerolist();
 		// cette liste contiendra les point de chaque cercle
 		ArrayList<Point> tmp ;
 		//Il n'est pas intéresant de parcourir tout les cercles car à un certain points il n'y a plus de cercle
@@ -649,10 +617,10 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		while(i<mainPanel.getBufferedOriginal().getWidth()){
 			l=0;
 			//Calcul du rayon
-			lenght = mainPanel.lenghtFrom2Points(centerCircle, new Point((int)(centerCircle.getX()+i), (int)centerCircle.getY()));
+			r = mainPanel.lenghtFrom2Points(centerCircle, new Point((int)(centerCircle.getX()+i), (int)centerCircle.getY()));
 			//Obtention de tout les points du cercle
-			tmp = mainPanel.getPointWithCenter((int)centerCircle.getX(),(int)centerCircle.getY(),lenght);
-			Double somme = 0.0,sommeBeam= 0.0 ,moy, moyBeam;
+			tmp = mainPanel.getPointWithCenter((int)centerCircle.getX(),(int)centerCircle.getY(),r);
+			Double somme = 0.0,sommeBeam= 0.0 ;
 			for(int h = 0; h<=tmp.size()-1;h++){
 				//Pour chaque point du cercle nous prenons  la valeur RGB et nous en faisons la moyenne pour avoir une 
 				// valeur en Nuance de gris
@@ -670,30 +638,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			//Ici nous calculons les valeurs nécessaire pour le graphe ensuite nous 
 			// les ajoutons a des listes specifique
 			if(!tmp.isEmpty()){
-				// Le lambda calcule autre part lors du lancement de la methode ou d'un changement de parametre dans les options
-				// Conversion du rayon en Metre pDouble = (p* (double)39.370079) p etant le PPI défini par l'utilisateur
-				j = (lenght/pDouble);
-				//Calculs de 2 Theta
-				theta2 = BigDecimal.valueOf(Math.toRadians(Math.atan((j/((double)lDouble/(double)100))/((double)180)*Math.PI)));
-				mainPanel.liste2theta.add(theta2.doubleValue()); 
-				//Calcul de d
-				double d =((lambda.doubleValue()*(double)lDouble*(double)100)/j)* Math.pow(10,6);
-				mainPanel.listeD.add(d);
-				mainPanel.listeRayon.add(j);
-				//Calcul Vecteur de diffusion
-				mainPanel.listeS.add(((lambda.doubleValue()/d)/lambda.doubleValue()));
-				//Calcul Moyenne d'intensité avec et sans correction BeamStop
-				moy = (somme/tmp.size());
-				moyBeam = (sommeBeam/l);
-				mainPanel.listeMoyen.add(moy);
-				mainPanel.listeSomme.add(somme);
-				
-				//Si le beamstop n'a pas ete defini nous n'entrons rien dans ces listes elles
-				//sont vides par defaut
-				if(minBS != -1){
-					mainPanel.listeMoyenBeam.add(moyBeam);
-					mainPanel.listeSommeBeam.add(sommeBeam);
-				}
+				addresulst(r,pDouble,lDouble,somme,sommeBeam,tmp.size() );
 			}
 			i++;
 		}
@@ -703,7 +648,45 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			statusDialogLabel.setText("You can now open the Graph (Beamstop Define)");
 		}
 	}
-
+    /**
+     * Le lambda calcule autre part lors du lancement de la methode ou d'un changement de parametre dans les options
+		 Conversion du rayon en Metre pDouble = (p* (double)39.370079) p etant le PPI défini par l'utilisateur
+     * @param r Rayon
+     * @param pDouble 
+     * @param lDouble Longueur de Camera
+     * @param somme Somme
+     * @param sommeBeam Somme BeamStop
+     * @param nbPoint Somme de point du cercle parcouru
+     *      
+     */
+    public void addresulst(double r, double pDouble, double lDouble, double somme, double sommeBeam, int nbPoint ){
+    	double j,moy,moyBeam;
+    	j = (r/pDouble);
+    	BigDecimal theta2;
+    	//Calculs de 2 Theta
+		theta2 = BigDecimal.valueOf(Math.toRadians(Math.atan((j/((double)lDouble/(double)100))/((double)180)*Math.PI)));
+		mainPanel.liste2theta.add(theta2.doubleValue()); 
+		//Calcul de d
+		double d =((lambda.doubleValue()*(double)lDouble*(double)100)/j)* Math.pow(10,6);
+		mainPanel.listeD.add(d);
+		mainPanel.listeRayon.add(j);
+		//Calcul Vecteur de diffusion
+		mainPanel.listeS.add(((lambda.doubleValue()/d)/lambda.doubleValue()));
+		//Calcul Moyenne d'intensité avec et sans correction BeamStop
+		moy = (somme/(double)nbPoint);
+		moyBeam = (sommeBeam/l);
+		mainPanel.listeMoyen.add(moy);
+		mainPanel.listeSomme.add(somme);
+		
+		//Si le beamstop n'a pas ete defini nous n'entrons rien dans ces listes elles
+		//sont vides par defaut
+		if(minBS != -1){
+			mainPanel.listeMoyenBeam.add(moyBeam);
+			mainPanel.listeSommeBeam.add(sommeBeam);
+		}
+    }
+    
+    
 	@Override
 	//Appeler lorsque le slider change d'etat
 	public void stateChanged(ChangeEvent arg0) {

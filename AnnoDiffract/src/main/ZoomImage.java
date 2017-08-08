@@ -30,11 +30,13 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+/**
+ * 
+ * @author Morteum and Heywir 2017@
+ *
+ */
 public class ZoomImage extends JFrame implements ActionListener, MouseListener, MouseMotionListener, ComponentListener, ChangeListener{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+	
 	private Fenetre f=null;
 	private int pX;
 	private int pY;
@@ -45,6 +47,10 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 	private double positionY;
 	private final JSlider brightSlide;
 	
+	/**
+	 * Creer l'objet image
+	 * @param f L'objet fenetre est nécessaire pour lancer le zoom
+	 */
 	public ZoomImage(Fenetre f){
 		this.setF(f);
 		this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("img/loupe.png")));
@@ -84,7 +90,12 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 		brightSlide.addChangeListener(this);
 				
 	}
-	//Cette méthode permettra d'avoir une parti de l'image d'origine sur la parti sélectionner par l'utilisateur
+	/**
+	 * Cette méthode permettra d'avoir une parti de l'image d'origine sur la parti sélectionner par l'utilisateur
+	 * @param img L'image pour avoir une parti de l'image
+	 * @param pX Position x du point
+	 * @param pY Position y du point
+	 */
 	public void getSubImage(BufferedImage img, int pX, int pY){
 		this.pX = pX-125;
 		this.pY = pY-125;
@@ -98,7 +109,9 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 		setBrightness();
 	}
 	
-	//Cette méthode permet de définir la luminosité de l'image zommer en fonction du slider
+	/**
+	 * Cette méthode permet de définir la luminosité de l'image zoommer en fonction du slider
+	 */
 	private void setBrightness() {
 		RescaleOp op = new RescaleOp(((float)25 * (float) brightSlide.getValue() / (float)f.brightSlide.getMaximum()), 0, null);
 		this.img = op.filter(img2, this.img);
@@ -203,32 +216,25 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 		
 	}
 
-
-
 	public int getpY() {
 		return pY;
 	}
-
 
 	public void setpY(int pY) {
 		this.pY = pY;
 	}
 
-
 	public Fenetre getF() {
 		return f;
 	}
-
 
 	private void setF(Fenetre f) {
 		this.f = f;
 	}
 
-
 	public int getpX() {
 		return pX;
 	}
-
 
 	public void setpX(int pX) {
 		this.pX = pX;
@@ -286,7 +292,6 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 		// TODO Auto-generated method stub
 		 
 	}
-
 
 }
 																																				//Morteum and Heywir 2017

@@ -1,5 +1,9 @@
 package main;
-
+/**
+ * 
+ * @author Morteum and Heywir 2017@
+ *
+ */
 public enum TypeOutil {	
 		 /* Outil principaux */
 		 NORMAL,/* L'utilisateur vient de lancer le software */

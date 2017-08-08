@@ -19,12 +19,13 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
+/**
+ * 
+ * @author Morteum and Heywir 2017@
+ *
+ */
 public class Panel extends JPanel {
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	//Variable fenetre
 	private final Fenetre f;
 	private TypeOutil currentTool = TypeOutil.NORMAL;
@@ -90,7 +91,11 @@ public class Panel extends JPanel {
 
 	}
 	
-	//Methode pour ouvrir l'image puis l'afficher avec une bonne dimension
+	/**
+	 * Methode pour ouvrir l'image puis l'afficher avec une bonne dimension
+	 * @param file Fichier image
+	 * @throws Exception L'exception
+	 */
 	void openImage(File file) throws Exception {
 		try {
 			listePointCenter.clear();
@@ -136,7 +141,9 @@ public class Panel extends JPanel {
 			e.printStackTrace();
 		}
 	}
-	
+	/**
+	 *  Mets l'image a jour
+	 */
 	public void setNewImage(){
 		Image img = bufferedScaled;
 		getLabel().setIcon(new ImageIcon(img));
@@ -161,7 +168,12 @@ public class Panel extends JPanel {
         return bimage;
     }
 	
-	//Methode pour charger l'image apres ca recuperation
+	/**
+	 * Methode pour charger l'image apres ca recuperation
+	 * @param data
+	 * @return
+	 * @throws Exception
+	 */
 	private Image load(byte[] data) throws Exception{
 	    Image image;
 	    SeekableStream stream = new ByteArraySeekableStream(data);
@@ -184,7 +196,9 @@ public class Panel extends JPanel {
 		
 	}
 	
-	// Methode Pour Mettre Les points a la bonne position par rapport a la nouvelle taille de fenetre
+	/**
+	 *  Methode Pour Mettre Les points a la bonne position par rapport a la nouvelle taille de fenetre
+	 */
 	void scale() {
 		if (imageScaled != null) {
 			float Calneww, Calnewh, imWidth = bufferedOriginal.getWidth(), imHeight = bufferedOriginal.getHeight();
@@ -252,10 +266,29 @@ public class Panel extends JPanel {
 			drawGraph(g);
 		}
 	}
-	
-	// Methode d'Andres Pour avoir tout les points aux bords d'un cercle
+	/**
+	 * Remets a zero les listes pour les graphiques
+	 */
+	public void setzerolist(){
+		listeMoyen.clear();
+		listeSomme.clear();
+		listeRayon.clear();
+		listeD.clear();
+		listeS.clear();
+		liste2theta.clear();
+		listeMoyenBeam.clear();
+		listeSommeBeam.clear();
+	}
+
+	/**
+	 *  Methode d'Andres Pour avoir tout les points aux bords d'un cercle
+	 * @param x_centre Position x du centre
+	 * @param y_centre Position y du centre
+	 * @param r Rayon du cercle
+	 * @return Une liste de point
+	 */
 	public ArrayList<Point> getPointWithCenter(int x_centre, int y_centre, double r){
-		
+
 		ArrayList<Point> pixels = new ArrayList<>();
 		int width = bufferedOriginal.getWidth();
 		int height = bufferedOriginal.getHeight();
@@ -307,7 +340,13 @@ public class Panel extends JPanel {
 		return pixels;
 	}
 	
-	//Méthode calculant le centre en fonction de trois points données
+	/**
+	 * Méthode calculant le centre en fonction de trois points données
+	 * @param A Point A
+	 * @param B Point B
+	 * @param C Point C
+	 * @return Retourne le centre
+	 */
 	public Point circleCenter(Point A, Point B, Point C) { 
 		float yDelta_a = B.y - A.y; 
 		float xDelta_a = B.x - A.x; 
@@ -325,12 +364,21 @@ public class Panel extends JPanel {
 		return center;
 	}
 	
-	//Calcule la distance entre deux points données 
+	/**
+	 * Calcule la distance entre deux points données 
+	 * @param A Point A
+	 * @param B Point B
+	 * @return retourne la distance en Double
+	 */
 	public double lenghtFrom2Points(Point A, Point B) {
 		return (double) (float)Math.sqrt((A.getX()-B.getX())*(A.getX()-B.getX()) + (A.getY()-B.getY())*(A.getY()-B.getY()));
 	}
 	
-	//Cette méthode  permet de transformer l'image en nuance de gris
+	/**
+	 * Cette méthode  permet de transformer l'image en nuance de gris
+	 * @param image
+	 * @return L'image en Nuance de Gris 
+	 */
 		public BufferedImage toGray(BufferedImage image) {
 			int width = image.getWidth();
 			int height = image.getHeight();
@@ -348,7 +396,12 @@ public class Panel extends JPanel {
 			return image;
 		}
 	
-	// Méthode dessinant le cercle
+	/**
+	 *  Méthode dessinant le cercle
+	 * @param g La variable de dessin 
+	 * @param centerCircle Centre du cercle
+	 * @param r Rayon du cercle
+	 */
 		private void drawCenteredCircle(Graphics2D g, Point centerCircle, double r) {
 			  int x = (int) Math.round(centerCircle.getX()-(r));
 			  int y = (int) Math.round(centerCircle.getY()-(r));
@@ -421,7 +474,11 @@ public class Panel extends JPanel {
 
 	}
 	
-	//Dessine un point sur l'image
+	/**
+	 * Dessine un point sur l'image
+	 * @param g2d Variable pour dessiner
+	 * @param e Le point en question
+	 */
 	private void drawPoint(Graphics2D g2d, Point e) {
 		int x1,y1,x2,y2;
 		x1 = (int) Math.round(e.getX() - 3); 
@@ -446,7 +503,10 @@ public class Panel extends JPanel {
 		g2d.drawLine(x1, y1, x2, y2);
 	}
 	
-	//Change la luminosite
+	/**
+	 * Change la luminosite
+	 * @param scaleFactor Facteur de luminositer
+	 */
 	public void setBrightness(float scaleFactor){
         RescaleOp op = new RescaleOp(2*scaleFactor, 0, null);
         bufferedScaled = op.filter(bufferedScaled2, bufferedScaled);

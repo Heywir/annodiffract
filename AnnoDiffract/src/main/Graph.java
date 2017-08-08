@@ -37,12 +37,13 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 
-
+/**
+ * 
+ * @author Morteum and Heywir 2017@
+ *
+ */
 public class Graph extends JFrame implements ChartMouseListener, ActionListener{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+
 	private Fenetre f;
 	private XYSeries XY;
 	private final String chartTitle;
@@ -62,7 +63,10 @@ public class Graph extends JFrame implements ChartMouseListener, ActionListener{
 	private JLabel statusLabel;
 	private XYPlot plot;
 	private Boolean yMoy=true;
-	
+	/**
+	 * Creer l'object Graph
+	 * @param f Necessite l'objet fenetre pour fonctionner
+	 */
 	public Graph(Fenetre f) {
 		//Construction du Graphique
 		super("Graphic");
@@ -141,7 +145,12 @@ public class Graph extends JFrame implements ChartMouseListener, ActionListener{
      	this.add(statusPanel, BorderLayout.SOUTH);
      	
 	}
-
+	/**
+	 * 
+	 * @param x
+	 * @param y
+	 * @return
+	 */
     private XYDataset createDataset(ArrayList<Double> x, ArrayList<Double> y ) {
 
     	//Creer une serie pour le graphe
@@ -179,6 +188,9 @@ public class Graph extends JFrame implements ChartMouseListener, ActionListener{
 	}
 
 	@Override
+	/**
+	 * Reagit au clique de l'utilisateur
+	 */
 	public void chartMouseClicked(ChartMouseEvent e) {
 		//Ajoute une annotation sur le graphe
 		ChartEntity ce = e.getEntity();
@@ -194,6 +206,9 @@ public class Graph extends JFrame implements ChartMouseListener, ActionListener{
 	}
 
 	@Override
+	/**
+	 * Reagit au mouvement de la souris
+	 */
 	public void chartMouseMoved(ChartMouseEvent e) {
 		ChartEntity ce = e.getEntity();
         if (ce instanceof XYItemEntity) {
@@ -207,7 +222,11 @@ public class Graph extends JFrame implements ChartMouseListener, ActionListener{
 	}
 	
 
+	
 	@Override
+	/**
+	 * Action sur les boutons
+	 */
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == setS){
 			chartPanel.setChart(xylineChartS);
