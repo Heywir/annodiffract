@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JToolBar;
@@ -96,17 +97,28 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 	 * @param pX Position x du point
 	 * @param pY Position y du point
 	 */
-	public void getSubImage(BufferedImage img, int pX, int pY){
+	public Boolean getSubImage(BufferedImage img, int pX, int pY){
 		this.pX = pX-125;
 		this.pY = pY-125;
-		BufferedImage j = img.getSubimage(pX-125, pY-125, 250, 250);
-		BufferedImage j1 = f.getMainPanel2().getBufferedOriginal().getSubimage(pX-125, pY-125, 250, 250);
-		this.img = j;
-		jL.setIcon(new ImageIcon(this.img));
-		this.img2 = j1;
-
-		//On garde la luminosite ajuste par nouveau clique
-		setBrightness();
+		BufferedImage j = null;
+		try{
+			j = img.getSubimage(pX-125, pY-125, 250, 250);
+			BufferedImage j1 = f.getMainPanel2().getBufferedOriginal().getSubimage(pX-125, pY-125, 250, 250);
+			this.img = j;
+			jL.setIcon(new ImageIcon(this.img));
+			this.img2 = j1;
+			//On garde la luminosite ajuste par nouveau clique
+			setBrightness();
+		//Dans le cas ou l'utilisateur zoom sur les bords de l'image
+		}catch( java.awt.image.RasterFormatException e){
+			JOptionPane.showMessageDialog(null, "The soft can't zoom on the edge of the image. "
+    				, "Error", JOptionPane.ERROR_MESSAGE);
+		}
+		if(j==null){
+			return false;
+		}else{
+			return true;
+		}
 	}
 	
 	/**
@@ -121,7 +133,6 @@ public class ZoomImage extends JFrame implements ActionListener, MouseListener, 
 	}
 
 	@Override
-	
 	public void stateChanged(ChangeEvent arg0) {
 		//La méthode va être appelé des qu'il y a changement d'état sur le slider
 		if(arg0.getSource()==brightSlide){

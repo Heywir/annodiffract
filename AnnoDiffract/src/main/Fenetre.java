@@ -523,15 +523,16 @@ public class Fenetre extends JFrame implements ActionListener, MouseListener, Mo
 			}
 			int x = (int)((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*positionX);
 			int y = (int)((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*positionY);
-			z.getSubImage(mainPanel.getBufferedOriginal2(), x,y);
-			x = (int)((mainPanel.getResX()/mainPanel.getBufferedOriginal().getWidth())*x);
-			y = (int)((mainPanel.getResY()/mainPanel.getBufferedOriginal().getHeight())*y);
-			mainPanel.setZonezoom(new Point(x, y));
-			RescaleOp op = new RescaleOp(1, 1, null);
-			op.filter(mainPanel.getBufferedScaled2(), mainPanel.getBufferedScaled());
-			mainPanel.toGray(mainPanel.getBufferedScaled());
-			op.filter(mainPanel.getBufferedScaled2(), mainPanel.getBufferedScaled());
-			mainPanel.toGray(mainPanel.getBufferedScaled());
+			if(z.getSubImage(mainPanel.getBufferedOriginal2(), x,y)){
+				x = (int)((mainPanel.getResX()/mainPanel.getBufferedOriginal().getWidth())*x);
+				y = (int)((mainPanel.getResY()/mainPanel.getBufferedOriginal().getHeight())*y);
+				mainPanel.setZonezoom(new Point(x, y));
+				RescaleOp op = new RescaleOp(1, 1, null);
+				op.filter(mainPanel.getBufferedScaled2(), mainPanel.getBufferedScaled());
+				mainPanel.toGray(mainPanel.getBufferedScaled());
+				op.filter(mainPanel.getBufferedScaled2(), mainPanel.getBufferedScaled());
+				mainPanel.toGray(mainPanel.getBufferedScaled());
+			}
 		}else if(mainPanel.getCurrentTool()==TypeOutil.BEAMSTOP){
 			if(mainPanel.listeCircle.isEmpty()){
 				mainPanel.setResX(mainPanel.getLabel().getWidth());
