@@ -64,6 +64,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	private double p = 244;
 	private double v =200;
 	private double l =100;
+	private double bright;
 	private BigDecimal lambda;
 	private ZoomImage z=null;
 	private double minBS=-1;
@@ -323,6 +324,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 					try {
 						//Remets par defaut le slider quand on ouvre une image
 						brightSlide.setValue(1);
+						bright = 1;
 						if (getMainPanel().isLoaded()) {
 
 							mainPanel.setBright(-1);
@@ -534,13 +536,13 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 				if (z != null && z.isVisible()) {
 					z.brightSlide.setValue(brightSlide.getValue());
 				}
-				mainPanel.cleanBlue();
+				//mainPanel.cleanBlue();
 				mainPanel.setZoneZoom(new Point(x, y));
-				//RescaleOp op = new RescaleOp(1, 1, null);
-				//op.filter(mainPanel.getBufferedScaled2(), mainPanel.getBufferedScaled());
-				//mainPanel.toGray(mainPanel.getBufferedScaled());
-				//op.filter(mainPanel.getBufferedScaled2(), mainPanel.getBufferedScaled());
-				//mainPanel.toGray(mainPanel.getBufferedScaled());
+				RescaleOp op = new RescaleOp((int)bright, 1, null);
+				op.filter(mainPanel.getBufferedScaled2(), mainPanel.getBufferedScaled());
+				mainPanel.toGray(mainPanel.getBufferedScaled());
+				op.filter(mainPanel.getBufferedScaled2(), mainPanel.getBufferedScaled());
+				mainPanel.toGray(mainPanel.getBufferedScaled());
 			}
 		}else if(mainPanel.getCurrentTool()==TypeOutil.BEAMSTOP){
 			if(mainPanel.listeCircle.isEmpty()){
@@ -632,14 +634,6 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			tmp = mainPanel.getPointWithCenter((int)centerCircle.getX(),(int)centerCircle.getY(),r);
 			Double somme = 0.0,sommeBeam= 0.0 ;
 			for(int h = 0; h<=tmp.size()-1;h++){
-				//Pour chaque point du cercle nous prenons  la valeur RGB et nous en faisons la moyenne pour avoir une 
-				// valeur en Nuance de gris
-				/*Color color=new Color(mainPanel.getBufferedOriginal().getRGB((int)(tmp.get(h).getX()), (int)tmp.get(h).getY()));
-				int c = (color.getRed() + color.getBlue()+ color.getGreen())/3;
-				//Si le beamtop n'a pas été défini la somme restera égale à 0 pour la correction Beamstop
-				
-			*/
-				
 				int[] pixelColor = new int[4];
 				mainPanel.getRaster().getPixel(tmp.get(h).x, tmp.get(h).y, pixelColor);
 				int c = Math.round(pixelColor[0]+pixelColor[1]+pixelColor[2]+pixelColor[3]);
@@ -709,8 +703,9 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		// TODO Auto-generated method stub
 		if(arg0.getSource()==brightSlide){
 			if(mainPanel.isLoaded()){
-				System.out.println(brightSlide.getValue());
+				//System.out.println(brightSlide.getValue());
 				mainPanel.setBrightness((float) brightSlide.getValue());
+				bright = brightSlide.getValue()/15;
 				if (z != null && z.isVisible()) {
                     z.brightSlide.setValue(brightSlide.getValue());
                 }
