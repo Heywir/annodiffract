@@ -500,12 +500,12 @@ public class Fenetre extends JFrame implements ActionListener, MouseListener, Mo
 				}
 				//** Ici on calcule le centre avec les coordonnées de la vrai image pour nos calcul
 				centerCircle=mainPanel.circleCenter(
-						new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getLabel().getWidth())*c.ptCircle.get(0).getX()),
-								(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getLabel().getHeight())*c.ptCircle.get(0).getY())),
-						new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getLabel().getWidth())*c.ptCircle.get(1).getX()),
-								(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getLabel().getHeight())*c.ptCircle.get(1).getY())),
-						new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getLabel().getWidth())*c.ptCircle.get(2).getX()),
-								(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getLabel().getHeight())*c.ptCircle.get(2).getY())));
+						new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*c.ptCircle.get(0).getX()),
+								(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*c.ptCircle.get(0).getY())),
+						new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*c.ptCircle.get(1).getX()),
+								(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*c.ptCircle.get(1).getY())),
+						new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*c.ptCircle.get(2).getX()),
+								(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*c.ptCircle.get(2).getY())));
 			    lambda = new BigDecimal((6.62 *Math.pow(10,-34))/
 						(Math.sqrt((2.9149 *Math.pow(10,-49))*(v*(double)1000)*
 								((double)1+(9.7714 *Math.pow(10,-7))*(v*(double)1000)))));
@@ -568,11 +568,11 @@ public class Fenetre extends JFrame implements ActionListener, MouseListener, Mo
 	 */
 	public void getBeamStop(int x,int y){
 		ArrayList<Integer> h = new ArrayList<>();
-		Color c ;
 		for(float i=-2;i<3 ;i++){
 			for(float j=-2;j<3 ;j++){
-				c = new Color(getMainPanel().getBufferedOriginal().getRGB(Math.round(x+j),Math.round(y+i)));
-				h.add((int)Math.round((c.getBlue()+c.getRed()+c.getRed())/3));
+				int[] pixelColor = new int[4];
+				mainPanel.getRaster().getPixel(Math.round(x+j),Math.round(y+i), pixelColor);
+				h.add(pixelColor[0]+pixelColor[1]+pixelColor[2]);
 			}
 		}
 		
@@ -625,9 +625,15 @@ public class Fenetre extends JFrame implements ActionListener, MouseListener, Mo
 			for(int h = 0; h<=tmp.size()-1;h++){
 				//Pour chaque point du cercle nous prenons  la valeur RGB et nous en faisons la moyenne pour avoir une 
 				// valeur en Nuance de gris
-				Color color=new Color(mainPanel.getBufferedOriginal().getRGB((int)(tmp.get(h).getX()), (int)tmp.get(h).getY()));
+				/*Color color=new Color(mainPanel.getBufferedOriginal().getRGB((int)(tmp.get(h).getX()), (int)tmp.get(h).getY()));
 				int c = (color.getRed() + color.getBlue()+ color.getGreen())/3;
 				//Si le beamtop n'a pas été défini la somme restera égale à 0 pour la correction Beamstop
+				
+			*/
+				
+				int[] pixelColor = new int[4];
+				mainPanel.getRaster().getPixel(tmp.get(h).x, tmp.get(h).y, pixelColor);
+				int c = (int)Math.round(pixelColor[0]+pixelColor[1]+pixelColor[2]+pixelColor[3]);
 				if(minBS !=-1){
 					if(c<minBS || c>maxBS){
 						sommeBeam = sommeBeam + c;
