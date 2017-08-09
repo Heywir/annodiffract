@@ -405,7 +405,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 				mainPanel.listeSomme.clear();
 				mainPanel.listeSommeBeam.clear();
 				mainPanel.tmpCircle.ptCircle.clear();
-				RescaleOp op = new RescaleOp(1, 1, null);
+				RescaleOp op = new RescaleOp((int)bright, 1, null);
 				op.filter(mainPanel.getBufferedScaled2(), mainPanel.getBufferedScaled());
 				mainPanel.toGray(mainPanel.getBufferedScaled());
 				op.filter(mainPanel.getBufferedScaled2(), mainPanel.getBufferedScaled());
@@ -422,7 +422,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			if(mainPanel.isLoaded()){
 				if(!mainPanel.listeCircle.isEmpty()){
 					mainPanel.listeCircle.remove(mainPanel.listeCircle.size()-1);
-					RescaleOp op = new RescaleOp(1, 1, null);
+					RescaleOp op = new RescaleOp((int)bright, 1, null);
 					op.filter(mainPanel.getBufferedScaled2(), mainPanel.getBufferedScaled());
 					mainPanel.toGray(mainPanel.getBufferedScaled());
 					op.filter(mainPanel.getBufferedScaled2(), mainPanel.getBufferedScaled());
