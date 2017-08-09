@@ -38,7 +38,7 @@ class ZoomImage extends JFrame implements ActionListener, MouseListener, MouseMo
 	private final JLabel jL = new JLabel();
 	private double positionX;
 	private double positionY;
-	private final JSlider brightSlide;
+	public JSlider brightSlide;
 	
 	/**
 	 * Creer l'objet image

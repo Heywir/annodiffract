@@ -532,6 +532,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 				x = (int)((mainPanel.getResX()/mainPanel.getBufferedOriginal().getWidth())*x);
 				y = (int)((mainPanel.getResY()/mainPanel.getBufferedOriginal().getHeight())*y);
 				mainPanel.setZoneZoom(new Point(x, y));
+				mainPanel.cleanBlue();
 				//RescaleOp op = new RescaleOp(1, 1, null);
 				//op.filter(mainPanel.getBufferedScaled2(), mainPanel.getBufferedScaled());
 				//mainPanel.toGray(mainPanel.getBufferedScaled());
@@ -707,6 +708,9 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			if(mainPanel.isLoaded()){
 				System.out.println(brightSlide.getValue());
 				mainPanel.setBrightness((float) brightSlide.getValue());
+				if (z != null && z.isVisible()) {
+                    z.brightSlide.setValue(brightSlide.getValue());
+                }
 			}
 		}
 	}

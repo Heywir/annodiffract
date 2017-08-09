@@ -225,7 +225,6 @@ public class Panel extends JPanel {
 				}
 			}
 			if(zoneZoom!=null){
-				cleanBlue();
 				int tmp= (int)((getResX()/getBufferedOriginal().getWidth())*125);
 				g2d.drawLine((int)zoneZoom.getX()-tmp, (int)zoneZoom.getY()-tmp, (int)zoneZoom.getX()-tmp, (int)zoneZoom.getY()+tmp);
 				g2d.drawLine((int)zoneZoom.getX()-tmp, (int)zoneZoom.getY()-tmp, (int)zoneZoom.getX()+tmp, (int)zoneZoom.getY()-tmp);
@@ -237,10 +236,7 @@ public class Panel extends JPanel {
 	}
 
 	public void cleanBlue() {
-		System.out.println(bright);
-		RescaleOp op = new RescaleOp(2*brightFactor, 0, null);
-		bufferedScaled = op.filter(bufferedScaled2, bufferedScaled);
-		toGray(bufferedScaled);
+		System.out.println("Code qui doit virer les carrés");
 	}
 
 
