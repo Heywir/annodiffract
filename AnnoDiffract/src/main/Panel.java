@@ -16,6 +16,7 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.RescaleOp;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -109,16 +110,15 @@ public class Panel extends JPanel {
 			listeRayon.clear();
 			listeS.clear();
 			listeD.clear();
-		    setImage(ImageIO.read(file));
-			bufferedOriginal = ImageIO.read(file);
+			FileInputStream in = new FileInputStream(file.getPath());
+			fileName = file.getName().replaceFirst("[.][^.]+$", "");
+			FileChannel channel = in.getChannel();
+			ByteBuffer buffer = ByteBuffer.allocate((int)channel.size());
+		    channel.read(buffer);
+		    setImage(load(buffer.array()));
+			bufferedOriginal = toBufferedImage(getImage());
 			raster = bufferedOriginal.getData();
-			ColorModel color = ImageIO.read(file).getColorModel();
-			System.out.println(color.getPixelSize());
-			double[] pixelColor = new double[4];
-			raster.getPixel(200, 200, pixelColor);
-			//Color c = new Color(bufferedOriginal.getRGB(200, 200)) ;
-			//System.out.println(pixelColor[0]+ " "+pixelColor[1]+" "+pixelColor[2]+ " "+c.getBlue()+" "+ c.getGreen()+" "+c.getRed());
-			//Redesiner l'image sur une autre variable pour ne pas modifier l'image originale 
+
 			bufferedOriginal2  = new BufferedImage(bufferedOriginal.getWidth(),
 			bufferedOriginal.getHeight(), BufferedImage.TYPE_INT_RGB);
 			
