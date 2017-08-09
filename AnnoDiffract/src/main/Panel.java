@@ -5,13 +5,11 @@ import com.sun.media.jai.codec.ImageCodec;
 import com.sun.media.jai.codec.ImageDecoder;
 import com.sun.media.jai.codec.SeekableStream;
 
-import javax.imageio.ImageIO;
 import javax.media.jai.PlanarImage;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.RescaleOp;
@@ -34,12 +32,11 @@ public class Panel extends JPanel {
 	private TypeOutil currentTool = TypeOutil.NORMAL;
 	private JLabel label = null;
 	
-	//Variable qui nous dit si une image à été chargé
+	//Variable qui nous dit si une image ï¿½ ï¿½tï¿½ chargï¿½
 	private boolean loaded = false;
 	
-	//Variable pour les images gardé en mémoires
+	//Variable pour les images gardï¿½ en mï¿½moires
 	private Image image = null;
-	private Image imageScaled = null;
 	private BufferedImage bufferedOriginal;
 	private Raster raster;
 	private BufferedImage bufferedOriginal2;
@@ -47,7 +44,7 @@ public class Panel extends JPanel {
 	private BufferedImage bufferedScaled2;
 	private String fileName;
 	
-	//Variable luminosité
+	//Variable luminositï¿½
 	private float bright=-1;
 
 	//Variable pour les points et cercles
@@ -55,7 +52,7 @@ public class Panel extends JPanel {
 	public final ArrayList<Circle> listeCircle = new ArrayList<>();
 	private Point zonezoom=null;
 	
-	//Liste Intensité
+	//Liste Intensitï¿½
 	public final ArrayList<Double> listeMoyen = new ArrayList<>();
 	public final ArrayList<Double> listeMoyenBeam = new ArrayList<>();
 	public final ArrayList<Double> listeSomme = new ArrayList<>();
@@ -125,7 +122,7 @@ public class Panel extends JPanel {
 			Graphics g = bufferedOriginal2.createGraphics();
 			g.drawImage(bufferedOriginal, 0, 0, null);
 			Dimension d = resizeImage();
-			imageScaled = getImage().getScaledInstance(d.width, -1,  Image.SCALE_SMOOTH);
+			Image imageScaled = getImage().getScaledInstance(d.width, -1, Image.SCALE_SMOOTH);
 
 		    //Convert Image to Gray
 		    bufferedScaled = toBufferedImage(imageScaled);
@@ -199,44 +196,7 @@ public class Panel extends JPanel {
 		return new Dimension(neww, newh);
 		
 	}
-	
-	/**
-	 *  Methode Pour Mettre Les points a la bonne position par rapport a la nouvelle taille de fenetre
-	 */
-	void scale() {
-		if (imageScaled != null) {
-			float Calneww, Calnewh, imWidth = bufferedOriginal.getWidth(), imHeight = bufferedOriginal.getHeight();
-			int neww,newh;
-			Calneww = (float) ((imWidth/imHeight)*(f.getHeight()/1.5));
-			Calnewh = (float) ((imHeight/imWidth)*(f.getWidth()/1.5));
-				
-			neww = Math.round(Calneww);
-			newh = Math.round(Calnewh);
-			Dimension d = new Dimension(neww,  newh);
-			imageScaled = bufferedOriginal.getScaledInstance(d.width, -1,  Image.SCALE_SMOOTH);
-			bufferedScaled = toBufferedImage(imageScaled);
-			toGray(bufferedScaled);
-		    bufferedScaled2 = toGray(toBufferedImage(imageScaled));
-		    if(bright!=-1){
-		    	setBrightness(bright);
-		    }
-		    Image img = bufferedScaled;
-			getLabel().setIcon(new ImageIcon(img));
-			if(zonezoom != null){
-				zonezoom.setLocation((getLabel().getWidth()/resX)*zonezoom.getX(), (getLabel().getHeight()/resY)*zonezoom.getY());
-			}
-			if(!listeCircle.isEmpty()){
-				for (Circle aListeCircle : listeCircle) {
-					for (int j = 0; j < aListeCircle.ptCircle.size(); j++) {
-						aListeCircle.ptCircle.get(j).setLocation(((getLabel().getWidth() / resX) * aListeCircle.ptCircle.get(j).getX()), ((getLabel().getHeight() / resY) * aListeCircle.ptCircle.get(j).getY()));
-					}
-				}
-			}
-		}
-		resX = getLabel().getWidth();
-		resY = getLabel().getHeight();
-	}
-	
+
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		if (isLoaded()) {
@@ -345,7 +305,7 @@ public class Panel extends JPanel {
 	}
 	
 	/**
-	 * Méthode calculant le centre en fonction de trois points données
+	 * Mï¿½thode calculant le centre en fonction de trois points donnï¿½es
 	 * @param A Point A
 	 * @param B Point B
 	 * @param C Point C
@@ -364,7 +324,7 @@ public class Panel extends JPanel {
 	}
 	
 	/**
-	 * Calcule la distance entre deux points données 
+	 * Calcule la distance entre deux points donnï¿½es 
 	 * @param A Point A
 	 * @param B Point B
 	 * @return retourne la distance en Double
@@ -374,7 +334,7 @@ public class Panel extends JPanel {
 	}
 	
 	/**
-	 * Cette méthode  permet de transformer l'image en nuance de gris
+	 * Cette mï¿½thode  permet de transformer l'image en nuance de gris
 	 * @param image
 	 * @return L'image en Nuance de Gris 
 	 */
@@ -396,7 +356,7 @@ public class Panel extends JPanel {
 		}
 	
 	/**
-	 *  Méthode dessinant le cercle
+	 *  Mï¿½thode dessinant le cercle
 	 * @param g La variable de dessin 
 	 * @param centerCircle Centre du cercle
 	 * @param r Rayon du cercle
@@ -419,14 +379,14 @@ public class Panel extends JPanel {
 		double indentationX = (bufferedOriginal.getWidth() / 10);
 		int tailleInden = 5;
 
-		// Point En haut a  gauche
+		// Point En haut aï¿½ gauche
 		int yZeroX = getLabel().getLocation().x;
 		int yZeroY = getLabel().getLocation().y;
 
-		// En Bas a  gauche
+		// En Bas aï¿½ gauche
 		int yFinY = yZeroY + getLabel().getIcon().getIconHeight();
 
-		// En Bas a  droite
+		// En Bas aï¿½ droite
 		int xFinX = yZeroX + getLabel().getIcon().getIconWidth();
 
 		// Longueur
@@ -562,11 +522,7 @@ public class Panel extends JPanel {
 	public void setResX(double resX) {
 		this.resX = resX;
 	}
-	
-	public float getBright(){
-		return bright;
-	}
-	
+
 	public void setBright(float e){
 		bright=e;
 	}
@@ -587,14 +543,6 @@ public class Panel extends JPanel {
 		return bufferedOriginal2;
 	}
 
-	public void setBufferedOriginal2(BufferedImage bufferedOriginal2) {
-		this.bufferedOriginal2 = bufferedOriginal2;
-	}
-
-	public Point getZonezoom() {
-		return zonezoom;
-	}
-
 	public void setZonezoom(Point zonezoom) {
 		this.zonezoom = zonezoom;
 	}
@@ -603,17 +551,9 @@ public class Panel extends JPanel {
 		return fileName;
 	}
 
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
-
 	public Raster getRaster() {
 		return raster;
 	}
 
-	public void setRaster(Raster raster) {
-		this.raster = raster;
-	}
-	
 }																																							//Morteum and Heywir 2017
  

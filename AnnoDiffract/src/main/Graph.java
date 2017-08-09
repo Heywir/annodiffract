@@ -9,7 +9,6 @@ import java.io.FileWriter;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 
 import javax.swing.JFileChooser;
@@ -42,9 +41,9 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
  * @author Morteum and Heywir 2017@
  *
  */
-public class Graph extends JFrame implements ChartMouseListener, ActionListener{
+class Graph extends JFrame implements ChartMouseListener, ActionListener{
 
-	private Fenetre f;
+	private final Fenetre f;
 	private XYSeries XY;
 	private final String chartTitle;
 	private final ChartPanel chartPanel;
@@ -60,7 +59,7 @@ public class Graph extends JFrame implements ChartMouseListener, ActionListener{
 	private JFreeChart xylineChartS = null;
 	private JFreeChart xylineChartRayon = null;
 	private JFreeChart xylineChart2theta = null;
-	private JLabel statusLabel;
+	private final JLabel statusLabel;
 	private XYPlot plot;
 	private Boolean yMoy=true;
 	/**
@@ -167,9 +166,9 @@ public class Graph extends JFrame implements ChartMouseListener, ActionListener{
     /**
      *  Regle les options graphique du graphique
      */
-	public void graphicOption(){
+	private void graphicOption(){
 		
-		//Viseur, couleur et épaisseur
+		//Viseur, couleur et ï¿½paisseur
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer( );
         renderer.setSeriesPaint( 0 , Color.BLACK );
         renderer.setSeriesOutlineStroke(0, new BasicStroke(0.1f));
@@ -202,7 +201,7 @@ public class Graph extends JFrame implements ChartMouseListener, ActionListener{
             XYDataset d = e1.getDataset();
             int s = e1.getSeriesIndex();
             int i = e1.getItem();
-            XYPointerAnnotation h = new XYPointerAnnotation(((int)(100*f.getMainPanel2().listeD.get((int)(i)))/100.)+" A",(double)d.getX(s, (int)(i)), (double)d.getY(s, (int)(i)),4.75);
+            XYPointerAnnotation h = new XYPointerAnnotation(((int)(100*f.getMainPanel2().listeD.get(i))/100.)+" A",(double)d.getX(s, i), (double)d.getY(s, i),4.75);
 			plot.addAnnotation(h);
         }
 		
@@ -284,18 +283,18 @@ public class Graph extends JFrame implements ChartMouseListener, ActionListener{
 		    if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
 		        if(filter.equals(chooser.getFileFilter())){
 			    	destinationFile = chooser.getSelectedFile().getAbsolutePath()+".txt";
-			    	convertAndPrint(false, true, false,destinationFile);
+			    	convertAndPrint(destinationFile);
 			    }
 			    if(filterCSV.equals(chooser.getFileFilter())){
 			    	destinationFile = chooser.getSelectedFile().getAbsolutePath()+".csv";
-			    	convertAndPrint(false, true, false,destinationFile);
+			    	convertAndPrint(destinationFile);
 			    }
 		    }
 		}
 	}
 	
-	 private void convertAndPrint(boolean writeToConsole, boolean writeToFile, boolean sortTheList, String destinationCSVFile) {
-	        String commaSeparatedValues = "";
+	 private void convertAndPrint(String destinationCSVFile) {
+	        StringBuilder commaSeparatedValues = new StringBuilder();
 	        double som = 0 ;
 	        for (int i =0;i<f.getMainPanel2().listeMoyenBeam.size();i++){
 	        	som = som+f.getMainPanel2().listeMoyenBeam.get(i);
@@ -303,36 +302,30 @@ public class Graph extends JFrame implements ChartMouseListener, ActionListener{
 	        
 	        if (f.getMainPanel2().listeMoyenBeam.isEmpty()) {
 	            /** Sort the list if sortTheList was passed as true**/
-	            if(sortTheList) {
-	                Collections.sort(f.getMainPanel2().listeD);
-	            }
-	            /**Iterate through the list and append comma after each values**/
+				/**Iterate through the list and append comma after each values**/
 	            Iterator<Double> iterD = f.getMainPanel2().listeD.iterator();
 	            Iterator<Double> iterS = f.getMainPanel2().listeS.iterator();
 	            Iterator<Double> iter2theta = f.getMainPanel2().liste2theta.iterator();
 	            Iterator<Double> iterInt = f.getMainPanel2().listeMoyen.iterator();
 	            Iterator<Double> iterIntSum = f.getMainPanel2().listeSomme.iterator();
-	            commaSeparatedValues += "Settings\r\nPPI; "+f.getP()+"; Microscope Tension:; "+f.getV()+"; Camera Lenght:; "+f.getL()+";\r\n\r\n";
+	            commaSeparatedValues.append("Settings\r\nPPI; ").append(f.getP()).append("; Microscope Tension:; ").append(f.getV()).append("; Camera Lenght:; ").append(f.getL()).append(";\r\n\r\n");
 	            int i = 0;
-	            commaSeparatedValues += "Interarticular Distance d; Scattering Vector S; Diffraction Angle 2 theta; Average Intensity Without BeamStop Correction; Sum Intensity Without BeamStop Correction;\r\n";
+	            commaSeparatedValues.append("Interarticular Distance d; Scattering Vector S; Diffraction Angle 2 theta; Average Intensity Without BeamStop Correction; Sum Intensity Without BeamStop Correction;\r\n");
 	            while (iterD.hasNext()) {
-	                commaSeparatedValues += iterD.next() + "; "+iterS.next() + "; "+iter2theta.next() +"; "+iterInt.next() +" ;"+iterIntSum.next()+";\r\n";
+	                commaSeparatedValues.append(iterD.next()).append("; ").append(iterS.next()).append("; ").append(iter2theta.next()).append("; ").append(iterInt.next()).append(" ;").append(iterIntSum.next()).append(";\r\n");
 	                i++;
 	                if(i>5){
-	                	commaSeparatedValues += "Interarticular Distance d; Scattering Vector S; Diffraction Angle 2 theta; Average Intensity Without BeamStop Correction; Sum Intensity Without BeamStop Correction;\r\n";
+	                	commaSeparatedValues.append("Interarticular Distance d; Scattering Vector S; Diffraction Angle 2 theta; Average Intensity Without BeamStop Correction; Sum Intensity Without BeamStop Correction;\r\n");
 	                	i=0;
 	                }
 	            }
 	            /**Remove the last comma**/
-	            if (commaSeparatedValues.endsWith(",")) {
-	                commaSeparatedValues = commaSeparatedValues.substring(0,
-	                        commaSeparatedValues.lastIndexOf(","));
+	            if (commaSeparatedValues.toString().endsWith(",")) {
+	                commaSeparatedValues = new StringBuilder(commaSeparatedValues.substring(0,
+							commaSeparatedValues.lastIndexOf(",")));
 	            }
 	        }else{
-	        	if(sortTheList) {
-	                Collections.sort(f.getMainPanel2().listeD);
-	            }
-	            /**Iterate through the list and append comma after each values**/
+				/**Iterate through the list and append comma after each values**/
 	            Iterator<Double> iterD = f.getMainPanel2().listeD.iterator();
 	            Iterator<Double> iterS = f.getMainPanel2().listeS.iterator();
 	            Iterator<Double> iter2theta = f.getMainPanel2().liste2theta.iterator();
@@ -340,46 +333,41 @@ public class Graph extends JFrame implements ChartMouseListener, ActionListener{
 	            Iterator<Double> iterIntBeam = f.getMainPanel2().listeMoyenBeam.iterator();
 	            Iterator<Double> iterIntSum = f.getMainPanel2().listeSomme.iterator();
 	            Iterator<Double> iterIntSumBeam = f.getMainPanel2().listeSommeBeam.iterator();
-	            commaSeparatedValues += "Settings\r\nPPI; "+f.getP()+"; Microscope Tension:; "+f.getV()+"; Camera Lenght:; "+f.getL()+";\r\n\r\n";
-	            commaSeparatedValues += "Interarticular Distance d; Scattering Vector S; Diffraction Angle 2 theta;Average Intensity  (u. a.) Without BeamStop Correction;Average Intensity  (u. a.) With BeamStop correction;Sum Intensity  (u. a.) Without BeamStop Correction;Sum Intensity  (u. a.) With BeamStop correction; \r\n";
+	            commaSeparatedValues.append("Settings\r\nPPI; ").append(f.getP()).append("; Microscope Tension:; ").append(f.getV()).append("; Camera Lenght:; ").append(f.getL()).append(";\r\n\r\n");
+	            commaSeparatedValues.append("Interarticular Distance d; Scattering Vector S; Diffraction Angle 2 theta;Average Intensity  (u. a.) Without BeamStop Correction;Average Intensity  (u. a.) With BeamStop correction;Sum Intensity  (u. a.) Without BeamStop Correction;Sum Intensity  (u. a.) With BeamStop correction; \r\n");
 	            int i =0;
 	            while (iterD.hasNext()) {
-	                commaSeparatedValues += iterD.next() + "; "+iterS.next() + "; "+iter2theta.next() +"; "+iterInt.next() +";"+iterIntBeam.next()+";"+iterIntSum.next()+";"+iterIntSumBeam.next()+";\r\n";
+	                commaSeparatedValues.append(iterD.next()).append("; ").append(iterS.next()).append("; ").append(iter2theta.next()).append("; ").append(iterInt.next()).append(";").append(iterIntBeam.next()).append(";").append(iterIntSum.next()).append(";").append(iterIntSumBeam.next()).append(";\r\n");
 	                i++;
 	                if(i>5){
 	                	i=0;
-	                	commaSeparatedValues += "Interarticular Distance d; Scattering Vector S; Diffraction Angle 2 theta;Average Intensity  (u. a.) Without BeamStop Correction;Average Intensity  (u. a.) With BeamStop correction;Sum Intensity  (u. a.) Without BeamStop Correction;Sum Intensity  (u. a.) With BeamStop correction; \r\n";
+	                	commaSeparatedValues.append("Interarticular Distance d; Scattering Vector S; Diffraction Angle 2 theta;Average Intensity  (u. a.) Without BeamStop Correction;Average Intensity  (u. a.) With BeamStop correction;Sum Intensity  (u. a.) Without BeamStop Correction;Sum Intensity  (u. a.) With BeamStop correction; \r\n");
 	                }
 	            }
 	            /**Remove the last comma**/
-	            if (commaSeparatedValues.endsWith(",")) {
-	                commaSeparatedValues = commaSeparatedValues.substring(0,
-	                        commaSeparatedValues.lastIndexOf(","));
+	            if (commaSeparatedValues.toString().endsWith(",")) {
+	                commaSeparatedValues = new StringBuilder(commaSeparatedValues.substring(0,
+							commaSeparatedValues.lastIndexOf(",")));
 	            }
 	        }
 	        /** If writeToConsole flag was passed as true, output to console**/
-	        if(writeToConsole) {
-	            System.out.println(commaSeparatedValues);
-	        }
-	        /** If writeToFile flag was passed as true, output to File**/      
-	        if(writeToFile) {
-	            try {
-	            	File f = new File(destinationCSVFile);
-	                FileWriter fstream = new FileWriter(f, false);
-	                BufferedWriter out = new BufferedWriter(fstream);
-	                out.write(commaSeparatedValues);
-	                out.close();
-	            } catch (Exception e) {
-	            	JOptionPane.showMessageDialog(null, "Error Encounter. "
-	    					+ "Afile of the same name is used, If you want to save close the software which use the file or"
-	    					+ " change the name of the file you want to save"
-	        				, "Error", JOptionPane.ERROR_MESSAGE);
-	            }
-	        }
-	 
-	    }
+		 /** If writeToFile flag was passed as true, output to File**/
+		 try {
+             File f = new File(destinationCSVFile);
+             FileWriter fstream = new FileWriter(f, false);
+             BufferedWriter out = new BufferedWriter(fstream);
+             out.write(commaSeparatedValues.toString());
+             out.close();
+         } catch (Exception e) {
+             JOptionPane.showMessageDialog(null, "Error Encounter. "
+                     + "Afile of the same name is used, If you want to save close the software which use the file or"
+                     + " change the name of the file you want to save"
+                     , "Error", JOptionPane.ERROR_MESSAGE);
+         }
+
+	 }
 	 //Methode qui va mettre a jour les series avec la correction Beamstop
-	 public void withBeam(){
+	 private void withBeam(){
 		XYSeriesCollection dataset = new XYSeriesCollection();
 		XY = new XYSeries( "BeamStop Correction" );
 		if(yMoy){
@@ -495,7 +483,7 @@ public class Graph extends JFrame implements ChartMouseListener, ActionListener{
 	 	//Methode qui met a jour les chartes sans la correction Beamstop
 	private void withoutBeam(){
         //On creer les Charts que l'utilisateur pourra afficher s'il le souhaite
-	    if(yMoy==true){
+	    if(yMoy){
 			xylineChartRayon = ChartFactory.createXYLineChart(
 	                chartTitle ,
 	                "Radius" ,

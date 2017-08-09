@@ -43,7 +43,7 @@ import org.jfree.ui.RefineryUtilities;
  * @author Morteum and Heywir 2017@
  *
  */
-public class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMotionListener, ComponentListener, ChangeListener{
+class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMotionListener, ComponentListener, ChangeListener{
 
 	private Panel mainPanel = null;
 	private JMenuItem menuItemOuvrir = null;
@@ -74,7 +74,7 @@ public class Fenetre extends JFrame implements ActionListener, MouseListener, Mo
 	/**
 	 * Méthode Pour fabriquer la fentre
 	 */
-	public Fenetre() {
+    private Fenetre() {
 		
 		// Taille Ecran
 		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -566,7 +566,7 @@ public class Fenetre extends JFrame implements ActionListener, MouseListener, Mo
 	 * @param x Le pixel x
 	 * @param y Le pixel y
 	 */
-	public void getBeamStop(int x,int y){
+    private void getBeamStop(int x, int y){
 		ArrayList<Integer> h = new ArrayList<>();
 		for(float i=-2;i<3 ;i++){
 			for(float j=-2;j<3 ;j++){
@@ -576,17 +576,17 @@ public class Fenetre extends JFrame implements ActionListener, MouseListener, Mo
 			}
 		}
 		
-		double moy=0,som=0,ecart;
+		double moy,som=0,ecart;
 		//Nous calculons la somme
-		for(int i=0;i<h.size();i++){
-			som = som+(double)h.get(i);
+		for (Integer aH1 : h) {
+			som = som + (double) aH1;
 		}
 		//Nous calculons la moyenne
 		moy = som/(double)h.size();
 		som = 0;
 		//Nous calculons l'écart-type
-		for(int i=0;i<h.size();i++){
-			som = som+(((double)h.get(i)-moy)*((double)h.get(i)-moy));
+		for (Integer aH : h) {
+			som = som + (((double) aH - moy) * ((double) aH - moy));
 		}
 
 		//Nous calculons l'intervalle grace a la moyenne et a l'ecart-type
@@ -608,7 +608,7 @@ public class Fenetre extends JFrame implements ActionListener, MouseListener, Mo
     	int l;
     	double i=0;
 		double r;
-		pDouble = (pDouble* (double)39.370079);
+		pDouble = (pDouble* 39.370079);
 		//On remet à jour les listes (on les vides) quand on appelle cette methode
 		mainPanel.setzerolist();
 		// cette liste contiendra les point de chaque cercle
@@ -633,7 +633,7 @@ public class Fenetre extends JFrame implements ActionListener, MouseListener, Mo
 				
 				int[] pixelColor = new int[4];
 				mainPanel.getRaster().getPixel(tmp.get(h).x, tmp.get(h).y, pixelColor);
-				int c = (int)Math.round(pixelColor[0]+pixelColor[1]+pixelColor[2]+pixelColor[3]);
+				int c = Math.round(pixelColor[0]+pixelColor[1]+pixelColor[2]+pixelColor[3]);
 				if(minBS !=-1){
 					if(c<minBS || c>maxBS){
 						sommeBeam = sommeBeam + c;
@@ -664,18 +664,17 @@ public class Fenetre extends JFrame implements ActionListener, MouseListener, Mo
      * @param somme Somme
      * @param sommeBeam Somme BeamStop
      * @param nbPointWB Somme de point du cercle parcouru sans correction beamstop
-     * @param nbPointSommeWTB Somme de point du cercle parcouru avec correction beamstop
-     *      
+	 *
      */
-    public void addresult(double r, double pDouble, double lDouble, double somme, double sommeBeam, int nbPointWB, int nbPointWTB ){
+    private void addresult(double r, double pDouble, double lDouble, double somme, double sommeBeam, int nbPointWB, int nbPointWTB){
     	double j,moy,moyBeam;
     	j = (r/pDouble);
     	BigDecimal theta2;
     	//Calculs de 2 Theta
-		theta2 = BigDecimal.valueOf(Math.toRadians(Math.atan((j/((double)lDouble/(double)100))/((double)180)*Math.PI)));
+		theta2 = BigDecimal.valueOf(Math.toRadians(Math.atan((j/(lDouble /(double)100))/((double)180)*Math.PI)));
 		mainPanel.liste2theta.add(theta2.doubleValue()); 
 		//Calcul de d
-		double d =((lambda.doubleValue()*(double)lDouble*(double)100)/j)* Math.pow(10,6);
+		double d =((lambda.doubleValue()* lDouble *(double)100)/j)* Math.pow(10,6);
 		mainPanel.listeD.add(d);
 		mainPanel.listeRayon.add(j);
 		//Calcul Vecteur de diffusion
@@ -731,33 +730,13 @@ public class Fenetre extends JFrame implements ActionListener, MouseListener, Mo
 		this.mainPanel = mainPanel;
 	}
 
-    
-	public ZoomImage getZ() {
-		return z;
-	}
 
-	public void setZ(ZoomImage z) {
-		this.z = z;
-	}
-	
 	public Panel getMainPanel2() {
 		return mainPanel;
 	}
 
-	public double getMinBS() {
-		return minBS;
-	}
-
-	public void setMinBS(double minBS) {
-		this.minBS = minBS;
-	}
-
 	public double getMaxBS() {
 		return maxBS;
-	}
-
-	public void setMaxBS(double maxBS) {
-		this.maxBS = maxBS;
 	}
 
 	@Override
@@ -782,10 +761,6 @@ public class Fenetre extends JFrame implements ActionListener, MouseListener, Mo
 	public void mouseReleased(MouseEvent arg0) {
 		// TODO Auto-generated method stub
 		
-	}
-	
-	public BigDecimal getLambda(){
-		return lambda;
 	}
 
 	public void setLambda(BigDecimal lambda){
