@@ -96,6 +96,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		// Layout
 		BorderLayout layout = new BorderLayout();
 		this.setLayout(layout);
+		brightSlide.setValue(1);
 
 		// Status Bar
 		statusPanel.add(statusLabel, BorderLayout.EAST);
@@ -145,9 +146,13 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		outilLabel.setForeground(Color.RED);
 
 		// ToolBar Bouttons
-		brightSlide = new JSlider();
+		brightSlide = new JSlider(JSlider.HORIZONTAL, 0, 255, 1);
+		brightSlide.setMajorTickSpacing(50);
+		brightSlide.setMinorTickSpacing(10);
+		brightSlide.setPaintTicks(true);
+		brightSlide.setPaintLabels(true);
 		Dimension d = brightSlide.getPreferredSize();
-		brightSlide.setPreferredSize(new Dimension(d.width/3, d.height));
+		brightSlide.setPreferredSize(new Dimension(d.width, d.height));
 
 		// 32 x 32
 		// Find Center
@@ -317,7 +322,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			if(returnVal == JFileChooser.APPROVE_OPTION) {
 					try {
 						//Remets par defaut le slider quand on ouvre une image
-						brightSlide.setValue(50);
+						brightSlide.setValue(1);
 						if (getMainPanel().isLoaded()) {
 
 							mainPanel.setBright(-1);
@@ -526,12 +531,12 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			if(z.getSubImage(mainPanel.getBufferedOriginal2(), x,y)){
 				x = (int)((mainPanel.getResX()/mainPanel.getBufferedOriginal().getWidth())*x);
 				y = (int)((mainPanel.getResY()/mainPanel.getBufferedOriginal().getHeight())*y);
-				mainPanel.setZonezoom(new Point(x, y));
-				RescaleOp op = new RescaleOp(1, 1, null);
-				op.filter(mainPanel.getBufferedScaled2(), mainPanel.getBufferedScaled());
-				mainPanel.toGray(mainPanel.getBufferedScaled());
-				op.filter(mainPanel.getBufferedScaled2(), mainPanel.getBufferedScaled());
-				mainPanel.toGray(mainPanel.getBufferedScaled());
+				mainPanel.setZoneZoom(new Point(x, y));
+				//RescaleOp op = new RescaleOp(1, 1, null);
+				//op.filter(mainPanel.getBufferedScaled2(), mainPanel.getBufferedScaled());
+				//mainPanel.toGray(mainPanel.getBufferedScaled());
+				//op.filter(mainPanel.getBufferedScaled2(), mainPanel.getBufferedScaled());
+				//mainPanel.toGray(mainPanel.getBufferedScaled());
 			}
 		}else if(mainPanel.getCurrentTool()==TypeOutil.BEAMSTOP){
 			if(mainPanel.listeCircle.isEmpty()){
@@ -700,7 +705,8 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		// TODO Auto-generated method stub
 		if(arg0.getSource()==brightSlide){
 			if(mainPanel.isLoaded()){
-				mainPanel.setBrightness(2* (float) brightSlide.getValue() / brightSlide.getMaximum());
+				System.out.println(brightSlide.getValue());
+				mainPanel.setBrightness((float) brightSlide.getValue());
 			}
 		}
 	}

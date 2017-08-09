@@ -1,14 +1,6 @@
 package main;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.GraphicsEnvironment;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -70,8 +62,15 @@ class ZoomImage extends JFrame implements ActionListener, MouseListener, MouseMo
 
 		JToolBar light = new JToolBar();
 		this.add(light,BorderLayout.NORTH);
-		brightSlide = new JSlider();
+
+		//Slider
+		brightSlide = new JSlider(JSlider.HORIZONTAL, 0, 255, 1);
 		brightSlide.setToolTipText("Luminosité");
+		brightSlide.setMajorTickSpacing(50);
+		brightSlide.setMinorTickSpacing(10);
+		brightSlide.setPaintTicks(true);
+		brightSlide.setPaintLabels(true);
+		brightSlide.setValue(f.brightSlide.getValue());
 		light.add(new JLabel("Brightness"));
 		light.add(brightSlide);
 
@@ -121,7 +120,7 @@ class ZoomImage extends JFrame implements ActionListener, MouseListener, MouseMo
 	 * Cette m�thode permet de d�finir la luminosit� de l'image zoommer en fonction du slider
 	 */
 	private void setBrightness() {
-		RescaleOp op = new RescaleOp(((float)25 * (float) brightSlide.getValue() / (float)f.brightSlide.getMaximum()), 0, null);
+		RescaleOp op = new RescaleOp(brightSlide.getValue(), 0, null);
 		this.img = op.filter(img2, this.img);
 		f.getMainPanel2().toGray(this.img);
 		jL.setIcon(new ImageIcon(this.img));

@@ -45,12 +45,13 @@ public class Panel extends JPanel {
 	private String fileName;
 	
 	//Variable luminosit�
-	private float bright=-1;
+	//private float bright=-1;
+	private float bright = 1;
 
 	//Variable pour les points et cercles
 	public Circle tmpCircle = new Circle();
 	public final ArrayList<Circle> listeCircle = new ArrayList<>();
-	private Point zonezoom=null;
+	private Point zoneZoom=null;
 	
 	//Liste Intensit�
 	public final ArrayList<Double> listeMoyen = new ArrayList<>();
@@ -70,6 +71,9 @@ public class Panel extends JPanel {
 	//Variable resolution
 	private double resX=0;
 	private double resY=0;
+
+	//Variable brightness
+	float brightFactor = 1;
 	
 
 	public Panel(Fenetre f) {
@@ -100,7 +104,7 @@ public class Panel extends JPanel {
 	void openImage(File file) throws Exception {
 		try {
 			listePointCenter.clear();
-			zonezoom = null;
+			zoneZoom = null;
 			tmpCircle.ptCircle.clear();
 			listeCircle.clear();
 			listeMoyen.clear();
@@ -130,7 +134,7 @@ public class Panel extends JPanel {
 		    BufferedImage tGray = toGray(bufferedScaled);
 		    //toGray(bufferedOriginal);
 		    //toGray(bufferedOriginal2);
-		    toGray(bufferedScaled2);
+		    toGray(bufferedScaled);
 		    setImage(tGray);
             
 		    //Put Image Rezize On Panel
@@ -220,16 +224,26 @@ public class Panel extends JPanel {
 					drawPoint(g2d, tmpCircle.ptCircle.get(i));
 				}
 			}
-			if(zonezoom!=null){
+			if(zoneZoom!=null){
+				cleanBlue();
 				int tmp= (int)((getResX()/getBufferedOriginal().getWidth())*125);
-				g2d.drawLine((int)zonezoom.getX()-tmp, (int)zonezoom.getY()-tmp, (int)zonezoom.getX()-tmp, (int)zonezoom.getY()+tmp);
-				g2d.drawLine((int)zonezoom.getX()-tmp, (int)zonezoom.getY()-tmp, (int)zonezoom.getX()+tmp, (int)zonezoom.getY()-tmp);
-				g2d.drawLine((int)zonezoom.getX()+tmp, (int)zonezoom.getY()-tmp, (int)zonezoom.getX()+tmp, (int)zonezoom.getY()+tmp);
-				g2d.drawLine((int)zonezoom.getX()-tmp, (int)zonezoom.getY()+tmp, (int)zonezoom.getX()+tmp, (int)zonezoom.getY()+tmp);
+				g2d.drawLine((int)zoneZoom.getX()-tmp, (int)zoneZoom.getY()-tmp, (int)zoneZoom.getX()-tmp, (int)zoneZoom.getY()+tmp);
+				g2d.drawLine((int)zoneZoom.getX()-tmp, (int)zoneZoom.getY()-tmp, (int)zoneZoom.getX()+tmp, (int)zoneZoom.getY()-tmp);
+				g2d.drawLine((int)zoneZoom.getX()+tmp, (int)zoneZoom.getY()-tmp, (int)zoneZoom.getX()+tmp, (int)zoneZoom.getY()+tmp);
+				g2d.drawLine((int)zoneZoom.getX()-tmp, (int)zoneZoom.getY()+tmp, (int)zoneZoom.getX()+tmp, (int)zoneZoom.getY()+tmp);
 			}
 			drawGraph(g);
 		}
 	}
+
+	public void cleanBlue() {
+		System.out.println(bright);
+		RescaleOp op = new RescaleOp(2*brightFactor, 0, null);
+		bufferedScaled = op.filter(bufferedScaled2, bufferedScaled);
+		toGray(bufferedScaled);
+	}
+
+
 	/**
 	 * Remets a zero les listes pour les graphiques
 	 */
@@ -467,7 +481,8 @@ public class Panel extends JPanel {
 	 * @param scaleFactor Facteur de luminositer
 	 */
 	public void setBrightness(float scaleFactor){
-        RescaleOp op = new RescaleOp(2*scaleFactor, 0, null);
+		brightFactor = scaleFactor;
+        RescaleOp op = new RescaleOp(scaleFactor/15, 0, null);
         bufferedScaled = op.filter(bufferedScaled2, bufferedScaled);
         toGray(bufferedScaled);
         bright = scaleFactor;
@@ -543,8 +558,8 @@ public class Panel extends JPanel {
 		return bufferedOriginal2;
 	}
 
-	public void setZonezoom(Point zonezoom) {
-		this.zonezoom = zonezoom;
+	public void setZoneZoom(Point zonezoom) {
+		this.zoneZoom = zonezoom;
 	}
 
 	public String getFileName() {
