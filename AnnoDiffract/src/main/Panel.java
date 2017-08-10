@@ -44,10 +44,6 @@ public class Panel extends JPanel {
 	private BufferedImage bufferedScaled2;
 	private String fileName;
 	
-	//Variable luminositï¿½
-	//private float bright=-1;
-	private float bright = 1;
-
 	//Variable pour les points et cercles
 	public Circle tmpCircle = new Circle();
 	public final ArrayList<Circle> listeCircle = new ArrayList<>();
@@ -67,6 +63,8 @@ public class Panel extends JPanel {
 	
 	//Autre Liste
 	public final ArrayList<Point> listePointCenter = new ArrayList<>();
+	public final ArrayList<Point> listePointOnBeamStop = new ArrayList<>();
+	
 	
 	//Variable resolution
 	private double resX=0;
@@ -132,14 +130,13 @@ public class Panel extends JPanel {
 		    bufferedScaled = toBufferedImage(imageScaled);
 		    bufferedScaled2 = toBufferedImage(imageScaled);
 		    BufferedImage tGray = toGray(bufferedScaled);
-		    //toGray(bufferedOriginal);
-		    //toGray(bufferedOriginal2);
-		    toGray(bufferedScaled);
+		    toGray(bufferedScaled2);
 		    setImage(tGray);
             
 		    //Put Image Rezize On Panel
             getLabel().setIcon(new ImageIcon(bufferedScaled));
             setLoaded(true);
+            in.close();
             repaint();
 			
 		} catch (FileNotFoundException e) {
@@ -155,6 +152,11 @@ public class Panel extends JPanel {
 		repaint();
 	}
 	
+	/**
+	 *  Converti une image en BufferedImage
+	 * @param img : Image a convertir
+	 * @return un BufferedImage
+	 */
 	private static BufferedImage toBufferedImage(Image img) {
         if (img instanceof BufferedImage)
         {
@@ -205,6 +207,13 @@ public class Panel extends JPanel {
 		super.paintComponent(g);
 		if (isLoaded()) {
 			Graphics2D g2d = bufferedScaled.createGraphics();
+			g2d.setColor(Color.RED);
+			if(!listePointOnBeamStop.isEmpty() && f.getSeeBeamstopPoint()){
+				for(int i=0; i<listePointOnBeamStop.size();i++){
+					Point p = converToPointScaled(listePointOnBeamStop.get(i).x, listePointOnBeamStop.get(i).y);
+					g2d.drawLine(p.x, p.y, p.x, p.y);
+				}
+			}
 			g2d.setColor(Color.BLUE);
 			if(!listeCircle.isEmpty()){
 				for (Circle aListePoint : listeCircle) {
@@ -219,6 +228,7 @@ public class Panel extends JPanel {
 					}
 				}
 			}
+			
 			if(tmpCircle.ptCircle.size()!=0){
 				for(int i=0; i<tmpCircle.ptCircle.size();i++){
 					drawPoint(g2d, tmpCircle.ptCircle.get(i));
@@ -235,15 +245,10 @@ public class Panel extends JPanel {
 		}
 	}
 
-	public void cleanBlue() {
-
-	}
-
-
 	/**
-	 * Remets a zero les listes pour les graphiques
+	 * Remet a zero les listes quand on recalcules les données
 	 */
-	public void setzerolist(){
+	public void setZeroList(){
 		listeMoyen.clear();
 		listeSomme.clear();
 		listeRayon.clear();
@@ -252,6 +257,8 @@ public class Panel extends JPanel {
 		liste2theta.clear();
 		listeMoyenBeam.clear();
 		listeSommeBeam.clear();
+		listePointCenter.clear();
+		listePointOnBeamStop.clear();
 	}
 
 	/**
@@ -266,35 +273,91 @@ public class Panel extends JPanel {
 		ArrayList<Point> pixels = new ArrayList<>();
 		int width = bufferedOriginal.getWidth();
 		int height = bufferedOriginal.getHeight();
-		
-	    double x = 0;
+		int[] pixelColor = new int[4];
+	    int c;
+		double x = 0;
 	    double y = r;
 	    double d = r - 1;
-	    
 	    while(y >= x){
 	    	
 	    	if((x_centre + x > 0 && width > x_centre + x ) && ( y_centre + y > 0 && height > y_centre + y ) ){
+	    		if(f.getMinBS()!=-1){
+	    			raster.getPixel((int)Math.round(x_centre + x), (int)Math.round(y_centre + y ), pixelColor);
+					c = pixelColor[0]+pixelColor[1]+pixelColor[2]+pixelColor[3];
+					if(!(c<f.getMinBS()||c>f.getMaxBS())){
+						listePointOnBeamStop.add(new Point( (int)Math.round(x_centre + x), (int)Math.round(y_centre + y )));
+					}
+	    		}
 	    		pixels.add( new Point( (int)Math.round(x_centre + x), (int)Math.round(y_centre + y )));
 	    	}
 	    	if((x_centre + y > 0 && width > x_centre + y ) && ( y_centre + x > 0 && height > y_centre + x ) ){
+	    		if(f.getMinBS()!=-1){
+	    			raster.getPixel((int)Math.round(x_centre + y), (int)Math.round(y_centre + x), pixelColor);
+	    			c = pixelColor[0]+pixelColor[1]+pixelColor[2]+pixelColor[3];
+					if( !(c<f.getMinBS()||c>f.getMaxBS()) ){
+						listePointOnBeamStop.add(new Point( (int)Math.round(x_centre + y), (int)Math.round(y_centre + x)));
+					}
+	    		}
 	    		pixels.add( new Point( (int)Math.round(x_centre + y), (int)Math.round(y_centre + x)));
 	    	}
 	    	if((x_centre - x > 0 && width > x_centre - x ) && ( y_centre + y > 0 && height > y_centre + y ) ){
+	    		if(f.getMinBS()!=-1){
+	    			raster.getPixel((int)Math.round(x_centre - x), (int)Math.round(y_centre + y ), pixelColor);
+					c = pixelColor[0]+pixelColor[1]+pixelColor[2]+pixelColor[3];
+					if( !(c<f.getMinBS()||c>f.getMaxBS()) ){
+						listePointOnBeamStop.add(new Point( (int)Math.round(x_centre - x), (int)Math.round(y_centre + y ) ));
+					}
+	    		}
 	    		pixels.add( new Point( (int)Math.round(x_centre - x), (int)Math.round(y_centre + y )));
 	    	}
 	    	if((x_centre - y > 0 && width > x_centre - y ) && ( y_centre + x > 0 && height > y_centre + x ) ){
+	    		if(f.getMinBS()!=-1){
+	    			raster.getPixel((int)Math.round(x_centre - y), (int)Math.round(y_centre + x ), pixelColor);
+					c = pixelColor[0]+pixelColor[1]+pixelColor[2]+pixelColor[3];
+					if( !(c<f.getMinBS()||c>f.getMaxBS()) ){
+						listePointOnBeamStop.add(new Point( (int)Math.round(x_centre - y), (int)Math.round(y_centre + x ) ));
+					}
+	    		}
 	    		pixels.add( new Point( (int)Math.round(x_centre - y), (int)Math.round(y_centre + x )));
 	    	}
 	    	if((x_centre + x > 0 && width > x_centre  + x ) && ( y_centre - y > 0 && height > y_centre - y ) ){
+	    		if(f.getMinBS()!=-1){
+	    			raster.getPixel( (int)Math.round(x_centre + x), (int)Math.round(y_centre - y ), pixelColor);
+					c = pixelColor[0]+pixelColor[1]+pixelColor[2]+pixelColor[3];
+					if( !(c<f.getMinBS()||c>f.getMaxBS()) ){
+						listePointOnBeamStop.add( new Point( (int)Math.round(x_centre + x), (int)Math.round(y_centre - y ) ));
+					}
+	    		}
 	    		pixels.add( new Point( (int)Math.round(x_centre + x), (int)Math.round(y_centre - y )));
 	    	}
 	    	if((x_centre + y > 0 && width > x_centre  + y ) && ( y_centre - x > 0 && height > y_centre - x ) ){
+	    		if(f.getMinBS()!=-1){
+	    			raster.getPixel( (int)Math.round(x_centre + y), (int)Math.round(y_centre - x), pixelColor);
+					c = pixelColor[0]+pixelColor[1]+pixelColor[2]+pixelColor[3];
+					if( !(c<f.getMinBS()||c>f.getMaxBS()) ){
+						listePointOnBeamStop.add(  new Point( (int)Math.round(x_centre + y), (int)Math.round(y_centre - x) ));
+					}
+	    		}
 	    		pixels.add( new Point( (int)Math.round(x_centre + y), (int)Math.round(y_centre - x) ));
 	    	}
 	    	if((x_centre - x > 0 && width > x_centre  - x ) && ( y_centre - y > 0 && height > y_centre - y ) ){
+	    		if(f.getMinBS()!=-1){
+	    			raster.getPixel( (int)Math.round(x_centre - x), (int)Math.round(y_centre - y), pixelColor);
+					 c = pixelColor[0]+pixelColor[1]+pixelColor[2]+pixelColor[3];
+					if( !(c<f.getMinBS()||c>f.getMaxBS()) ){
+						listePointOnBeamStop.add(  new Point( (int)Math.round(x_centre - x), (int)Math.round(y_centre - y) ));
+					}
+	    		}
 	    		pixels.add( new Point( (int)Math.round(x_centre - x), (int)Math.round(y_centre - y) ));
 	    	}
 	    	if((x_centre - y > 0 && width > x_centre  - y ) && ( y_centre - x > 0 && height > y_centre - x ) ){
+		    	if(f.getMinBS()!=-1){
+	    			raster.getPixel( (int)Math.round(x_centre - y), (int)Math.round(y_centre - x), pixelColor);
+					c = pixelColor[0]+pixelColor[1]+pixelColor[2]+pixelColor[3];
+					if(!(c<f.getMinBS()||c>f.getMaxBS())){
+						listePointOnBeamStop.add(  new Point( (int)Math.round(x_centre - y), (int)Math.round(y_centre - x) ));
+					}
+		    	}
 	    		pixels.add( new Point( (int)Math.round(x_centre - y), (int)Math.round(y_centre - x) ));
 	    	}
 	        
@@ -311,7 +374,16 @@ public class Panel extends JPanel {
 	            x ++;
 	        }
 	    }
+	    //repaint();
+	    setNewImage();
 		return pixels;
+	}
+
+	public Point converToPointScaled( int x, int y){
+		x = (int)Math.round((resX/bufferedOriginal.getWidth())*x);
+		y = (int)Math.round((resY/bufferedOriginal.getHeight())*y);
+		
+		return new Point(x,y);
 	}
 	
 	/**
@@ -481,7 +553,6 @@ public class Panel extends JPanel {
         RescaleOp op = new RescaleOp(scaleFactor/15, 0, null);
         bufferedScaled = op.filter(bufferedScaled2, bufferedScaled);
         toGray(bufferedScaled);
-        bright = scaleFactor;
         repaint();
 	}
 	
@@ -535,7 +606,6 @@ public class Panel extends JPanel {
 	}
 
 	public void setBright(float e){
-		bright=e;
 	}
 
 	public BufferedImage getBufferedOriginal() {
