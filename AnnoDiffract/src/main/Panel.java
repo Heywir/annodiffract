@@ -454,11 +454,14 @@ public class Panel extends JPanel {
 		// Parametres graphe
 
 		// Distance entre axe et text
-		int distance = 20;
+		int distanceX = 20;
+		int distanceY = 8;
 
 		// Pour le decoupage selon l'image
-		double indentationY = (bufferedOriginal.getHeight() / 10);
-		double indentationX = (bufferedOriginal.getWidth() / 10);
+		double indentationY = (bufferedOriginal.getHeight() / 11);
+		double indentationX = (bufferedOriginal.getWidth() / 11);
+
+		// Taille des traits d'indentation
 		int tailleInden = 5;
 
 		// Point En haut a� gauche
@@ -478,39 +481,43 @@ public class Panel extends JPanel {
 		// Dessin
 
 		// ParamÃ¨tres
-
-		
 		Graphics2D g2 = (Graphics2D) g;
+		// Epaisseur
 		g2.setStroke(new BasicStroke(1));
+		// Couleur
 		g2.setColor(Color.BLACK);
 
 		// Y Axis
+		// Ligne
 		g2.drawLine(yZeroX -1, yZeroY, yZeroX -1, yFinY);
-		g2.drawString("Y", yZeroX - 4, yZeroY - 4);
+		// Texte
+		g2.drawString("Y", yZeroX - distanceX - 2, yZeroY - distanceY - 4);
 
 		// X Axis
-		g2.drawLine(yZeroX, yFinY, xFinX, yFinY);
-		g2.drawString("X", xFinX + 4, yFinY + 4);
+		// Ligne
+		g2.drawLine(yZeroX, yZeroY-1,xFinX, yZeroY-1);
+		// Texte
+		g2.drawString("X", yZeroX - 2, yZeroY - distanceY - 12);
 
 
-	  // Numerotation Y
+	    // Numerotation Y
 
 		int longueurMot;
 		for(int i = 0; i < indentationY +1; i=i+15) {
 			g2.draw(new Line2D.Double(yZeroX - tailleInden, yZeroY + (i * yLength), yZeroX + tailleInden, yZeroY + (i * yLength)));
 			FontMetrics fm = getFontMetrics(getFont());
 			longueurMot = fm.stringWidth(Integer.toString(i*10));
-			g2.drawString(Integer.toString(i*10), (yZeroX - distance) - longueurMot /2, yZeroY + (int) (i * (yLength)));
+			g2.drawString(Integer.toString(i*10), (yZeroX - distanceX) - longueurMot /2, yZeroY + (int) (i * (yLength)));
 
 		}
 
 		// Numerotation X
 
 		for(int i = 0; i < indentationX +1; i=i+15) {
-			g2.draw(new Line2D.Double(yZeroX + (i * xLength), yFinY - tailleInden, yZeroX + (i * xLength), yFinY + tailleInden));
+			g2.draw(new Line2D.Double(yZeroX + (i * xLength), yZeroY - tailleInden, yZeroX + (i * xLength), yZeroY + tailleInden));
 			FontMetrics fm = getFontMetrics(getFont());
 			longueurMot = fm.stringWidth(Integer.toString(i*10));
-			g2.drawString(Integer.toString(i*10), yZeroX + (int) (i * xLength) - longueurMot /2, yFinY + distance);
+			g2.drawString(Integer.toString(i*10), yZeroX + (int) (i * xLength) - longueurMot /2, yZeroY - distanceY);
 		}
 
 	}
