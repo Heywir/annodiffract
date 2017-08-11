@@ -45,6 +45,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	private double v =200;
 	private double l =100;
 	private Boolean seeBeamstopPoint=false;
+	private Boolean trueScale=false;
 	private double bright;
 	private BigDecimal lambda;
 	private ZoomImage z=null;
@@ -227,10 +228,14 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		JLabel lLabel = new JLabel("Camera Lenght (cm) :");
 		JTextField lField = new JTextField(String.valueOf(l),7);
 
-		//CheckBox
+		//CheckBox Beamstop
 		JCheckBox check1 = new JCheckBox("See Beamstop Point");
 		check1.setSelected(seeBeamstopPoint);
 
+		//CheckBox true scale
+		JCheckBox check2 = new JCheckBox("true Scale Intensity");
+		check2.setSelected(trueScale);
+		
 		//Panel et Layout
 		JPanel myPanel = new JPanel();
 		myPanel.setLayout(new GridBagLayout());
@@ -264,6 +269,12 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		gbc.gridy = 3;
 		myPanel.add(check1, gbc);
 
+		//CheckBox
+		gbc.gridx= 0;
+		gbc.gridy = 4;
+		myPanel.add(check2, gbc);
+
+		
 		int result = JOptionPane.showConfirmDialog(null, myPanel,
 	               "Option", JOptionPane.OK_CANCEL_OPTION);
 		if (result == JOptionPane.OK_OPTION) {
@@ -276,6 +287,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
     		    l=Double.parseDouble(lField.getText());
     		    JOptionPane.showMessageDialog(null, "The Settings changed", "Good", JOptionPane.INFORMATION_MESSAGE);
     		    seeBeamstopPoint=check1.isSelected();
+    		    trueScale=check2.isSelected();
 			} catch(NumberFormatException z){
 				JOptionPane.showMessageDialog(null, "You didn't enter a number. "
     					+ "The Settings aren't changed"
@@ -429,7 +441,6 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 				if(!mainPanel.listeCircle.isEmpty()){
 					mainPanel.listeCircle.remove(mainPanel.listeCircle.size()-1);
 					resetPoint();
-					System.out.println(mainPanel.listePointCenter.size());
 					if(!mainPanel.listePointCenter.isEmpty()){
 						mainPanel.listePointCenter.remove(mainPanel.listePointCenter.size()-1);
 					}
@@ -478,11 +489,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			}
 			positionX = arg0.getX();
 			positionY = arg0.getY();
-			int[] pixelColor = new int[4];
-			mainPanel.getRaster().getPixel((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*arg0.getX()), (int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*arg0.getY()), pixelColor);
-			int c = Math.round(pixelColor[0]+pixelColor[1]+pixelColor[2]+pixelColor[3]);
-			statusLabel.setText(c+" MouseX: " + Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*arg0.getX()) + " " + "MouseY: " + Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*arg0.getY()));
-			
+			statusLabel.setText("MouseX: " + Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*arg0.getX()) + " " + "MouseY: " + Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*arg0.getY()));
 		}
 		
 	}
@@ -596,11 +603,23 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	 */
     private void getBeamStop(int x, int y){
 		ArrayList<Integer> h = new ArrayList<>();
+		int[] pixelColor = new int[mainPanel.getNbBand()];
+		int c=0,max=Integer.MIN_VALUE,min = Integer.MAX_VALUE;
 		for(float i=-2;i<3 ;i++){
 			for(float j=-2;j<3 ;j++){
-				int[] pixelColor = new int[4];
+				System.out.println(min+" "+max);
+				c=0;
 				mainPanel.getRaster().getPixel(Math.round(x+j),Math.round(y+i), pixelColor);
-				h.add(pixelColor[0]+pixelColor[1]+pixelColor[2]);
+				for(int l=0;l<mainPanel.getNbBand();l++){
+					c=c+pixelColor[l];
+				}
+				c=c/mainPanel.getNbBand();
+				if(max<c){
+					max=c;
+				}else if (min>c){
+					min=c;
+				}
+				h.add(c);
 			}
 		}
 		
@@ -619,8 +638,8 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 
 		//Nous calculons l'intervalle grace a la moyenne et a l'ecart-type
 		ecart = Math.sqrt(som/(double)h.size());
-		minBS = Math.round(moy-ecart);
-		maxBS = Math.round(moy+ecart);
+		minBS = min;
+		maxBS = max;
 	}
 	
 	/**
@@ -636,6 +655,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
     	int l;
     	double i=0;
 		double r;
+		int c=0;
 		pDouble = (pDouble* 39.370079);
 		//On remet à jour les listes (on les vides) quand on appelle cette methode
 		mainPanel.setZeroList();
@@ -643,19 +663,25 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		ArrayList<Point> tmp ;
 		//Il n'est pas intéresant de parcourir tout les cercles car à un certain points il n'y a plus de cercle
 		//Donc nous nous arrètons a la taille maximum X de l'image
+		Double somme = 0.0,sommeBeam= 0.0 ;
 		while(i<mainPanel.getBufferedOriginal().getWidth()){
 			l=0;
+			somme = 0.0;
+			sommeBeam = 0.0;
 			//Calcul du rayon
 			r = mainPanel.lenghtFrom2Points(centerCircle, new Point((int)(centerCircle.getX()+i), (int)centerCircle.getY()));
 			//Obtention de tout les points du cercle
 			tmp = mainPanel.getPointWithCenter((int)centerCircle.getX(),(int)centerCircle.getY(),r);
-			Double somme = 0.0,sommeBeam= 0.0 ;
 			for(int h = 0; h<=tmp.size()-1;h++){
-				int[] pixelColor = new int[4];
+				c=0;
+				int[] pixelColor = new int[mainPanel.getNbBand()];
 				mainPanel.getRaster().getPixel(tmp.get(h).x, tmp.get(h).y, pixelColor);
-				int c = Math.round(pixelColor[0]+pixelColor[1]+pixelColor[2]+pixelColor[3]);
+				for(int y=0;y<mainPanel.getNbBand();y++){
+					c=c+pixelColor[y];
+				}
+				c=c/mainPanel.getNbBand();
 				if(minBS !=-1){
-					if(c<minBS || c>maxBS){
+					if(!(c>=minBS && c<=maxBS)){
 						sommeBeam = sommeBeam + c;
 					}else{
 						l=l+1;
@@ -669,6 +695,9 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 				addresult(r,pDouble,lDouble,somme,sommeBeam,tmp.size(),tmp.size()-l );
 			}
 			i++;
+		}
+		if(!trueScale){
+			mainPanel.makeechelle();
 		}
 		if(minBS == -1){
 			statusDialogLabel.setText("You can now open the Graph or define the Beamstop (which is important) !!");
@@ -721,7 +750,6 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		// TODO Auto-generated method stub
 		if(arg0.getSource()==brightSlide){
 			if(mainPanel.isLoaded()){
-				//System.out.println(brightSlide.getValue());
 				mainPanel.setBrightness((float) brightSlide.getValue());
 				bright = brightSlide.getValue()/15;
 				if (z != null && z.isVisible()) {

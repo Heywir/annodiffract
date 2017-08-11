@@ -39,6 +39,7 @@ public class Panel extends JPanel {
 	private Image image = null;
 	private BufferedImage bufferedOriginal;
 	private Raster raster;
+	private int nbBand;
 	private BufferedImage bufferedOriginal2;
 	private BufferedImage bufferedScaled;
 	private BufferedImage bufferedScaled2;
@@ -105,10 +106,7 @@ public class Panel extends JPanel {
 			zoneZoom = null;
 			tmpCircle.ptCircle.clear();
 			listeCircle.clear();
-			listeMoyen.clear();
-			listeRayon.clear();
-			listeS.clear();
-			listeD.clear();
+			setZeroList();
 			FileInputStream in = new FileInputStream(file.getPath());
 			fileName = file.getName().replaceFirst("[.][^.]+$", "");
 			FileChannel channel = in.getChannel();
@@ -117,7 +115,8 @@ public class Panel extends JPanel {
 		    setImage(load(buffer.array()));
 			bufferedOriginal = toBufferedImage(getImage());
 			raster = bufferedOriginal.getData();
-
+			setNbBand(raster.getNumBands());
+			System.out.println(nbBand);
 			bufferedOriginal2  = new BufferedImage(bufferedOriginal.getWidth(),
 			bufferedOriginal.getHeight(), BufferedImage.TYPE_INT_RGB);
 			
@@ -385,6 +384,49 @@ public class Panel extends JPanel {
 		
 		return new Point(x,y);
 	}
+	/**
+	 * Mets l'intensité sous une echelle de 0 a 1 ce qui est beaucoup plus lisible
+	 */
+	public void makeechelle(){
+		double max=Integer.MIN_VALUE;
+		for(int i = 0; i<listeMoyen.size();i++){
+			if(max<listeMoyen.get(i)){
+				max=listeMoyen.get(i);
+			}
+		}
+		for(int i = 0; i<listeMoyen.size();i++){
+			listeMoyen.set(i, listeMoyen.get(i)/max);
+		}
+		max=Integer.MIN_VALUE;
+		for(int i = 0; i<listeSomme.size();i++){
+			if(max<listeSomme.get(i)){
+				max=listeSomme.get(i);
+			}
+		}
+		for(int i = 0; i<listeSomme.size();i++){
+			listeSomme.set(i, listeSomme.get(i)/max);
+		}
+		if(f.getMaxBS()!=-1){
+			max=Integer.MIN_VALUE;
+			for(int i = 0; i<listeMoyenBeam.size();i++){
+				if(max<listeMoyenBeam.get(i)){
+					max=listeMoyenBeam.get(i);
+				}
+			}
+			for(int i = 0; i<listeMoyenBeam.size();i++){
+				listeMoyenBeam.set(i, listeMoyenBeam.get(i)/max);
+			}
+			max=Integer.MIN_VALUE;
+			for(int i = 0; i<listeSommeBeam.size();i++){
+				if(max<listeSommeBeam.get(i)){
+					max=listeSommeBeam.get(i);
+				}
+			}
+			for(int i = 0; i<listeSommeBeam.size();i++){
+				listeSommeBeam.set(i, listeSommeBeam.get(i)/max);
+			}
+		}
+	}
 	
 	/**
 	 * Mï¿½thode calculant le centre en fonction de trois points donnï¿½es
@@ -641,6 +683,14 @@ public class Panel extends JPanel {
 
 	public Raster getRaster() {
 		return raster;
+	}
+
+	public int getNbBand() {
+		return nbBand;
+	}
+
+	public void setNbBand(int nbBand) {
+		this.nbBand = nbBand;
 	}
 
 }																																							//Morteum and Heywir 2017

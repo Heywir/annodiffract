@@ -171,6 +171,7 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 		//Viseur, couleur et �paisseur
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer( );
         renderer.setSeriesPaint( 0 , Color.BLACK );
+        renderer.setSeriesPaint( 1 , Color.RED );
         renderer.setSeriesOutlineStroke(0, new BasicStroke(0.1f));
         renderer.setSeriesStroke( 0 , new BasicStroke( 1.0f ) );
         renderer.setBaseShapesVisible(false);
@@ -369,15 +370,15 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 	 //Methode qui va mettre a jour les series avec la correction Beamstop
 	 private void withBeam(){
 		XYSeriesCollection dataset = new XYSeriesCollection();
-		XY = new XYSeries( "BeamStop Correction" );
+		XY = new XYSeries( "Without BeamStop Correction" );
 		if(yMoy){
 			for (int i=0; i<f.getMainPanel2().listeRayon.size();i++){
-		        XY.add(f.getMainPanel2().listeRayon.get(i), f.getMainPanel2().listeMoyenBeam.get(i));
+		        XY.add(f.getMainPanel2().listeRayon.get(i), f.getMainPanel2().listeMoyen.get(i));
 		    }
 			dataset.addSeries(XY);
-			XY = new XYSeries( "Without BeamStop Correction" );
+			XY = new XYSeries( "BeamStop Correction" );
 			for (int i=0; i<f.getMainPanel2().listeRayon.size();i++){
-		        XY.add(f.getMainPanel2().listeRayon.get(i), f.getMainPanel2().listeMoyen.get(i));
+		        XY.add(f.getMainPanel2().listeRayon.get(i), f.getMainPanel2().listeMoyenBeam.get(i));
 		    }
 			dataset.addSeries(XY);
 			xylineChartRayon = ChartFactory.createXYLineChart(
@@ -388,15 +389,15 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 		             PlotOrientation.VERTICAL ,
 		             true , true , false);
 			dataset = new XYSeriesCollection();
+			XY = new XYSeries( "Without BeamStop Correction" );
+			for (int i=0; i<f.getMainPanel2().listeS.size();i++){
+		        XY.add(f.getMainPanel2().listeS.get(i), f.getMainPanel2().listeMoyen.get(i));
+		    }
+			dataset.addSeries(XY);
 			XY = new XYSeries( "BeamStop Correction" );
 			for (int i=0; i<f.getMainPanel2().listeS.size();i++){
 		        XY.add(f.getMainPanel2().listeS.get(i), f.getMainPanel2().listeMoyenBeam.get(i));
 		    }
-			dataset.addSeries(XY);
-			XY = new XYSeries( "Without BeamStop Correction" );
-			for (int i=0; i<f.getMainPanel2().listeS.size();i++){
-		        XY.add(f.getMainPanel2().listeS.get(i), f.getMainPanel2().listeMoyen.get(i));
-		    }			
 			dataset.addSeries(XY);
 			xylineChartS = ChartFactory.createXYLineChart(
 		           chartTitle ,
@@ -407,14 +408,14 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 		           true , true , false);
 			
 			dataset = new XYSeriesCollection();
-			XY = new XYSeries( "BeamStop Correction" );
-			for (int i=0; i<f.getMainPanel2().liste2theta.size();i++){
-		        XY.add(f.getMainPanel2().liste2theta.get(i), f.getMainPanel2().listeMoyenBeam.get(i));
-		    }
-			dataset.addSeries(XY);
-			XY = new XYSeries( "Without BeamStop Correction" );			
+			XY = new XYSeries( "Without BeamStop Correction" );
 			for (int i=0; i<f.getMainPanel2().liste2theta.size();i++){
 		        XY.add(f.getMainPanel2().liste2theta.get(i), f.getMainPanel2().listeMoyen.get(i));
+		    }
+			dataset.addSeries(XY);
+			XY = new XYSeries( "BeamStop Correction" );			
+			for (int i=0; i<f.getMainPanel2().liste2theta.size();i++){
+		        XY.add(f.getMainPanel2().liste2theta.get(i), f.getMainPanel2().listeMoyenBeam.get(i));
 		    }
 			dataset.addSeries(XY);
 			xylineChart2theta = ChartFactory.createXYLineChart(
@@ -426,12 +427,12 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 		                true , true , false);
 		}else{
 			for (int i=0; i<f.getMainPanel2().listeRayon.size();i++){
-		        XY.add(f.getMainPanel2().listeRayon.get(i), f.getMainPanel2().listeSommeBeam.get(i));
+		        XY.add(f.getMainPanel2().listeRayon.get(i), f.getMainPanel2().listeSomme.get(i));
 		    }
 			dataset.addSeries(XY);
-			XY = new XYSeries( "Without BeamStop Correction" );
+			XY = new XYSeries( "BeamStop Correction" );
 			for (int i=0; i<f.getMainPanel2().listeRayon.size();i++){
-		        XY.add(f.getMainPanel2().listeRayon.get(i), f.getMainPanel2().listeSomme.get(i));
+		        XY.add(f.getMainPanel2().listeRayon.get(i), f.getMainPanel2().listeSommeBeam.get(i));
 		    }
 			dataset.addSeries(XY);
 			xylineChartRayon = ChartFactory.createXYLineChart(
@@ -442,14 +443,14 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 		                PlotOrientation.VERTICAL ,
 		                true , true , false);
 			dataset = new XYSeriesCollection();
-			XY = new XYSeries( "BeamStop Correction" );
-			for (int i=0; i<f.getMainPanel2().listeS.size();i++){
-		        XY.add(f.getMainPanel2().listeS.get(i), f.getMainPanel2().listeSommeBeam.get(i));
-		    }
-			dataset.addSeries(XY);
 			XY = new XYSeries( "Without BeamStop Correction" );
 			for (int i=0; i<f.getMainPanel2().listeS.size();i++){
 		        XY.add(f.getMainPanel2().listeS.get(i), f.getMainPanel2().listeSomme.get(i));
+		    }
+			dataset.addSeries(XY);
+			XY = new XYSeries( "BeamStop Correction" );
+			for (int i=0; i<f.getMainPanel2().listeS.size();i++){
+		        XY.add(f.getMainPanel2().listeS.get(i), f.getMainPanel2().listeSommeBeam.get(i));
 		    }			
 			dataset.addSeries(XY);
 			xylineChartS = ChartFactory.createXYLineChart(
@@ -461,14 +462,14 @@ class Graph extends JFrame implements ChartMouseListener, ActionListener{
 		                true , true , false);
 				
 			dataset = new XYSeriesCollection();
-			XY = new XYSeries( "BeamStop Correction" );
-			for (int i=0; i<f.getMainPanel2().liste2theta.size();i++){
-			      XY.add(f.getMainPanel2().liste2theta.get(i), f.getMainPanel2().listeSommeBeam.get(i));
-		    }
-			dataset.addSeries(XY);
-			XY = new XYSeries( "Without BeamStop Correction" );			
+			XY = new XYSeries( "Without BeamStop Correction" );
 			for (int i=0; i<f.getMainPanel2().liste2theta.size();i++){
 			     XY.add(f.getMainPanel2().liste2theta.get(i), f.getMainPanel2().listeSomme.get(i));
+		    }			
+			dataset.addSeries(XY);
+			XY = new XYSeries( "BeamStop Correction" );			
+			for (int i=0; i<f.getMainPanel2().liste2theta.size();i++){
+			      XY.add(f.getMainPanel2().liste2theta.get(i), f.getMainPanel2().listeSommeBeam.get(i));
 		    }
 			dataset.addSeries(XY);
 			xylineChart2theta = ChartFactory.createXYLineChart(

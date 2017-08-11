@@ -120,11 +120,13 @@ class ZoomImage extends JFrame implements ActionListener, MouseListener, MouseMo
 	 * Cette m�thode permet de d�finir la luminosit� de l'image zoommer en fonction du slider
 	 */
 	private void setBrightness() {
-		RescaleOp op = new RescaleOp(brightSlide.getValue(), 0, null);
-		this.img = op.filter(img2, this.img);
-		f.getMainPanel2().toGray(this.img);
-		jL.setIcon(new ImageIcon(this.img));
-		repaint();
+		if(img!=null){
+			RescaleOp op = new RescaleOp(brightSlide.getValue(), 0, null);
+			this.img = op.filter(img2, this.img);
+			f.getMainPanel2().toGray(this.img);
+			jL.setIcon(new ImageIcon(this.img));
+			repaint();
+		}
 	}
 
 	@Override
