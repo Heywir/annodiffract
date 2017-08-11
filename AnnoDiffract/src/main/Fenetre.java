@@ -1,13 +1,6 @@
 package main;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GraphicsEnvironment;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -19,21 +12,7 @@ import java.awt.image.RescaleOp;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
-import javax.swing.Box;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.JTextField;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -235,27 +214,59 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	 * Methode pour changer le parametre
 	 */
 	private void changeParam(){
-	    
-	    JTextField pField = new JTextField(String.valueOf(p),7);
-	    JTextField vField = new JTextField(String.valueOf(v),7);
-	    JTextField lField = new JTextField(String.valueOf(l),7);
-	    JCheckBox check1 = new JCheckBox("See Beamstop Point");
-	    check1.setSelected(seeBeamstopPoint);
-	    
-	    JPanel myPanel = new JPanel();
-	    myPanel.add(new JLabel("PPI :"));
-	    myPanel.add(pField);
-	    myPanel.add(Box.createHorizontalStrut(15)); // a spacer
-	    myPanel.add(new JLabel("Acceleration voltage of electrons(kV) :"));
-	    myPanel.add(vField);
-	    myPanel.add(Box.createHorizontalStrut(15)); // a spacer
-	    myPanel.add(new JLabel("Camera Lenght (cm) :"));
-	    myPanel.add(lField);
-	    myPanel.add(check1);
-		      
-	      int result = JOptionPane.showConfirmDialog(null, myPanel, 
+
+		//PPI
+		JLabel pLabel = new JLabel("PPI :");
+		JTextField pField = new JTextField(String.valueOf(p),7);
+
+		//V
+		JLabel vLabel = new JLabel("Acceleration voltage of electrons(kV) :");
+		JTextField vField = new JTextField(String.valueOf(v),7);
+
+		//L
+		JLabel lLabel = new JLabel("Camera Lenght (cm) :");
+		JTextField lField = new JTextField(String.valueOf(l),7);
+
+		//CheckBox
+		JCheckBox check1 = new JCheckBox("See Beamstop Point");
+		check1.setSelected(seeBeamstopPoint);
+
+		//Panel et Layout
+		JPanel myPanel = new JPanel();
+		myPanel.setLayout(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
+
+		//Règles et ajouts
+		//PPI
+		gbc.anchor = GridBagConstraints.WEST;
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		myPanel.add(pLabel, gbc);
+		gbc.gridx++;
+		myPanel.add(pField, gbc);
+
+		//V
+		gbc.gridx = 0;
+		gbc.gridy = 1;
+		myPanel.add(vLabel, gbc);
+		gbc.gridx++;
+		myPanel.add(vField, gbc);
+
+		//L
+		gbc.gridx = 0;
+		gbc.gridy = 2;
+		myPanel.add(lLabel, gbc);
+		gbc.gridx++;
+		myPanel.add(lField, gbc);
+
+		//CheckBox
+		gbc.gridx= 0;
+		gbc.gridy = 3;
+		myPanel.add(check1, gbc);
+
+		int result = JOptionPane.showConfirmDialog(null, myPanel,
 	               "Option", JOptionPane.OK_CANCEL_OPTION);
-	      if (result == JOptionPane.OK_OPTION) {
+		if (result == JOptionPane.OK_OPTION) {
 			try {
 				Float.parseFloat(pField.getText());
 				Float.parseFloat(vField.getText());
@@ -290,8 +301,9 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 				CalculMoyAndRadius(centerCircle, p, v, l);
 				resetPoint();
 			}
-	       }
+		}
 	}
+
 	/**
 	 * Cette methode permet d'obtenir la moyenne de tout les centre défini par l'utilisateur
 	 * @return Retourne le centre
