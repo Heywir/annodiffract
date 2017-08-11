@@ -246,7 +246,7 @@ public class Panel extends JPanel {
 	}
 
 	/**
-	 * Remet a zero les listes quand on recalcules les données
+	 * Remet a zero les listes quand on recalcules les donnï¿½es
 	 */
 	public void setZeroList(){
 		listeMoyen.clear();
@@ -458,8 +458,8 @@ public class Panel extends JPanel {
 		int distanceY = 8;
 
 		// Pour le decoupage selon l'image
-		double indentationY = (bufferedOriginal.getHeight() / 11);
-		double indentationX = (bufferedOriginal.getWidth() / 11);
+		double indentationY = (bufferedOriginal.getHeight() / 10);
+		double indentationX = (bufferedOriginal.getWidth() / 10);
 
 		// Taille des traits d'indentation
 		int tailleInden = 5;
