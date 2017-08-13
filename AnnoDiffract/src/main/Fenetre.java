@@ -285,33 +285,32 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
     		    p=Double.parseDouble(pField.getText());
     		    v=Double.parseDouble(vField.getText());
     		    l=Double.parseDouble(lField.getText());
-    		    JOptionPane.showMessageDialog(null, "The Settings changed", "Good", JOptionPane.INFORMATION_MESSAGE);
     		    seeBeamstopPoint=check1.isSelected();
     		    trueScale=check2.isSelected();
+    		    if(!mainPanel.listeCircle.isEmpty()){
+    				centerCircle=mainPanel.circleCenter(
+    						new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(0).getX()),
+    								(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(0).getY())),
+    						new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(1).getX()),
+    								(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(1).getY())),
+    						new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(2).getX()),
+    								(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(2).getY())));
+    				mainPanel.listePointCenter.add(centerCircle);
+    				centerCircle = getCenterCicleMoy();
+    				
+    				//Calcul lambda
+    	    		lambda = new BigDecimal((6.62 *Math.pow(10,-34))/
+    						(Math.sqrt((2.9149 *Math.pow(10,-49))*(v*(double)1000)*
+    								((double)1+(9.7714 *Math.pow(10,-7))*(v*(double)1000)))));
+    				
+    				CalculMoyAndRadius(centerCircle, p, v, l);
+    				resetPoint();
+    				JOptionPane.showMessageDialog(null, "The Settings changed", "Good", JOptionPane.INFORMATION_MESSAGE);
+    		    }
 			} catch(NumberFormatException z){
 				JOptionPane.showMessageDialog(null, "You didn't enter a number. "
     					+ "The Settings aren't changed"
         				, "Not Good", JOptionPane.ERROR_MESSAGE);
-			}
-			
-			if(!mainPanel.listeCircle.isEmpty()){
-				centerCircle=mainPanel.circleCenter(
-						new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(0).getX()),
-								(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(0).getY())),
-						new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(1).getX()),
-								(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(1).getY())),
-						new Point((int)Math.round((mainPanel.getBufferedOriginal().getWidth()/mainPanel.getResX())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(2).getX()),
-								(int)Math.round((mainPanel.getBufferedOriginal().getHeight()/mainPanel.getResY())*mainPanel.listeCircle.get(mainPanel.listeCircle.size()-1).ptCircle.get(2).getY())));
-				mainPanel.listePointCenter.add(centerCircle);
-				centerCircle = getCenterCicleMoy();
-				
-				//Calcul lambda
-	    		lambda = new BigDecimal((6.62 *Math.pow(10,-34))/
-						(Math.sqrt((2.9149 *Math.pow(10,-49))*(v*(double)1000)*
-								((double)1+(9.7714 *Math.pow(10,-7))*(v*(double)1000)))));
-				
-				CalculMoyAndRadius(centerCircle, p, v, l);
-				resetPoint();
 			}
 		}
 	}
@@ -607,7 +606,6 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		int c=0,max=Integer.MIN_VALUE,min = Integer.MAX_VALUE;
 		for(float i=-2;i<3 ;i++){
 			for(float j=-2;j<3 ;j++){
-				System.out.println(min+" "+max);
 				c=0;
 				mainPanel.getRaster().getPixel(Math.round(x+j),Math.round(y+i), pixelColor);
 				for(int l=0;l<mainPanel.getNbBand();l++){
@@ -652,7 +650,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	 */
 	public void CalculMoyAndRadius(Point centerCircle, double pDouble, double vDouble, double lDouble){
 		statusDialogLabel.setText("Calculate the intensity. Wait a moment !!");
-    	int l;
+		int l;
     	double i=0;
 		double r;
 		int c=0;
@@ -683,7 +681,6 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 				if(minBS !=-1){
 					if(!(c>=minBS && c<=maxBS)){
 						sommeBeam = sommeBeam + c;
-					}else{
 						l=l+1;
 					}
 				}
@@ -692,7 +689,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 			//Ici nous calculons les valeurs nécessaire pour le graphe ensuite nous 
 			// les ajoutons a des listes specifique
 			if(!tmp.isEmpty()){
-				addresult(r,pDouble,lDouble,somme,sommeBeam,tmp.size(),tmp.size()-l );
+				addresult(r,pDouble,lDouble,somme,sommeBeam,tmp.size(),l );
 			}
 			i++;
 		}
@@ -731,7 +728,7 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		mainPanel.listeS.add(((lambda.doubleValue()/d)/lambda.doubleValue()));
 		//Calcul Moyenne d'intensité avec et sans correction BeamStop
 		moy = (somme/(double)nbPointWB);
-		moyBeam = (sommeBeam/nbPointWTB);
+		moyBeam = (sommeBeam/(double)nbPointWTB);
 		mainPanel.listeMoyen.add(moy);
 		mainPanel.listeSomme.add(somme);
 		
@@ -844,6 +841,13 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 	public void setCenterCircle(Point centerCircle){
 		this.centerCircle=centerCircle;
 	}
+
+	public Boolean getSeeBeamstopPoint() {
+		return seeBeamstopPoint;
+	}
+	public void setSeeBeamstopPoint(Boolean seeBeamstopPoint) {
+		this.seeBeamstopPoint = seeBeamstopPoint;
+	}
 	
 	//Main
 	public static void main(String[] args) {
@@ -853,13 +857,6 @@ class Fenetre extends JFrame implements ActionListener, MouseListener, MouseMoti
 		window.setVisible(true);
 
 	}
-	public Boolean getSeeBeamstopPoint() {
-		return seeBeamstopPoint;
-	}
-	public void setSeeBeamstopPoint(Boolean seeBeamstopPoint) {
-		this.seeBeamstopPoint = seeBeamstopPoint;
-	}
-
 }																																																		//Morteum and Heywir 2017
 
  

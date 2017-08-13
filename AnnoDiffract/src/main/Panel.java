@@ -116,7 +116,6 @@ public class Panel extends JPanel {
 			bufferedOriginal = toBufferedImage(getImage());
 			raster = bufferedOriginal.getData();
 			setNbBand(raster.getNumBands());
-			System.out.println(nbBand);
 			bufferedOriginal2  = new BufferedImage(bufferedOriginal.getWidth(),
 			bufferedOriginal.getHeight(), BufferedImage.TYPE_INT_RGB);
 			
